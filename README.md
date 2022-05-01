@@ -1,5 +1,4 @@
-![1200 x 630](https://user-images.githubusercontent.com/33253710/154557615-651cda3f-5795-4169-b01b-ba83b5988d4e.jpg)
-
+![2022 1 SM Banner 1200x630](https://user-images.githubusercontent.com/33253710/166158530-56169759-079e-403c-9053-78ed5e7d05da.jpg)
 
 <b>Save Manager</b> is a <b>FREE</b> local save system for Unity games. 
 > Version 1.1.0
