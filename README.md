@@ -1,7 +1,12 @@
 ![2022 1 SM Banner 1200x630](https://user-images.githubusercontent.com/33253710/166158530-56169759-079e-403c-9053-78ed5e7d05da.jpg)
 
 <b>Save Manager</b> is a <b>FREE</b> local save system for Unity games. 
-> Version 1.1.0
+
+## Badges
+![CodeFactor](https://www.codefactor.io/repository/github/cartergames/SaveManager/badge?style=for-the-badge)
+![GitHub all releases](https://img.shields.io/github/downloads/CarterGames/SaveManager/total?style=for-the-badge)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/CarterGames/SaveManager?style=for-the-badge)
+![GitHub repo size](https://img.shields.io/github/repo-size/CarterGames/SaveManager?style=for-the-badge)
 
 ## Key Features
 - Custom editor window to assist in save class creation.
