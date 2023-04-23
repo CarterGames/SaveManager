@@ -1,0 +1,11 @@
+﻿using CarterGames.Assets.SaveManager;
+using UnityEngine;
+
+namespace Save
+{
+    [CreateAssetMenu(fileName = "%SaveObjectName%")]
+    public class %SaveObjectName% : SaveObject
+    {
+        // Enter your save values here...
+    }
+}

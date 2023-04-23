@@ -1,0 +1,16 @@
+{
+    "name": "CarterGames.SaveManager.Runtime",
+    "rootNamespace": "CarterGames.Assets.SaveManager",
+    "references": [
+        "GUID:50f4cdc5056abc0428441516ab79cd9a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
