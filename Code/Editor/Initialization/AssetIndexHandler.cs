@@ -107,9 +107,14 @@ namespace CarterGames.Assets.SaveManager.Editor
                 if (assetObj.GetType() == typeof(AssetIndex) || assetObj.GetType() == typeof(SettingsAssetEditor)) continue;
                 foundAssets.Add((SaveManagerAsset) AssetDatabase.LoadAssetAtPath(assetPath, typeof(SaveManagerAsset)));
             }
-
+            
+            EditorGUI.BeginChangeCheck();
             UtilEditor.AssetIndex.SetLookup(foundAssets);
-            EditorUtility.SetDirty(UtilEditor.AssetIndex);
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(UtilEditor.AssetIndex);
+            }
+            
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }

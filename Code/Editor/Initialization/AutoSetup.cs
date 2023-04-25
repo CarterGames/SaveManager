@@ -22,6 +22,7 @@
  */
 
 using UnityEditor;
+using UnityEditor.Callbacks;
 using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager.Editor
@@ -38,7 +39,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// Creates the scriptable objects for the asset if they don't exist yet.
         /// </summary>
-        [UnityEditor.Callbacks.DidReloadScripts]
+        [DidReloadScripts(-10)]
         private static void OnScriptsReloaded() 
         {
             if (UtilEditor.HasInitialized) return;

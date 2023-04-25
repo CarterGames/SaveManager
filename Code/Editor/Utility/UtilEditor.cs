@@ -75,7 +75,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         private const string SaveManagerEditorSettingsFilter = "t:settingsasseteditor";
         private const string SaveProfilesStoreFilter = "t:saveprofilesstore";
         private const string SaveDataFilter = "t:savedata";
-        private const string SaveDataEncryptionKeyFilter = "t:savemanagerencryptionkey";
+        private const string SaveDataEncryptionKeyFilter = "t:encryptionkeyasset";
         private const string AssetIndexFilter = "t:assetindex";
 
 
@@ -241,7 +241,14 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// Gets if there is a settings asset in the project.
         /// </summary>
-        public static bool HasInitialized => AssetIndex.Lookup.ContainsKey(typeof(SettingsAssetRuntime).ToString());
+        public static bool HasInitialized
+        {
+            get
+            {
+                AssetIndexHandler.UpdateIndex();
+                return AssetIndex.Lookup.ContainsKey(typeof(SettingsAssetRuntime).ToString());
+            }
+        }
         
 
         /// <summary>
@@ -545,6 +552,13 @@ namespace CarterGames.Assets.SaveManager.Editor
 
         public static void Initialize()
         {
+            AssetDatabase.Refresh();
+            
+            if (assetIndexCache == null)
+            {
+                assetIndexCache = AssetIndex;
+            }
+            
             if (settingsCache == null)
             {
                 settingsCache = Settings;
@@ -568,11 +582,6 @@ namespace CarterGames.Assets.SaveManager.Editor
             if (encryptionKeyAssetCache == null)
             {
                 encryptionKeyAssetCache = EncryptionKeyAsset;
-            }
-
-            if (assetIndexCache == null)
-            {
-                assetIndexCache = AssetIndex;
             }
 
             AssetIndexHandler.UpdateIndex();
@@ -607,8 +616,12 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             Settings.Initialize();
             SettingsAssetEditor.Initialize();
-            EncryptionKeyAsset.SaveEncryptionKey = EncryptionKeyAsset.GenerateKey();
-            EditorUtility.SetDirty(EncryptionKeyAsset);
+            
+            if (!EncryptionKeyAsset.HasKey)
+            {
+                EncryptionKeyAsset.SaveEncryptionKey = EncryptionKeyAsset.GenerateKey();
+                EditorUtility.SetDirty(EncryptionKeyAsset);
+            }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
