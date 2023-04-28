@@ -69,7 +69,7 @@ namespace CarterGames.Assets.SaveManager.Serializiation
             {
                 var current = list[i];
                 
-#if UNITY_2021
+#if UNITY_2021_1_1_OR_NEWER
                 TryAdd(current.key, current.value);
 #elif UNITY_2020
                 Add(current.key, current.value);
