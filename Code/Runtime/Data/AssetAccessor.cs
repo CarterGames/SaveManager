@@ -22,6 +22,7 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager
@@ -86,7 +87,7 @@ namespace CarterGames.Assets.SaveManager
         {
             if (Index.Lookup.ContainsKey(typeof(T).ToString()))
             {
-                return Index.Lookup[typeof(T).ToString()] as List<T>;
+                return Index.Lookup[typeof(T).ToString()].Cast<T>().ToList();
             }
 
             return null;

@@ -69,10 +69,16 @@ namespace CarterGames.Assets.SaveManager.Serializiation
             {
                 var current = list[i];
                 
-#if UNITY_2021_1_1_OR_NEWER
-                TryAdd(current.key, current.value);
+#if UNITY_2021_1_OR_NEWER
+                if (current.key != null)
+                {
+                    TryAdd(current.key, current.value);
+                }
 #elif UNITY_2020
-                Add(current.key, current.value);
+                if (current.key != null)
+                {
+                    Add(current.key, current.value);
+                }
 #endif
             }
         }
@@ -100,12 +106,20 @@ namespace CarterGames.Assets.SaveManager.Serializiation
         /// </summary>
         private void AddNewValue()
         {
-#if UNITY_2021_1_1_OR_NEWER
+#if UNITY_2021_1_OR_NEWER
             var current = list[^1];
-            TryAdd(current.key, current.value);
+            
+            if (current.key != null)
+            {
+                TryAdd(current.Key, current.value);
+            }
 #elif UNITY_2020
             var current = list[list.Count - 1];
-            Add(current.key, current.value);
+            
+            if (current.key != null)
+            {
+                Add(current.key, current.value);
+            }
 #endif
         }
     }
