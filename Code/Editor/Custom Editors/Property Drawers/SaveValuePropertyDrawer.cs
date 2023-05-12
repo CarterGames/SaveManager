@@ -21,6 +21,7 @@
  * THE SOFTWARE.
  */
 
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -31,10 +32,10 @@ namespace CarterGames.Assets.SaveManager.Editor
     {
         // Note EditorGUILayout works here as its applying to a base class and any inheriting classes will behave.
         // Its a super weird instance where it does work, but saves a lot of code for the rects etc.
-        
-        
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            if (property.serializedObject == null) return;
+            
             EditorGUILayout.BeginVertical();
 
             EditorGUI.indentLevel++;
@@ -45,14 +46,17 @@ namespace CarterGames.Assets.SaveManager.Editor
             DrawResetButton(property);
             
             EditorGUILayout.EndHorizontal();
-            
+
             if (property.isExpanded)
             {
                 EditorGUILayout.BeginVertical("Box");
 
-                EditorGUI.BeginDisabledGroup(true);
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("key"), new GUIContent("Key"));
-                EditorGUI.EndDisabledGroup();
+                if (UtilEditor.SettingsAssetEditor.ShowSaveKeys)
+                {
+                    EditorGUI.BeginDisabledGroup(true);
+                    EditorGUILayout.PropertyField(property.FindPropertyRelative("key"), new GUIContent("Key"));
+                    EditorGUI.EndDisabledGroup();
+                }
                 
                 EditorGUI.BeginChangeCheck();
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("value"), new GUIContent("Value"));
@@ -83,13 +87,12 @@ namespace CarterGames.Assets.SaveManager.Editor
 
         private static void ResetToDefault(SerializedProperty prop)
         {
-            var type = prop.serializedObject.targetObject.GetType();
+            var field = prop.serializedObject.targetObject.GetType()
+                .GetField(prop.propertyPath.Split('.')[0],
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             
-            var serialized2 = ScriptableObject.CreateInstance(type);
-            var serializedCopy = new SerializedObject(serialized2);
-            Object.DestroyImmediate(serialized2);
-            
-            prop.serializedObject.CopyFromSerializedPropertyIfDifferent(serializedCopy.FindProperty(prop.propertyPath));
+            field.GetValue(prop.serializedObject.targetObject).GetType()
+                .GetMethod("ResetValue", BindingFlags.Public | BindingFlags.Instance).Invoke(field.GetValue(prop.serializedObject.targetObject), null);
         }
 
 
@@ -99,13 +102,14 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             if (GUILayout.Button("-", GUILayout.Width(25)))
             {
-                if (EditorUtility.DisplayDialog($"Reset {property.FindPropertyRelative("key").stringValue}",
-                        $"Are you sure you want to reset {property.FindPropertyRelative("key").stringValue} to its default value.",
+                if (EditorUtility.DisplayDialog($"Reset {property.name}",
+                        $"Are you sure you want to reset {property.name} to its default value.",
                         "Reset", "Cancel"))
                 {
                     ResetToDefault(property.FindPropertyRelative("value"));
                     property.serializedObject.ApplyModifiedProperties();
                     property.serializedObject.Update();
+                    EditorUtility.SetDirty(property.serializedObject.targetObject);
                     SaveManager.Save();
                     return;
                 }

@@ -39,6 +39,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         [SerializeField] private bool saveEditorProfileCreator;
         [SerializeField] private bool saveEditorProfileViewer;
         [SerializeField] private string lastProfileName;
+        [SerializeField] private bool showSaveKeys;
         
         // Are used, just not directly referenced!
         [SerializeField] private string lastSaveObjectName;
@@ -95,6 +96,16 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// Gets the normal GUI.Background color and caches it for use.
         /// </summary>
         public Color BackgroundColor => backgroundColor;
+        
+        
+        /// <summary>
+        /// Gets/Sets the tab pos of the save editor window.
+        /// </summary>
+        public bool ShowSaveKeys
+        {
+            get => showSaveKeys;
+            set => showSaveKeys = value;
+        }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods

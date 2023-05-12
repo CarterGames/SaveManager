@@ -48,6 +48,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         private static readonly GUIContent PrettyFormat = new GUIContent("Pretty Save Formatting?","Formats the save file into a more readable format when saving.");
         private static readonly GUIContent AutoLoad = new GUIContent("Auto Load?","Defines if the game loads on play/entering the game.");
         private static readonly GUIContent AutoSave = new GUIContent("Auto Save?","Defines if the game saves when exiting the game.");
+        private static readonly GUIContent SaveKeysToggle = new GUIContent("Show Save Keys?","Defines if the save editor shows the save key for each save value, Use this to condense the UI a tad if you need to.");
         private static readonly GUIContent Logs = new GUIContent("Show Log Messages?", "Shows log messages for any errors as well as some handy debugging information.");
 
         private const string ExplorerButtonLabel = "Open Save Path In Explorer";
@@ -233,6 +234,14 @@ namespace CarterGames.Assets.SaveManager.Editor
             EditorGUILayout.PropertyField(SettingsAssetObject.FindProperty("autoSaveOnExit"),AutoSave);
             EditorGUI.EndDisabledGroup();
 
+            // Editor Only Setting....
+            EditorGUI.BeginChangeCheck();
+            EditorGUILayout.PropertyField(UtilEditor.EditorSettingsObject.FindProperty("showSaveKeys"), SaveKeysToggle);
+            if (EditorGUI.EndChangeCheck())
+            {
+                UtilEditor.EditorSettingsObject.ApplyModifiedProperties();
+                UtilEditor.EditorSettingsObject.Update();
+            }
 
             // Show Logs...
             EditorGUILayout.PropertyField(SettingsAssetObject.FindProperty("showLogs"), Logs);

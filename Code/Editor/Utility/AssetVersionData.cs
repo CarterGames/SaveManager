@@ -31,7 +31,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// The version number of the asset.
         /// </summary>
-        public static string VersionNumber => "2.0.3";
+        public static string VersionNumber => "2.0.4";
         
         
         /// <summary>
@@ -40,6 +40,6 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <remarks>
         /// Asset owner is in the UK, so its D/M/Y format.
         /// </remarks>
-        public static string ReleaseDate => "09/05/2023";
+        public static string ReleaseDate => "13/05/2023";
     }
 }

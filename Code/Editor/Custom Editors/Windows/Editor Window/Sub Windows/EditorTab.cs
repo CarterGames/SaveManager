@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CarterGames.Assets.SaveManager.Demo;
 using UnityEditor;
 using UnityEngine;
 
@@ -60,8 +59,8 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
                     sObj = new SerializedObject(saveObj);
                 }
                 
-                
-                if (saveObj.GetType() == typeof(ExampleSaveObject))
+
+                if (saveObj.GetType().FullName == "CarterGames.Assets.SaveManager.Demo.ExampleSaveObject")
                 {
                     if (demoLookup.ContainsKey(saveObj)) continue;
                     demoLookup.Add(saveObj, sObj);
@@ -102,21 +101,29 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
         {
             EditorGUILayout.LabelField(sectionName, EditorStyles.boldLabel);
             
+            
             foreach (var pair in lookup)
             {
+                if (!editorsLookup.ContainsKey(pair.Key))
+                {
+                    editorsLookup.Add(pair.Key, UnityEditor.Editor.CreateEditor(pair.Key));
+                }
+                
+                
                 EditorGUILayout.BeginVertical("HelpBox");
+                
+                EditorGUILayout.BeginHorizontal();
                 
                 EditorGUI.BeginChangeCheck();
 
-                EditorGUILayout.BeginHorizontal();
-
-                pair.Value.FindProperty("isExpanded").boolValue =
-                    EditorGUILayout.Foldout(pair.Value.FindProperty("isExpanded").boolValue, pair.Key.name);
+                editorsLookup[pair.Key].serializedObject.FindProperty("isExpanded").boolValue =
+                    EditorGUILayout.Foldout(editorsLookup[pair.Key].serializedObject.FindProperty("isExpanded").boolValue, pair.Key.name);
                 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    pair.Value.ApplyModifiedProperties();
-                    pair.Value.Update();
+                    editorsLookup[pair.Key].serializedObject.ApplyModifiedProperties();
+                    editorsLookup[pair.Key].serializedObject.Update();
+                    
                     SaveManager.Save();
                 }
 
@@ -131,12 +138,9 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
                         // Reset Save Object
                         pair.Key.ResetObjectSaveValues();
                         
-                        pair.Value.ApplyModifiedProperties();
-                        pair.Value.Update();
-
                         editorsLookup[pair.Key].serializedObject.ApplyModifiedProperties();
                         editorsLookup[pair.Key].serializedObject.Update();
-
+                        
                         SaveManager.Save();
                         GUI.FocusControl(null);
 
@@ -151,20 +155,12 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
                 GUILayout.Space(2.5f);
 
                 
-                if (pair.Value.FindProperty("isExpanded").boolValue)
+                if (editorsLookup[pair.Key].serializedObject.FindProperty("isExpanded").boolValue)
                 {
-                    if (editorsLookup.ContainsKey(pair.Key))
-                    {
-                        editorsLookup[pair.Key].OnInspectorGUI();
-                    }
-                    else
-                    {
-                        editorsLookup.Add(pair.Key, UnityEditor.Editor.CreateEditor(pair.Key));
-                        editorsLookup[pair.Key].OnInspectorGUI();
-                    }
-
+                    editorsLookup[pair.Key].OnInspectorGUI();
                     GUILayout.Space(1.5f);
                 }
+                
                 EditorGUI.EndDisabledGroup();
                 
                 EditorGUILayout.EndVertical();
