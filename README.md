@@ -8,6 +8,7 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/CarterGames/SaveManager/total?style=for-the-badge)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/CarterGames/SaveManager?style=for-the-badge)
 ![GitHub repo size](https://img.shields.io/github/repo-size/CarterGames/SaveManager?style=for-the-badge)
+![Unity](https://img.shields.io/badge/Unity-2020.3.x_or_higher-critical?style=for-the-badge)
 
 ## Key Features
 ✔️ Save editor window for edit the save in edit mode<br>
