@@ -151,10 +151,18 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             get
             {
-                var script = AssetDatabase.FindAssets($"t:Script {nameof(UtilEditor)}")[0];
-                var path = AssetDatabase.GUIDToAssetPath(script);
+                string path = string.Empty;
+                
+                foreach (var scriptFound in AssetDatabase.FindAssets($"t:Script {nameof(UtilEditor)}"))
+                {
+                    path = AssetDatabase.GUIDToAssetPath(scriptFound);
+                    
+                    if (!path.Contains("Save Manager") || !path.Contains("/UtilEditor.cs")) continue;
+                    path = AssetDatabase.GUIDToAssetPath(scriptFound);
+                    path = path.Replace("/Carter Games/Save Manager/Code/Editor/Utility/UtilEditor.cs", "");
+                    return path;
+                }
 
-                path = path.Replace("/Carter Games/Save Manager/Code/Editor/Utility/UtilEditor.cs", "");
                 return path;
             }
         }
