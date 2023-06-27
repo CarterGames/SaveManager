@@ -143,30 +143,12 @@ namespace CarterGames.Assets.SaveManager.Editor
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        
+
         /// <summary>
         /// Gets the path where the asset code is located.
         /// </summary>
-        private static string AssetBasePath
-        {
-            get
-            {
-                string path = string.Empty;
-                
-                foreach (var scriptFound in AssetDatabase.FindAssets($"t:Script {nameof(UtilEditor)}"))
-                {
-                    path = AssetDatabase.GUIDToAssetPath(scriptFound);
-                    
-                    if (!path.Contains("Save Manager") || !path.Contains("/UtilEditor.cs")) continue;
-                    path = AssetDatabase.GUIDToAssetPath(scriptFound);
-                    path = path.Replace("/Carter Games/Save Manager/Code/Editor/Utility/UtilEditor.cs", "");
-                    return path;
-                }
+        private static string AssetBasePath => FileEditorUtil.AssetBasePath;
 
-                return path;
-            }
-        }
-        
 
         // Textures/Graphics
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -174,72 +156,72 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// Gets the save manager logo.
         /// </summary>
-        public static Texture2D SaveManagerLogo => GetOrAssignCache(ref saveManagerLogoCache, SaveManagerLogoFilter);
+        public static Texture2D SaveManagerLogo => FileEditorUtil.GetOrAssignCache(ref saveManagerLogoCache, SaveManagerLogoFilter);
 
 
         /// <summary>
         /// Gets the save manager banner.
         /// </summary>
         public static Texture2D SaveManagerBanner =>
-            GetOrAssignCache(ref saveManagerBannerCache, SaveManagerBannerFilter);
+            FileEditorUtil.GetOrAssignCache(ref saveManagerBannerCache, SaveManagerBannerFilter);
 
 
         /// <summary>
         /// Gets the save manager banner.
         /// </summary>
         public static Texture2D SaveManagerBannerTextOnly =>
-            GetOrAssignCache(ref saveManagerTitleBannerCache, SaveManagerTitleBannerFilter);
+            FileEditorUtil.GetOrAssignCache(ref saveManagerTitleBannerCache, SaveManagerTitleBannerFilter);
 
 
         /// <summary>
         /// Gets the carter games banner.
         /// </summary>
         public static Texture2D CarterGamesBanner =>
-            GetOrAssignCache(ref carterGamesBannerCache, CarterGamesBannerFilter);
+            FileEditorUtil.GetOrAssignCache(ref carterGamesBannerCache, CarterGamesBannerFilter);
 
 
         /// <summary>
         /// Gets the cog icon.
         /// </summary>
-        public static Texture2D CogIcon => GetOrAssignCache(ref cogIconCache, CogIconFilter);
+        public static Texture2D CogIcon => FileEditorUtil.GetOrAssignCache(ref cogIconCache, CogIconFilter);
 
 
         /// <summary>
         /// Gets the key icon.
         /// </summary>
-        public static Texture2D KeyIcon => GetOrAssignCache(ref keyIconCache, KeyIconFilter);
+        public static Texture2D KeyIcon => FileEditorUtil.GetOrAssignCache(ref keyIconCache, KeyIconFilter);
 
 
         /// <summary>
         /// Gets the book icon.
         /// </summary>
-        public static Texture2D BookIcon => GetOrAssignCache(ref bookIconCache, BookIconFilter);
+        public static Texture2D BookIcon => FileEditorUtil.GetOrAssignCache(ref bookIconCache, BookIconFilter);
 
 
         /// <summary>
         /// Gets the data icon.
         /// </summary>
-        public static Texture2D DataIcon => GetOrAssignCache(ref dataIconCache, DataIconFilter);
+        public static Texture2D DataIcon => FileEditorUtil.GetOrAssignCache(ref dataIconCache, DataIconFilter);
 
 
         /// <summary>
         /// Gets the white save icon.
         /// </summary>
-        public static Texture2D SaveIconWhite => GetOrAssignCache(ref saveIconWhite, SaveWhiteIconFilter);
+        public static Texture2D SaveIconWhite => FileEditorUtil.GetOrAssignCache(ref saveIconWhite, SaveWhiteIconFilter);
 
 
         /// <summary>
         /// Gets the title text for the editor tab in the save manager editor window.
         /// </summary>
         public static Texture2D EditorWindowTitleEditor => 
-            GetOrAssignCache(ref editorWindowTitleEditor, EditorWindowTitleEditorFilter);
+            FileEditorUtil.GetOrAssignCache(ref editorWindowTitleEditor, EditorWindowTitleEditorFilter);
 
 
         /// <summary>
         /// Gets the title text for the profiles tab in the save manager editor window.
         /// </summary>
         public static Texture2D EditorWindowTitleProfiles =>
-            GetOrAssignCache(ref editorWindowTitleProfiles, EditorWindowTitleProfilesFilter);
+            FileEditorUtil.GetOrAssignCache(ref editorWindowTitleProfiles, EditorWindowTitleProfilesFilter);
 
 
 
@@ -257,142 +239,55 @@ namespace CarterGames.Assets.SaveManager.Editor
                 return AssetIndex.Lookup.ContainsKey(typeof(SettingsAssetRuntime).ToString());
             }
         }
-        
+
 
         /// <summary>
         /// Gets/Sets the save manager settings asset.
         /// </summary>
-        public static SettingsAssetRuntime Settings
-            => CreateSoGetOrAssignCache(ref settingsCache, SettingsAssetPath, SaveManagerSettingsFilter);
-
-        
-        /// <summary>
-        /// Gets/Sets the save manager editor settings asset.
-        /// </summary>
-        public static SerializedObject SettingsObject
-        {
-            get
-            {
-                if (settingsObjectCache != null) return settingsObjectCache;
-                settingsObjectCache = new SerializedObject(Settings);
-                return settingsObjectCache;
-            }
-        }
-        
-
-        /// <summary>
-        /// Gets/Sets the save manager editor settings asset.
-        /// </summary>
-        public static SettingsAssetEditor SettingsAssetEditor
-            => CreateSoGetOrAssignCache(ref settingsAssetEditorCache, EditorSettingsAssetPath,
-                SaveManagerEditorSettingsFilter);
+        public static SettingsAssetRuntime Settings => ScriptableRef.RuntimeSettings;
 
 
         /// <summary>
         /// Gets/Sets the save manager editor settings asset.
         /// </summary>
-        public static SerializedObject EditorSettingsObject
-        {
-            get
-            {
-                if (editorSettingsObjectCache != null) return editorSettingsObjectCache;
-                editorSettingsObjectCache = new SerializedObject(SettingsAssetEditor);
-                return editorSettingsObjectCache;
-            }
-        }
+        public static SerializedObject SettingsObject => ScriptableRef.RuntimeSettingsObject;
+
+
+        /// <summary>
+        /// Gets/Sets the save manager editor settings asset.
+        /// </summary>
+        public static SettingsAssetEditor SettingsAssetEditor => ScriptableRef.EditorSettings;
+
+
+        /// <summary>
+        /// Gets/Sets the save manager editor settings asset.
+        /// </summary>
+        public static SerializedObject EditorSettingsObject => ScriptableRef.EditorSettingsObject;
+
 
 
         /// <summary>
         /// Gets/Sets the save manager save profiles asset.
         /// </summary>
-        public static SaveProfilesStore SaveProfiles
-            => CreateSoGetOrAssignCache(ref saveProfilesStoreCache, CapturesObjectAssetPath, SaveProfilesStoreFilter);
+        public static SaveProfilesStore SaveProfiles => ScriptableRef.SaveProfiles;
 
 
         /// <summary>
         /// Gets/Sets the save manager save data asset.
         /// </summary>
-        public static SaveData SaveData
-            => CreateSoGetOrAssignCache(ref saveDataCache, SaveDataPath, SaveDataFilter);
+        public static SaveData SaveData => ScriptableRef.SaveData;
 
 
         /// <summary>
         /// Gets/Sets the save manager save data asset.
         /// </summary>
-        public static EncryptionKeyAsset EncryptionKeyAsset
-            => CreateSoGetOrAssignCache(ref encryptionKeyAssetCache, EncryptionKeyAssetPath, SaveDataEncryptionKeyFilter);
+        public static EncryptionKeyAsset EncryptionKeyAsset => ScriptableRef.EncryptionKey;
         
         
         /// <summary>
         /// Gets/Sets the save manager save data asset.
         /// </summary>
-        public static AssetIndex AssetIndex
-            => CreateSoGetOrAssignCache(ref assetIndexCache, AssetIndexPath, AssetIndexFilter);
-
-
-        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Reference/Cache Methods
-        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-
-        /// <summary>
-        /// Gets a file via filter.
-        /// </summary>
-        /// <param name="filter">The filter to search for.</param>
-        /// <typeparam name="T">The type.</typeparam>
-        /// <returns>The found file as an object if found successfully.</returns>
-        private static object GetFileViaFilter<T>(string filter)
-        {
-            var asset = AssetDatabase.FindAssets(filter, null);
-            if (asset == null || asset.Length <= 0) return null;
-            var path = AssetDatabase.GUIDToAssetPath(asset[0]);
-            return AssetDatabase.LoadAssetAtPath(path, typeof(T));
-        }
-        
-        
-        public static object GetFileViaFilter(Type type, string filter)
-        {
-            var asset = AssetDatabase.FindAssets(filter, null);
-            if (asset == null || asset.Length <= 0) return null;
-            var path = AssetDatabase.GUIDToAssetPath(asset[0]);
-            return AssetDatabase.LoadAssetAtPath(path, type);
-        }
-
-
-        /// <summary>
-        /// Gets or assigned the cached value of any type, just saving writing the same lines over and over xD
-        /// </summary>
-        /// <param name="cache">The cached value to assign or get.</param>
-        /// <param name="filter">The filter to use.</param>
-        /// <typeparam name="T">The type.</typeparam>
-        /// <returns>The assigned cache.</returns>
-        private static T GetOrAssignCache<T>(ref T cache, string filter)
-        {
-            if (cache != null) return cache;
-            cache = (T) GetFileViaFilter<T>(filter);
-            return cache;
-        }
-
-
-        /// <summary>
-        /// Creates a scriptable object if it doesn't exist and then assigns it to its cache. 
-        /// </summary>
-        /// <param name="cache">The cached value to assign or get.</param>
-        /// <param name="path">The path to create to if needed.</param>
-        /// <param name="filter">The filter to use.</param>
-        /// <typeparam name="T">The type.</typeparam>
-        /// <returns>The assigned cache.</returns>
-        private static T CreateSoGetOrAssignCache<T>(ref T cache, string path, string filter) where T : ScriptableObject
-        {
-            if (cache != null) return cache;
-            cache = (T)GetFileViaFilter<T>(filter);
-
-            if (cache == null)
-            {
-                cache = CreateScriptableObject<T>(path);
-            }
-
-            return cache;
-        }
+        public static AssetIndex AssetIndex => ScriptableRef.AssetIndex;
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Draw Methods

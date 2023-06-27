@@ -159,7 +159,13 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             EditorGUILayout.LabelField("Info", EditorStyles.boldLabel);
 
-            EditorGUILayout.LabelField(VersionTitle, VersionValue);
+            EditorGUILayout.BeginHorizontal();
+            
+            EditorGUILayout.LabelField(VersionTitle,  VersionValue);
+            VersionEditorGUI.DrawCheckForUpdatesButton();
+            
+            EditorGUILayout.EndHorizontal();
+            
             EditorGUILayout.LabelField(ReleaseTitle, ReleaseValue);
 
             GUILayout.Space(2.5f);
@@ -215,7 +221,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             EditorGUILayout.EndHorizontal();
 #endif
             
-            
+            GUILayout.Space(2.5f);
             
             // Encryption...
             EditorGUI.BeginChangeCheck();
