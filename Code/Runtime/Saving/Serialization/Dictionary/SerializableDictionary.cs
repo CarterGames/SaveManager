@@ -51,10 +51,13 @@ namespace CarterGames.Assets.SaveManager.Serializiation
         public void OnBeforeSerialize()
         {
             if (list.Count > Count)
+            {
                 AddNewValue();
-        
-            else if (list.Count < Count)
+            }
+            else
+            {
                 UpdateSerializedValues();
+            }
         }
         
         
@@ -77,6 +80,7 @@ namespace CarterGames.Assets.SaveManager.Serializiation
 #elif UNITY_2020
                 if (current.key != null)
                 {
+                    if (ContainsKey(current.key)) continue;
                     Add(current.key, current.value);
                 }
 #endif
@@ -118,6 +122,7 @@ namespace CarterGames.Assets.SaveManager.Serializiation
             
             if (current.key != null)
             {
+                if (ContainsKey(current.key)) return;
                 Add(current.key, current.value);
             }
 #endif
