@@ -236,10 +236,11 @@ namespace CarterGames.Assets.SaveManager.Editor
             // Pretty Format...
             EditorGUI.BeginDisabledGroup(SettingsAssetObject.FindProperty("encryptionOption").enumValueIndex.Equals(1));
             EditorGUILayout.PropertyField(SettingsAssetObject.FindProperty("prettify"),PrettyFormat);
+            EditorGUI.EndDisabledGroup();
+            
             EditorGUILayout.PropertyField(SettingsAssetObject.FindProperty("autoLoadOnEntry"),AutoLoad);
             EditorGUILayout.PropertyField(SettingsAssetObject.FindProperty("autoSaveOnExit"),AutoSave);
-            EditorGUI.EndDisabledGroup();
-
+            
             // Editor Only Setting....
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(UtilEditor.EditorSettingsObject.FindProperty("showSaveKeys"), SaveKeysToggle);
