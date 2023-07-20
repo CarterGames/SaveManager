@@ -72,11 +72,9 @@ namespace CarterGames.Assets.SaveManager.Editor
         private void OnEnable()
         {
             isInitialized = false;
-            Initialize();
-            UtilEditor.TryRefreshImageCache();
         }
-
         
+
         private void OnGUI()
         {
             Initialize();
@@ -135,6 +133,8 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             SaveObjectAddedToSaveData.Remove(SetSaveObjectsCache);
             SaveObjectAddedToSaveData.Add(SetSaveObjectsCache);
+            
+            UtilEditor.TryRefreshImageCache();
             
             isInitialized = true;
         }

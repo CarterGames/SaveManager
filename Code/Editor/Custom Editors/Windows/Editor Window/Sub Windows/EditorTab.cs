@@ -172,8 +172,8 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
         {
             foreach (var editor in editorsLookup.Values.ToArray())
             {
-                editor.serializedObject.ApplyModifiedProperties();
                 editor.serializedObject.Update();
+                editor.serializedObject.ApplyModifiedProperties();
             }
         }
     }

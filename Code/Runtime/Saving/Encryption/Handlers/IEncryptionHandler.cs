@@ -21,25 +21,25 @@
  * THE SOFTWARE.
  */
 
-namespace CarterGames.Assets.SaveManager.Editor
+namespace CarterGames.Assets.SaveManager.Encryption
 {
-    /// <summary>
-    /// Contains details for the asset.
-    /// </summary>
-    public static class AssetVersionData
+    public interface IEncryptionHandler
     {
+        /* —————————————————————————————————————————————————————————————————————————————————————————————————————————————
+        |   Methods
+        ————————————————————————————————————————————————————————————————————————————————————————————————————————————— */
+        
         /// <summary>
-        /// The version number of the asset.
+        /// Encrypt the data.
         /// </summary>
-        public static string VersionNumber => "2.0.8";
+        /// <param name="jsonData">The data to encrypt.</param>
+        public void Encrypt(string jsonData);
         
         
         /// <summary>
-        /// The date this release of the asset was submitted for release.
+        /// Decrypt the data.
         /// </summary>
-        /// <remarks>
-        /// Asset owner is in the UK, so its D/M/Y format.
-        /// </remarks>
-        public static string ReleaseDate => "20/07/2023";
+        /// <returns>The data decrypted.</returns>
+        public string Decrypt();
     }
 }
