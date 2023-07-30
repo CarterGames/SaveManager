@@ -30,7 +30,7 @@ The asset is now installed, just make your save objects and save values to start
 You can access a online of the documentation here: <a href="https://carter.games/savemanager">Online Documentation</a>. A offline copy if provided with the package and asset if needed. 
 
 ## Unity Supported Versions
-The asset is developed and maintained in 2020.3.x and make use for avalible .Net updates in the version. Older versions of Unity are not supported for this asset. The asset has been tested pre-release in versions Tested in 2020.3.0f1 & 2022.2.15f1.
+The asset is developed and maintained in 2020.3.x and make use for avalible .Net updates in the version. Older versions of Unity are not supported for this asset. The asset has been tested pre-release in versions: 2020.3.0f1 & 2022.2.15f1.
 
 ## Authors
 - <a href="https://github.com/JonathanMCarter">Jonathan Carter</a>
