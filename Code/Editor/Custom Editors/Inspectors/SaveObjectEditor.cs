@@ -62,18 +62,18 @@ namespace CarterGames.Assets.SaveManager.Editor
         public override void OnInspectorGUI()
         {
             EditorGUILayout.Space(7.5f);
-
+            
             InitializeObject();
-
+            
             UtilEditor.DrawHorizontalGUILine();
             
             // Checks for changes on this save object.
             EditorGUI.BeginChangeCheck();
-
+            
             DrawInfoSection();
             EditorGUILayout.Space(3.5f);
             DrawValuesSection();
-
+            
             
             // Applies changes only if there are changes made.
             if (!EditorGUI.EndChangeCheck()) return;

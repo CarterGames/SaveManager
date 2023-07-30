@@ -21,76 +21,57 @@
  * THE SOFTWARE.
  */
 
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+using System.IO;
+using UnityEditor;
 
-namespace CarterGames.Assets.SaveManager
+namespace CarterGames.Assets.SaveManager.Editor
 {
     /// <summary>
-    /// Handles accessing the scriptable object data assets for this asset.
+    /// A helper class to remove the old asset index if it exists in the project still.
+    /// As of (2.0.9) it was moved into the asset folder structure, so the external one is not used anymore.
     /// </summary>
-    public static class AssetAccessor
+    public static class LegacyIndexRemovalTool
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-     
-        private const string IndexPath = "Asset Index";
         
-        // A cache of all the assets found...
-        private static AssetIndex indexCache;
-
-        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Properties
-        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-
         /// <summary>
-        /// Gets all the assets from the build versions asset...
+        /// The path of the old index to clear.
         /// </summary>
-        private static AssetIndex Index
-        {
-            get
-            {
-                if (indexCache != null) return indexCache;
-                indexCache = (AssetIndex) Resources.Load(IndexPath, typeof(AssetIndex));
-                return indexCache;
-            }
-        }
+        private const string LegacyIndexPath = "Assets/Resources/Carter Games/Save Manager/Asset Index.asset";
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-
+        
         /// <summary>
-        /// Gets the Save Manager Asset requested.
+        /// Returns if the old index is still in place.
         /// </summary>
-        /// <typeparam name="T">The save manager asset to get.</typeparam>
-        /// <returns>The asset if it exists.</returns>
-        public static T GetAsset<T>() where T : SaveManagerAsset
+        /// <returns>Bool</returns>
+        private static bool HasLegacyIndex()
         {
-            if (Index.Lookup.ContainsKey(typeof(T).ToString()))
-            {
-                return (T)Index.Lookup[typeof(T).ToString()][0];
-            }
-
-            return null;
+            return File.Exists(LegacyIndexPath);
         }
-        
-        
+
+
         /// <summary>
-        /// Gets the Save Manager Asset requested.
+        /// Tries to remove the old index and pathing where possible
         /// </summary>
-        /// <typeparam name="T">The save manager asset to get.</typeparam>
-        /// <returns>The asset if it exists.</returns>
-        public static List<T> GetAssets<T>() where T : SaveManagerAsset
+        /// <remarks>Doesn't delete Carter Games folder in-case other assets still use it.</remarks>
+        public static void TryRemoveOldIndex()
         {
-            if (Index.Lookup.ContainsKey(typeof(T).ToString()))
+            if (!HasLegacyIndex()) return;
+            
+            Directory.Delete("Assets/Resources/Carter Games/Save Manager/", true);
+            AssetDatabase.Refresh();
+
+            if (Directory.GetFiles("Assets/Resources/Carter Games/").Length <= 1)
             {
-                return Index.Lookup[typeof(T).ToString()].Cast<T>().ToList();
+                FileUtil.DeleteFileOrDirectory("Assets/Resources/Carter Games");
             }
 
-            return null;
+            AssetDatabase.Refresh();
         }
     }
 }

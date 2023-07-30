@@ -40,7 +40,7 @@ namespace CarterGames.Assets.SaveManager.Encryption
         /* —————————————————————————————————————————————————————————————————————————————————————————————————————————————
         |   Methods
         ————————————————————————————————————————————————————————————————————————————————————————————————————————————— */
-        
+
         /// <summary>
         /// Gets the handler for the current encryption setup.
         /// </summary>
@@ -60,6 +60,7 @@ namespace CarterGames.Assets.SaveManager.Encryption
             return handlers[encryptionOption];
         }
         
+
 
         /// <summary>
         /// Encrypts the data when called.

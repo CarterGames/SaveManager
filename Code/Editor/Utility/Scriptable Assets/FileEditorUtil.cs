@@ -147,7 +147,42 @@ namespace CarterGames.Assets.SaveManager.Editor
         public static object GetAssetInstance<T>(string filter, params string[] pathContains)
         {
             string path = string.Empty;
+            
+            foreach (var assetFound in AssetDatabase.FindAssets(filter, null))
+            {
+                path = AssetDatabase.GUIDToAssetPath(assetFound);
+
+                foreach (var containCheck in pathContains)
+                {
+                    if (!path.Contains(containCheck)) goto Loop;
+                }
                 
+                path = AssetDatabase.GUIDToAssetPath(assetFound);
+                return AssetDatabase.LoadAssetAtPath(path, typeof(T));
+                Loop: ;
+            }
+
+            return null;
+        }
+        
+        
+        /// <summary>
+        /// Gets a asset file in the asset.
+        /// </summary>
+        /// <param name="filter">The filter to check.</param>
+        /// <param name="assetPath">The path to check.</param>
+        /// <param name="pathContains">Parts of a string the path should contain.</param>
+        /// <typeparam name="T">The type.</typeparam>
+        /// <returns>The found file as an object if found successfully.</returns>
+        public static object GetAssetInstance<T>(string filter, string assetPath, params string[] pathContains)
+        {
+            if (AssetDatabase.AssetPathToGUID(assetPath).Length > 0)
+            {
+                return AssetDatabase.LoadAssetAtPath(assetPath, typeof(T));
+            }
+            
+            string path = string.Empty;
+            
             foreach (var assetFound in AssetDatabase.FindAssets(filter, null))
             {
                 path = AssetDatabase.GUIDToAssetPath(assetFound);
@@ -195,7 +230,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             if (cache != null) return cache;
 
-            cache = (T)GetAssetInstance<T>(filter, pathContains);
+            cache = (T)GetAssetInstance<T>(filter, path, pathContains);
 
             if (cache == null)
             {

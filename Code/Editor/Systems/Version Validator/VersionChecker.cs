@@ -49,6 +49,12 @@ namespace CarterGames.Assets.SaveManager.Editor
 
         
         /// <summary>
+        /// Gets if the version here is higher that the latest version.
+        /// </summary>
+        public static bool IsNewerVersion => Versions.Data.IsHigherVersion(VersionInfo.ProjectVersionNumber);
+        
+        
+        /// <summary>
         /// Gets the version data downloaded.
         /// </summary>
         public static VersionPacket Versions { get; private set; }
@@ -67,7 +73,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// Raises when the data has been downloaded.
         /// </summary>
         public static Evt ResponseReceived { get; private set; } = new Evt();
-        
+
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */

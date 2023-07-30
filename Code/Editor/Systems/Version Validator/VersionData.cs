@@ -95,5 +95,24 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             return aVN.Major.Equals(bVN.Major) && aVN.Minor.Equals(bVN.Minor) && aVN.Patch.Equals(bVN.Patch);
         }
+                
+        
+        /// <summary>
+        /// Gets if the entry is a higher version than the converted version.
+        /// </summary>
+        /// <param name="toCompare">The version string to compare.</param>
+        /// <returns>If the entry is greater on any (major/minor/patch) value.</returns>
+        public bool IsHigherVersion(string toCompare)
+        {
+            var aVN = VersionNumber;
+            var bVN = new VersionNumber(toCompare);
+
+            if (Match(toCompare))
+            {
+                return false;
+            }
+            
+            return (aVN.Major < bVN.Major) || (aVN.Minor < bVN.Minor) || (aVN.Patch < bVN.Patch);
+        }
     }
 }

@@ -35,22 +35,28 @@ namespace CarterGames.Assets.SaveManager.Editor
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (property.serializedObject == null) return;
+
+            if (Event.current.isMouse && Event.current.button == 1)
+            {
+                OnPropertyContextMenu(new GenericMenu(), property);
+            }
             
+            EditorGUI.BeginProperty(position, label, property);
             EditorGUILayout.BeginVertical();
-
+    
             EditorGUI.indentLevel++;
-
+    
             EditorGUILayout.BeginHorizontal();
             property.isExpanded = EditorGUILayout.Foldout(property.isExpanded, label);
-
+    
             DrawResetButton(property);
             
             EditorGUILayout.EndHorizontal();
-
+    
             if (property.isExpanded)
             {
                 EditorGUILayout.BeginVertical("Box");
-
+    
                 if (UtilEditor.SettingsAssetEditor.ShowSaveKeys)
                 {
                     EditorGUI.BeginDisabledGroup(true);
@@ -62,8 +68,6 @@ namespace CarterGames.Assets.SaveManager.Editor
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("value"), new GUIContent("Value"));
                 if (EditorGUI.EndChangeCheck())
                 {
-                    property.serializedObject.ApplyModifiedProperties();
-                    property.serializedObject.Update();
                     SaveManager.Save();
                 }
                 
@@ -73,18 +77,16 @@ namespace CarterGames.Assets.SaveManager.Editor
             EditorGUI.indentLevel--;
             
             EditorGUILayout.EndVertical();
-            
-            property.serializedObject.ApplyModifiedProperties();
-            property.serializedObject.Update();
+            EditorGUI.EndProperty();
         }
         
-
+    
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             return EditorGUIUtility.standardVerticalSpacing;
         }
-
-
+    
+    
         private static void ResetToDefault(SerializedProperty prop)
         {
             var field = prop.serializedObject.targetObject.GetType()
@@ -94,8 +96,8 @@ namespace CarterGames.Assets.SaveManager.Editor
             field.GetValue(prop.serializedObject.targetObject).GetType()
                 .GetMethod("ResetValue", BindingFlags.Public | BindingFlags.Instance).Invoke(field.GetValue(prop.serializedObject.targetObject), null);
         }
-
-
+    
+    
         private void DrawResetButton(SerializedProperty property)
         {
             GUI.backgroundColor = UtilEditor.Red;
@@ -114,8 +116,23 @@ namespace CarterGames.Assets.SaveManager.Editor
                     return;
                 }
             }
-
+    
             GUI.backgroundColor = UtilEditor.SettingsAssetEditor.BackgroundColor;
+        }
+        
+
+        void OnPropertyContextMenu(GenericMenu menu, SerializedProperty property)
+        {
+            Debug.Log(property);
+            Debug.Log(property.FindPropertyRelative("value").type);
+            
+            var propertyCopy = property.Copy();
+            menu.AddItem(new GUIContent("Copy Value"), false, () =>
+            {
+                GUIUtility.systemCopyBuffer = property.FindPropertyRelative("value").ToString();
+            });
+            
+            menu.ShowAsContext();
         }
     }
 }

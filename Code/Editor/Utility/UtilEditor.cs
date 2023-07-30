@@ -236,7 +236,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             get
             {
                 AssetIndexHandler.UpdateIndex();
-                return AssetIndex.Lookup.ContainsKey(typeof(SettingsAssetRuntime).ToString());
+                return ScriptableRef.HasAllAssets;
             }
         }
 

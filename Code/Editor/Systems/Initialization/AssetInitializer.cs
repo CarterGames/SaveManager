@@ -22,26 +22,35 @@
  */
 
 using UnityEditor;
-using UnityEditor.Callbacks;
-using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
     /// <summary>
     /// Handles the auto setup of the save manager when the assets are changed in the project.
     /// </summary>
-    public static class AutoSetup
+    public class AssetInitializer : AssetPostprocessor
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         /// <summary>
+        /// Runs after assets have imported / script reload etc at a safe time to edit assets.
+        /// </summary>
+        private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets,
+            string[] movedFromAssetPaths)
+        {
+            TryInitialize();
+        }
+
+        
+        /// <summary>
         /// Creates the scriptable objects for the asset if they don't exist yet.
         /// </summary>
-        [DidReloadScripts(-10)]
-        private static void OnScriptsReloaded() 
+        private static void TryInitialize()
         {
+            LegacyIndexRemovalTool.TryRemoveOldIndex();
+            
             if (UtilEditor.HasInitialized) return;
             UtilEditor.Initialize();
             AssetDatabase.SaveAssets();

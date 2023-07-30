@@ -21,6 +21,7 @@
  * THE SOFTWARE.
  */
 
+using System.IO;
 using UnityEditor;
 
 namespace CarterGames.Assets.SaveManager.Editor
@@ -36,7 +37,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         
         // Asset Paths
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        private static readonly string AssetIndexPath = $"Assets/Resources/Carter Games/{AssetName}/Asset Index.asset";
+        private static readonly string AssetIndexPath = $"{AssetBasePath}/Carter Games/{AssetName}/Resources/Asset Index.asset";
         private static readonly string SettingsAssetPath = $"{AssetBasePath}/Carter Games/{AssetName}/Data/Runtime Settings.asset";
         private static readonly string EditorSettingsAssetPath = $"{AssetBasePath}/Carter Games/{AssetName}/Data/Editor Settings.asset";
         private static readonly string CapturesObjectAssetPath = $"{AssetBasePath}/Carter Games/{AssetName}/Data/Save Profiles Container.asset";
@@ -46,12 +47,12 @@ namespace CarterGames.Assets.SaveManager.Editor
 
         // Asset Filters
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        private const string RuntimeSettingsFilter = "t:settingsassetruntime";
-        private const string EditorSettingsFilter = "t:settingsasseteditor";
-        private const string AssetIndexFilter = "t:assetindex";
-        private const string SaveProfilesStoreFilter = "t:saveprofilesstore";
-        private const string SaveDataFilter = "t:savedata";
-        private const string SaveDataEncryptionKeyFilter = "t:encryptionkeyasset";
+        private static readonly string RuntimeSettingsFilter = $"t:{typeof(SettingsAssetRuntime).FullName}";
+        private static readonly string EditorSettingsFilter = $"t:{typeof(SettingsAssetEditor).FullName}";
+        private static readonly string AssetIndexFilter = $"t:{typeof(AssetIndex).FullName}";
+        private static readonly string SaveProfilesStoreFilter = $"t:{typeof(SaveProfilesStore).FullName}";
+        private static readonly string SaveDataFilter = $"t:{typeof(SaveData).FullName}";
+        private static readonly string SaveDataEncryptionKeyFilter = $"t:{typeof(EncryptionKeyAsset).FullName}";
         
         
         // Asset Caches
@@ -95,7 +96,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// The asset index for the asset.
         /// </summary>
         public static AssetIndex AssetIndex =>
-            FileEditorUtil.CreateSoGetOrAssignAssetCache(ref assetIndexCache, AssetIndexFilter, AssetIndexPath, AssetName, $"{AssetName}/Asset Index.asset");
+            FileEditorUtil.CreateSoGetOrAssignAssetCache(ref assetIndexCache, AssetIndexFilter, AssetIndexPath, AssetName, $"{AssetName}/Resources/Asset Index.asset");
         
         
         /// <summary>
@@ -147,5 +148,16 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         public static SerializedObject RuntimeSettingsObject =>
             FileEditorUtil.CreateGetOrAssignSerializedObjectCache(ref settingsAssetRuntimeObjectCache, RuntimeSettings);
+        
+        // Assets Initialized Check
+        /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+        /// <summary>
+        /// Gets if all the assets needed for the asset to function are in the project at the expected paths.
+        /// </summary>
+        public static bool HasAllAssets =>
+            File.Exists(AssetIndexPath) && File.Exists(SettingsAssetPath) &&
+            File.Exists(EditorSettingsAssetPath) && File.Exists(EncryptionKeyAssetPath) &&
+            File.Exists(SaveDataPath) && File.Exists(CapturesObjectAssetPath);
     }
 }
