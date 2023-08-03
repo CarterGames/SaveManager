@@ -210,7 +210,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             {
                 if (!Directory.Exists(UtilEditor.Settings.SavePath))
                 {
-                    UtilEditor.CreateToDirectory(UtilEditor.Settings.SavePath);
+                    FileEditorUtil.CreateToDirectory(UtilEditor.Settings.SavePath);
                 }
                 
                 EditorUtility.RevealInFinder(UtilEditor.Settings.SavePath.Replace("save.sf", string.Empty));

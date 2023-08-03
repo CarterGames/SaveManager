@@ -21,12 +21,8 @@
  * THE SOFTWARE.
  */
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using CarterGames.Assets.SaveManager.Serializiation;
 using CarterGames.Assets.SaveManager.Utility;
 using UnityEditor;
 using UnityEngine;
@@ -45,13 +41,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         // Paths
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         public const string SettingsWindowPath = "Project/Carter Games/Save Manager";
-        private static readonly string SettingsAssetPath = $"{AssetBasePath}/Carter Games/Save Manager/Data/Save Manager Settings.asset";
-        private static readonly string EditorSettingsAssetPath = $"{AssetBasePath}/Carter Games/Save Manager/Data/Save Manager Editor Settings.asset";
-        private static readonly string CapturesObjectAssetPath = $"{AssetBasePath}/Carter Games/Save Manager/Data/Save Profiles Container.asset";
         public static readonly string CapturesSavePath = $"{AssetBasePath}/Carter Games/Save Manager/Data/Save Profiles/";
-        private static readonly string SaveDataPath = $"{AssetBasePath}/Carter Games/Save Manager/Data/Save Data.asset";
-        private static readonly string EncryptionKeyAssetPath = $"{AssetBasePath}/Carter Games/Save Manager/Data/Encryption Key.asset";
-        private const string AssetIndexPath = "Assets/Resources/Carter Games/Save Manager/Asset Index.asset";
 
 
         // Filters
@@ -69,14 +59,6 @@ namespace CarterGames.Assets.SaveManager.Editor
         private const string SaveWhiteIconFilter = "SaveWhite";
         private const string EditorWindowTitleEditorFilter = "EditorTitle";
         private const string EditorWindowTitleProfilesFilter = "ProfilesTitle";
-
-        // Assets
-        private const string SaveManagerSettingsFilter = "t:settingsassetruntime";
-        private const string SaveManagerEditorSettingsFilter = "t:settingsasseteditor";
-        private const string SaveProfilesStoreFilter = "t:saveprofilesstore";
-        private const string SaveDataFilter = "t:savedata";
-        private const string SaveDataEncryptionKeyFilter = "t:encryptionkeyasset";
-        private const string AssetIndexFilter = "t:assetindex";
 
 
         // Texture Caches
@@ -147,7 +129,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// Gets the path where the asset code is located.
         /// </summary>
-        private static string AssetBasePath => FileEditorUtilSM.AssetBasePath;
+        private static string AssetBasePath => FileEditorUtil.AssetBasePath;
 
 
         // Textures/Graphics
@@ -156,72 +138,72 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// Gets the save manager logo.
         /// </summary>
-        public static Texture2D SaveManagerLogo => FileEditorUtilSM.GetOrAssignCache(ref saveManagerLogoCache, SaveManagerLogoFilter);
+        public static Texture2D SaveManagerLogo => FileEditorUtil.GetOrAssignCache(ref saveManagerLogoCache, SaveManagerLogoFilter);
 
 
         /// <summary>
         /// Gets the save manager banner.
         /// </summary>
         public static Texture2D SaveManagerBanner =>
-            FileEditorUtilSM.GetOrAssignCache(ref saveManagerBannerCache, SaveManagerBannerFilter);
+            FileEditorUtil.GetOrAssignCache(ref saveManagerBannerCache, SaveManagerBannerFilter);
 
 
         /// <summary>
         /// Gets the save manager banner.
         /// </summary>
         public static Texture2D SaveManagerBannerTextOnly =>
-            FileEditorUtilSM.GetOrAssignCache(ref saveManagerTitleBannerCache, SaveManagerTitleBannerFilter);
+            FileEditorUtil.GetOrAssignCache(ref saveManagerTitleBannerCache, SaveManagerTitleBannerFilter);
 
 
         /// <summary>
         /// Gets the carter games banner.
         /// </summary>
         public static Texture2D CarterGamesBanner =>
-            FileEditorUtilSM.GetOrAssignCache(ref carterGamesBannerCache, CarterGamesBannerFilter);
+            FileEditorUtil.GetOrAssignCache(ref carterGamesBannerCache, CarterGamesBannerFilter);
 
 
         /// <summary>
         /// Gets the cog icon.
         /// </summary>
-        public static Texture2D CogIcon => FileEditorUtilSM.GetOrAssignCache(ref cogIconCache, CogIconFilter);
+        public static Texture2D CogIcon => FileEditorUtil.GetOrAssignCache(ref cogIconCache, CogIconFilter);
 
 
         /// <summary>
         /// Gets the key icon.
         /// </summary>
-        public static Texture2D KeyIcon => FileEditorUtilSM.GetOrAssignCache(ref keyIconCache, KeyIconFilter);
+        public static Texture2D KeyIcon => FileEditorUtil.GetOrAssignCache(ref keyIconCache, KeyIconFilter);
 
 
         /// <summary>
         /// Gets the book icon.
         /// </summary>
-        public static Texture2D BookIcon => FileEditorUtilSM.GetOrAssignCache(ref bookIconCache, BookIconFilter);
+        public static Texture2D BookIcon => FileEditorUtil.GetOrAssignCache(ref bookIconCache, BookIconFilter);
 
 
         /// <summary>
         /// Gets the data icon.
         /// </summary>
-        public static Texture2D DataIcon => FileEditorUtilSM.GetOrAssignCache(ref dataIconCache, DataIconFilter);
+        public static Texture2D DataIcon => FileEditorUtil.GetOrAssignCache(ref dataIconCache, DataIconFilter);
 
 
         /// <summary>
         /// Gets the white save icon.
         /// </summary>
-        public static Texture2D SaveIconWhite => FileEditorUtilSM.GetOrAssignCache(ref saveIconWhite, SaveWhiteIconFilter);
+        public static Texture2D SaveIconWhite => FileEditorUtil.GetOrAssignCache(ref saveIconWhite, SaveWhiteIconFilter);
 
 
         /// <summary>
         /// Gets the title text for the editor tab in the save manager editor window.
         /// </summary>
         public static Texture2D EditorWindowTitleEditor => 
-            FileEditorUtilSM.GetOrAssignCache(ref editorWindowTitleEditor, EditorWindowTitleEditorFilter);
+            FileEditorUtil.GetOrAssignCache(ref editorWindowTitleEditor, EditorWindowTitleEditorFilter);
 
 
         /// <summary>
         /// Gets the title text for the profiles tab in the save manager editor window.
         /// </summary>
         public static Texture2D EditorWindowTitleProfiles =>
-            FileEditorUtilSM.GetOrAssignCache(ref editorWindowTitleProfiles, EditorWindowTitleProfilesFilter);
+            FileEditorUtil.GetOrAssignCache(ref editorWindowTitleProfiles, EditorWindowTitleProfilesFilter);
 
 
 
@@ -236,7 +218,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             get
             {
                 AssetIndexHandler.UpdateIndex();
-                return ScriptableRefSM.HasAllAssets;
+                return ScriptableRef.HasAllAssets;
             }
         }
 
@@ -244,50 +226,50 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// Gets/Sets the save manager settings asset.
         /// </summary>
-        public static CarterGames.Assets.SaveManager.SettingsAssetRuntime Settings => ScriptableRefSM.RuntimeSettings;
+        public static SettingsAssetRuntime Settings => ScriptableRef.RuntimeSettings;
 
 
         /// <summary>
         /// Gets/Sets the save manager editor settings asset.
         /// </summary>
-        public static SerializedObject SettingsObject => ScriptableRefSM.RuntimeSettingsObject;
+        public static SerializedObject SettingsObject => ScriptableRef.RuntimeSettingsObject;
 
 
         /// <summary>
         /// Gets/Sets the save manager editor settings asset.
         /// </summary>
-        public static CarterGames.Assets.SaveManager.Editor.SettingsAssetEditor SettingsAssetEditor => ScriptableRefSM.EditorSettings;
+        public static SettingsAssetEditor SettingsAssetEditor => ScriptableRef.EditorSettings;
 
 
         /// <summary>
         /// Gets/Sets the save manager editor settings asset.
         /// </summary>
-        public static SerializedObject EditorSettingsObject => ScriptableRefSM.EditorSettingsObject;
+        public static SerializedObject EditorSettingsObject => ScriptableRef.EditorSettingsObject;
 
 
 
         /// <summary>
         /// Gets/Sets the save manager save profiles asset.
         /// </summary>
-        public static CarterGames.Assets.SaveManager.Editor.SaveProfilesStore SaveProfiles => ScriptableRefSM.SaveProfiles;
+        public static SaveProfilesStore SaveProfiles => ScriptableRef.SaveProfiles;
 
 
         /// <summary>
         /// Gets/Sets the save manager save data asset.
         /// </summary>
-        public static CarterGames.Assets.SaveManager.SaveData SaveData => ScriptableRefSM.SaveData;
+        public static SaveData SaveData => ScriptableRef.SaveData;
 
 
         /// <summary>
         /// Gets/Sets the save manager save data asset.
         /// </summary>
-        public static CarterGames.Assets.SaveManager.EncryptionKeyAsset EncryptionKeyAsset => ScriptableRefSM.EncryptionKey;
+        public static EncryptionKeyAsset EncryptionKeyAsset => ScriptableRef.EncryptionKey;
         
         
         /// <summary>
         /// Gets/Sets the save manager save data asset.
         /// </summary>
-        public static CarterGames.Assets.SaveManager.AssetIndex AssetIndex => ScriptableRefSM.AssetIndex;
+        public static AssetIndex AssetIndex => ScriptableRef.AssetIndex;
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Draw Methods
@@ -378,75 +360,6 @@ namespace CarterGames.Assets.SaveManager.Editor
             {
                 GUI.FocusControl(null);
             }
-        }
-
-        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   File Management Methods
-        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-
-
-        /// <summary>
-        /// Creates a scriptable object of the type entered when called.
-        /// </summary>
-        /// <param name="path">The path to create the new asset at.</param>
-        /// <typeparam name="T">The type to make.</typeparam>
-        /// <returns>The newly created asset.</returns>
-        private static T CreateScriptableObject<T>(string path) where T : ScriptableObject
-        {
-            var instance = ScriptableObject.CreateInstance(typeof(T));
-
-            CreateToDirectory(path);
-
-            AssetDatabase.CreateAsset(instance, path);
-            AssetDatabase.Refresh();
-
-            return (T)instance;
-        }
-
-
-        /// <summary>
-        /// Creates all the folders to a path if they don't exist already.
-        /// </summary>
-        /// <param name="path">The path to create to.</param>
-        public static void CreateToDirectory(string path)
-        {
-            var currentPath = string.Empty;
-            var split = path.Split('/');
-
-            for (var i = 0; i < path.Split('/').Length; i++)
-            {
-                var element = path.Split('/')[i];
-                currentPath += element + "/";
-
-                if (i.Equals(split.Length - 1))
-                {
-                    continue;
-                }
-
-                if (Directory.Exists(currentPath))
-                {
-                    continue;
-                }
-
-                Directory.CreateDirectory(currentPath);
-            }
-        }
-
-
-        /// <summary>
-        /// Deletes a directory and any assets within when called.
-        /// </summary>
-        /// <param name="path">The path to delete.</param>
-        public static void DeleteDirectoryAndContents(string path)
-        {
-            foreach (var file in Directory.GetFiles(path).ToList())
-            {
-                AssetDatabase.DeleteAsset(file);
-            }
-
-            AssetDatabase.DeleteAsset(path);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
         }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────

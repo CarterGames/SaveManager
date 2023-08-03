@@ -163,7 +163,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                     return;
                 }
 
-                UtilEditor.DeleteDirectoryAndContents(UtilEditor.CapturesSavePath + profileName);
+                FileEditorUtil.DeleteDirectoryAndContents(UtilEditor.CapturesSavePath + profileName);
             }
                     
             SaveProfileManager.CaptureProfile(UtilEditor.CapturesSavePath, profileName);

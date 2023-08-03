@@ -23,6 +23,8 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -31,7 +33,7 @@ namespace CarterGames.Assets.SaveManager.Editor
     /// <summary>
     /// Handles finding assets in the project in editor space and creating/referencing/caching them for use.
     /// </summary>
-    public static class FileEditorUtilSM
+    public static class FileEditorUtil
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields
@@ -89,19 +91,23 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             string path = string.Empty;
             var containsChecks = new List<string> { AssetName, $"/{BasePathScriptName}.cs" };
-                
+            
             foreach (var scriptFound in AssetDatabase.FindAssets($"t:Script {nameof(UtilEditor)}"))
             {
                 path = AssetDatabase.GUIDToAssetPath(scriptFound);
 
                 foreach (var check in containsChecks)
                 {
-                    if (!path.Contains(check)) continue;
+                    if (!path.Contains(check)) goto SkipAndLoop;
                 }
                 
                 path = AssetDatabase.GUIDToAssetPath(scriptFound);
                 path = path.Replace(BasePathScriptPath, "");
+                
                 return path;
+                
+                // Skips the return as the path contained an invalid element for the asset...
+                SkipAndLoop: ;
             }
 
             return path;
@@ -281,7 +287,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// Creates all the folders to a path if they don't exist already.
         /// </summary>
         /// <param name="path">The path to create to.</param>
-        private static void CreateToDirectory(string path)
+        public static void CreateToDirectory(string path)
         {
             var currentPath = string.Empty;
             var split = path.Split('/');
@@ -291,18 +297,28 @@ namespace CarterGames.Assets.SaveManager.Editor
                 var element = path.Split('/')[i];
                 currentPath += element + "/";
 
-                if (i.Equals(split.Length - 1))
-                {
-                    continue;
-                }
-
-                if (Directory.Exists(currentPath))
-                {
-                    continue;
-                }
-
+                if (i.Equals(split.Length - 1))continue;
+                if (Directory.Exists(currentPath))continue;
+                
                 Directory.CreateDirectory(currentPath);
             }
+        }
+        
+        
+        /// <summary>
+        /// Deletes a directory and any assets within when called.
+        /// </summary>
+        /// <param name="path">The path to delete.</param>
+        public static void DeleteDirectoryAndContents(string path)
+        {
+            foreach (var file in Directory.GetFiles(path).ToList())
+            {
+                AssetDatabase.DeleteAsset(file);
+            }
+
+            AssetDatabase.DeleteAsset(path);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
     }
 }

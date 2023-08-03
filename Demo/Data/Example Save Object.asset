@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 649d94550d8048308bb50160783f05c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 11010672a3811f84e8d31964f42df820, type: 3}
   m_Name: Example Save Object
   m_EditorClassIdentifier: 
   isExpanded: 0

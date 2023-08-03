@@ -2,7 +2,7 @@
     "name": "CarterGames.SaveManager.Runtime",
     "rootNamespace": "CarterGames.Assets.SaveManager",
     "references": [
-        "GUID:50f4cdc5056abc0428441516ab79cd9a"
+        "GUID:0dd839a085d98c5478abb31237806e7c"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
