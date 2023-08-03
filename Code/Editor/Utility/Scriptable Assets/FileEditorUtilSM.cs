@@ -31,7 +31,7 @@ namespace CarterGames.Assets.SaveManager.Editor
     /// <summary>
     /// Handles finding assets in the project in editor space and creating/referencing/caching them for use.
     /// </summary>
-    public static class FileEditorUtil
+    public static class FileEditorUtilSM
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields
