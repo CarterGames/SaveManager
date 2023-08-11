@@ -39,7 +39,9 @@ namespace CarterGames.Assets.SaveManager.Demo
         [SerializeField] private InputField shieldInputField;
         
         [Header("Load Text Display's")]
+#pragma warning disable 
         [SerializeField] private Text name;
+#pragma warning restore 
         [SerializeField] private Text health;
         [SerializeField] private Text position;
         [SerializeField] private Text shields;

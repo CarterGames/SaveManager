@@ -37,9 +37,11 @@ namespace CarterGames.Assets.SaveManager
         |   Fields
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
+#pragma warning disable 
         [SerializeField] private string defaultSavePath = "%Application.persistentDataPath%/save.sf";
         [SerializeField] private string defaultSavePathWeb = "/idbfs/%productName%-%companyName%/save.sf";
-
+#pragma warning restore
+        
         [SerializeField] private SaveData saveDataAsset;
 
         [SerializeField] private EncryptionOption encryptionOption;

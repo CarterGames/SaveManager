@@ -192,7 +192,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             {
                 if (!Directory.Exists(UtilEditor.Settings.SavePath))
                 {
-                    UtilEditor.CreateToDirectory(UtilEditor.Settings.SavePath);
+                    FileEditorUtil.CreateToDirectory(UtilEditor.Settings.SavePath);
                 }
                 
                 EditorUtility.RevealInFinder(UtilEditor.Settings.SavePath.Replace("save.sf", string.Empty));
@@ -227,6 +227,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             EditorGUI.BeginChangeCheck();
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(SettingsAssetObject.FindProperty("encryptionOption"),EncryptionOption);
+            
             if (EditorGUI.EndChangeCheck())
             {
                 UtilRuntime.SetPref(PrefSetting.Encryption, PrefUseOption.Editor,
@@ -244,6 +245,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             // Editor Only Setting....
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(UtilEditor.EditorSettingsObject.FindProperty("showSaveKeys"), SaveKeysToggle);
+            
             if (EditorGUI.EndChangeCheck())
             {
                 UtilEditor.EditorSettingsObject.ApplyModifiedProperties();
@@ -267,13 +269,19 @@ namespace CarterGames.Assets.SaveManager.Editor
             EditorGUILayout.BeginHorizontal();
             
             if (GUILayout.Button("GitHub", GUILayout.Height(30), GUILayout.MinWidth(100)))
+            {
                 Application.OpenURL("https://github.com/CarterGames/SaveManager");
+            }
 
             if (GUILayout.Button("Documentation", GUILayout.Height(30), GUILayout.MinWidth(100)))
+            {
                 Application.OpenURL("https://carter.games/savemanager");
+            }
 
             if (GUILayout.Button("Support", GUILayout.Height(30), GUILayout.MinWidth(100)))
+            {
                 Application.OpenURL("https://carter.games/contact");
+            }
 
             EditorGUILayout.EndHorizontal();
             
@@ -285,14 +293,18 @@ namespace CarterGames.Assets.SaveManager.Editor
                 GUI.contentColor = new Color(1, 1, 1, .75f);
 
                 if (GUILayout.Button(UtilEditor.CarterGamesBanner, GUILayout.MaxHeight(40)))
+                {
                     Application.OpenURL("https://carter.games");
+                }
 
                 GUI.contentColor = defaultTextColour;
             }
             else
             {
                 if (GUILayout.Button("Carter Games", GUILayout.MaxHeight(40)))
+                {
                     Application.OpenURL("https://carter.games");
+                }
             }
         }
     }
