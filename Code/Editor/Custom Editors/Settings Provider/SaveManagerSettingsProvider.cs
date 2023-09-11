@@ -48,6 +48,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         private static readonly GUIContent PrettyFormat = new GUIContent("Pretty Save Formatting?","Formats the save file into a more readable format when saving.");
         private static readonly GUIContent AutoLoad = new GUIContent("Auto Load?","Defines if the game loads on play/entering the game.");
         private static readonly GUIContent AutoSave = new GUIContent("Auto Save?","Defines if the game saves when exiting the game.");
+        private static readonly GUIContent EditorSaveSetting = new GUIContent("Editor Save Method","Defines the method the system uses while in the editor to save your data. In builds it's always to file.");
         private static readonly GUIContent SaveKeysToggle = new GUIContent("Show Save Keys?","Defines if the save editor shows the save key for each save value, Use this to condense the UI a tad if you need to.");
         private static readonly GUIContent Logs = new GUIContent("Show Log Messages?", "Shows log messages for any errors as well as some handy debugging information.");
 
@@ -216,7 +217,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 EditorUtility.RevealInFinder(UtilEditor.Settings.SavePath.Replace("save.sf", string.Empty));
             }
             
-            GUI.backgroundColor = UtilEditor.SettingsAssetEditor.BackgroundColor;
+            GUI.backgroundColor = Color.white;
             
             EditorGUILayout.EndHorizontal();
 #endif
@@ -243,18 +244,10 @@ namespace CarterGames.Assets.SaveManager.Editor
             EditorGUILayout.PropertyField(SettingsAssetObject.FindProperty("autoSaveOnExit"),AutoSave);
             
             // Editor Only Setting....
-            EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(UtilEditor.EditorSettingsObject.FindProperty("showSaveKeys"), SaveKeysToggle);
-            
-            if (EditorGUI.EndChangeCheck())
-            {
-                UtilEditor.EditorSettingsObject.ApplyModifiedProperties();
-                UtilEditor.EditorSettingsObject.Update();
-            }
+            PerUserSettings.ShowSaveKeys = EditorGUILayout.Toggle(SaveKeysToggle, PerUserSettings.ShowSaveKeys);
 
             // Show Logs...
             EditorGUILayout.PropertyField(SettingsAssetObject.FindProperty("showLogs"), Logs);
-
             
             GUILayout.Space(2.5f);
             EditorGUILayout.EndVertical();
@@ -267,6 +260,11 @@ namespace CarterGames.Assets.SaveManager.Editor
         private static void DrawButtons()
         {
             EditorGUILayout.BeginHorizontal();
+            
+            if (GUILayout.Button("Buy Me A Coffee", GUILayout.Height(30), GUILayout.MinWidth(100)))
+            {
+                Application.OpenURL("https://www.buymeacoffee.com/cartergames");
+            }
             
             if (GUILayout.Button("GitHub", GUILayout.Height(30), GUILayout.MinWidth(100)))
             {

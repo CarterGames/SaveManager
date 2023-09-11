@@ -42,22 +42,24 @@ namespace CarterGames.Assets.SaveManager.Editor
             }
             
             EditorGUI.BeginProperty(position, label, property);
-            EditorGUILayout.BeginVertical();
-    
-            EditorGUI.indentLevel++;
+            EditorGUILayout.BeginVertical("HelpBox");
     
             EditorGUILayout.BeginHorizontal();
             property.isExpanded = EditorGUILayout.Foldout(property.isExpanded, label);
-    
+            
             DrawResetButton(property);
             
             EditorGUILayout.EndHorizontal();
+            
+            GUILayout.Space(2.5f);
     
             if (property.isExpanded)
             {
+                EditorGUI.indentLevel++;
+                
                 EditorGUILayout.BeginVertical("Box");
     
-                if (UtilEditor.SettingsAssetEditor.ShowSaveKeys)
+                if (PerUserSettings.ShowSaveKeys)
                 {
                     EditorGUI.BeginDisabledGroup(true);
                     EditorGUILayout.PropertyField(property.FindPropertyRelative("key"), new GUIContent("Key"));
@@ -68,13 +70,15 @@ namespace CarterGames.Assets.SaveManager.Editor
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("value"), new GUIContent("Value"));
                 if (EditorGUI.EndChangeCheck())
                 {
+                    property.serializedObject.ApplyModifiedProperties();
+                    property.serializedObject.Update();
                     SaveManager.Save();
                 }
                 
                 EditorGUILayout.EndVertical();
+                
+                EditorGUI.indentLevel--;
             }
-            
-            EditorGUI.indentLevel--;
             
             EditorGUILayout.EndVertical();
             EditorGUI.EndProperty();
@@ -117,15 +121,12 @@ namespace CarterGames.Assets.SaveManager.Editor
                 }
             }
     
-            GUI.backgroundColor = UtilEditor.SettingsAssetEditor.BackgroundColor;
+            GUI.backgroundColor = Color.white;
         }
         
 
-        void OnPropertyContextMenu(GenericMenu menu, SerializedProperty property)
+        private void OnPropertyContextMenu(GenericMenu menu, SerializedProperty property)
         {
-            Debug.Log(property);
-            Debug.Log(property.FindPropertyRelative("value").type);
-            
             var propertyCopy = property.Copy();
             menu.AddItem(new GUIContent("Copy Value"), false, () =>
             {

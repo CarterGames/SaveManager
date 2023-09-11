@@ -59,7 +59,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         }
 
 
-        public override void OnInspectorGUI()
+        public void EditorWindowGUI()
         {
             EditorGUILayout.Space(7.5f);
             
@@ -72,8 +72,29 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             DrawInfoSection();
             EditorGUILayout.Space(3.5f);
+            
             DrawValuesSection();
             
+            // Applies changes only if there are changes made.
+            if (!EditorGUI.EndChangeCheck()) return;
+            
+            serializedObject.ApplyModifiedProperties();
+            serializedObject.Update();
+        }
+        
+
+        public override void OnInspectorGUI()
+        {
+            EditorGUILayout.Space(7.5f);
+            
+            InitializeObject();
+            
+            // Checks for changes on this save object.
+            EditorGUI.BeginChangeCheck();
+            
+            InspectorDrawInfoSection();
+            EditorGUILayout.Space(3.5f);
+            InspectorDrawValues();
             
             // Applies changes only if there are changes made.
             if (!EditorGUI.EndChangeCheck()) return;
@@ -133,8 +154,30 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             UtilEditor.DrawSoScriptSection(target);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("saveKey"));
-
+            
             EditorGUILayout.Space(1f);
+            EditorGUILayout.EndVertical();
+        }
+        
+        
+        /// <summary>
+        /// Draws the info section of the save object editor.
+        /// </summary>
+        private void InspectorDrawInfoSection()
+        {
+            if (!targetSaveObject.IsInitialized) return;
+            
+            EditorGUILayout.BeginVertical("HelpBox");
+            EditorGUILayout.Space(.5f);
+
+            EditorGUILayout.LabelField("Info", EditorStyles.boldLabel);
+            
+            UtilEditor.DrawHorizontalGUILine();
+            
+            UtilEditor.DrawSoScriptSection(target);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("saveKey"));
+
+            EditorGUILayout.Space(1.5f);
             EditorGUILayout.EndVertical();
         }
 
@@ -156,12 +199,51 @@ namespace CarterGames.Assets.SaveManager.Editor
                 while (prop.NextVisible(false))
                 {
                     if (propertiesLookup.ContainsKey(prop.name)) continue;
-
+                    
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(prop.name), true);
                 }
             }
             
             EditorGUILayout.Space(1f);
+            EditorGUILayout.EndVertical();
+        }
+        
+        
+        /// <summary>
+        /// Draws the values section for the save object.
+        /// </summary>
+        private void InspectorDrawValues()
+        {
+            if (!targetSaveObject.IsInitialized) return;
+            
+            EditorGUILayout.BeginVertical("HelpBox");
+            EditorGUILayout.Space(.5f);
+            
+            EditorGUILayout.LabelField("Values", EditorStyles.boldLabel);
+            UtilEditor.DrawHorizontalGUILine();
+            
+            var prop = serializedObject.GetIterator();
+
+            EditorGUI.BeginDisabledGroup(true);
+            
+            if (prop.NextVisible(true))
+            {
+                while (prop.NextVisible(false))
+                {
+                    if (propertiesLookup.ContainsKey(prop.name)) continue;
+                    
+                    EditorGUI.indentLevel++;
+                    
+                    
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty(prop.name).FindPropertyRelative("value"), new GUIContent(prop.displayName), true);
+                    
+                    EditorGUI.indentLevel--;
+                }
+            }
+            
+            EditorGUI.EndDisabledGroup();
+            
+            EditorGUILayout.Space(1.5f);
             EditorGUILayout.EndVertical();
         }
     }

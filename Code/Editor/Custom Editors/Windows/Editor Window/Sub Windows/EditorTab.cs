@@ -11,7 +11,7 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
         |   Fields
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
-        private Dictionary<SaveObject, UnityEditor.Editor> editorsLookup;
+        private Dictionary<SaveObject, SaveObjectEditor> editorsLookup;
         private Dictionary<SaveObject, SerializedObject> soLookup;
         private Dictionary<SaveObject, SerializedObject> demoLookup;
         
@@ -25,7 +25,7 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
         public void Initialize()
         {
             soLookup = new Dictionary<SaveObject, SerializedObject>();
-            editorsLookup = new Dictionary<SaveObject, UnityEditor.Editor>();
+            editorsLookup = new Dictionary<SaveObject, SaveObjectEditor>();
             demoLookup = new Dictionary<SaveObject, SerializedObject>();
         }
         
@@ -106,7 +106,7 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
             {
                 if (!editorsLookup.ContainsKey(pair.Key))
                 {
-                    editorsLookup.Add(pair.Key, UnityEditor.Editor.CreateEditor(pair.Key));
+                    editorsLookup.Add(pair.Key, (SaveObjectEditor) UnityEditor.Editor.CreateEditor(pair.Key));
                 }
                 
                 
@@ -148,7 +148,7 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
                     }
                 }
 
-                GUI.backgroundColor = UtilEditor.SettingsAssetEditor.BackgroundColor;
+                GUI.backgroundColor = Color.white;
                 
                 EditorGUILayout.EndHorizontal();
                 
@@ -157,7 +157,8 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
                 
                 if (editorsLookup[pair.Key].serializedObject.FindProperty("isExpanded").boolValue)
                 {
-                    editorsLookup[pair.Key].OnInspectorGUI();
+                    // TODO - Refactor this to have the current GUI as a different class. And have the normal OnInspectorGUI use a readonly style for each field so it can only be edited in the editor window.
+                    editorsLookup[pair.Key].EditorWindowGUI();
                     GUILayout.Space(1.5f);
                 }
                 

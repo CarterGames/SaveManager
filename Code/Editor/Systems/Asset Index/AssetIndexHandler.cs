@@ -104,7 +104,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 
                 // Doesn't include editor only or the index itself.
                 if (assetObj == null) continue;
-                if (assetObj.GetType() == typeof(AssetIndex) || assetObj.GetType() == typeof(SettingsAssetEditor)) continue;
+                if (assetObj.GetType() == typeof(AssetIndex)) continue;
                 foundAssets.Add((SaveManagerAsset) AssetDatabase.LoadAssetAtPath(assetPath, typeof(SaveManagerAsset)));
             }
             

@@ -22,79 +22,48 @@
  */
 
 using UnityEditor;
-using UnityEngine;
+using UnityEngine.Windows;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
-    [CustomEditor(typeof(SettingsAssetEditor))]
-    public sealed class SettingsAssetEditorEditor : UnityEditor.Editor
+    /// <summary>
+    /// Handles the removal of any legacy editor settings asset for this asset.
+    /// </summary>
+    /// <remarks>
+    /// It was moved to editor prefs as of 2.0.13 to aid with version control on group projects with the asset.
+    /// </remarks>
+    public sealed class LegacyEditorSettingsRemover : AssetPostprocessor
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Unity Methods
+        |   Fields
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
-        public override void OnInspectorGUI()
-        {
-            DrawHeaderSection();
-            
-            GUILayout.Space(5f);
-
-            EditorGUILayout.BeginVertical("HelpBox");
-            GUILayout.Space(2.5f);
-            
-            UtilEditor.DrawSoScriptSection(target);
-            
-            GUILayout.Space(12.5f);
-            
-            EditorGUI.BeginDisabledGroup(true);
-
-            EditorGUILayout.LabelField("General", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("saveEditorTabPos"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("backgroundColor"));
-
-            GUILayout.Space(5f);
-            
-            EditorGUILayout.LabelField("Save Profile Generator", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("lastProfileName"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("saveEditorProfileCreator"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("saveEditorProfileViewer"));
-            
-            GUILayout.Space(5f);
-            
-            EditorGUILayout.LabelField("Save Object Generator", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("lastSaveObjectName"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("lastSaveObjectFileName"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("justCreatedSaveObject"));
-            
-            EditorGUI.EndDisabledGroup();
-
-            GUILayout.Space(2.5f);
-            EditorGUILayout.EndVertical();
-        }
+        private static readonly string OldEditorSettingsPath =
+            $"{FileEditorUtil.AssetBasePath}/Carter Games/{FileEditorUtil.AssetName}/Data/Editor Settings.asset";
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Draw Methods
+        |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
-        private static void DrawHeaderSection()
+        private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets,
+            string[] movedFromAssetPaths)
         {
-            GUILayout.Space(5f);
-                    
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-                    
-            if (UtilEditor.CogIcon != null)
-            {
-                if (GUILayout.Button(UtilEditor.CogIcon, GUIStyle.none, GUILayout.MaxHeight(75)))
-                {
-                    GUI.FocusControl(null);
-                }
-            }
-
-            GUILayout.FlexibleSpace();
-            EditorGUILayout.EndHorizontal();
-                    
-            GUILayout.Space(5f);
+            Mitigate();
+        }
+        
+        
+        /// <summary>
+        /// Runs the mitigation for the editor settings to be deleted.
+        /// </summary>
+        private static void Mitigate()
+        {
+            if (!File.Exists(OldEditorSettingsPath)) return;
+            
+            // Remove the file as its not needed anymore as of (2.0.13)
+            File.Delete(OldEditorSettingsPath);
+            
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
     }
 }

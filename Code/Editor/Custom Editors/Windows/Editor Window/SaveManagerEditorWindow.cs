@@ -83,23 +83,22 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             EditorGUI.BeginChangeCheck();
             
-            UtilEditor.SettingsAssetEditor.TabPos =
-                GUILayout.Toolbar(UtilEditor.SettingsAssetEditor.TabPos, UtilEditor.SaveEditorButtonGraphics, GUILayout.Height(30f));
+            PerUserSettings.SaveEditorTabPos =
+                GUILayout.Toolbar(PerUserSettings.SaveEditorTabPos, UtilEditor.SaveEditorButtonGraphics, GUILayout.Height(30f));
 
             if (EditorGUI.EndChangeCheck())
             {
-                if (UtilEditor.SettingsAssetEditor.TabPos.Equals(0))
+                if (PerUserSettings.SaveEditorTabPos.Equals(0))
                 {
                     editorTab.RefreshEditor();
                 }
                 
-                EditorUtility.SetDirty(UtilEditor.SettingsAssetEditor);
                 AssetDatabase.SaveAssets();
             }
             
             EditorGUILayout.Space(7.5f);
 
-            switch (UtilEditor.SettingsAssetEditor.TabPos)
+            switch (PerUserSettings.SaveEditorTabPos)
             {
                 case 0:
                     editorTab.DrawTab(saveObjects);

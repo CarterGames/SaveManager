@@ -51,12 +51,12 @@ namespace CarterGames.Assets.SaveManager.Editor
         public static void DrawDisplay()
         {
             // Draws the dropdown for this GUI.
-            UtilEditor.SettingsAssetEditor.ProfileViewerExpanded =
-                EditorGUILayout.Foldout(UtilEditor.SettingsAssetEditor.ProfileViewerExpanded, DropDownLabel);
+            PerUserSettings.SaveEditorProfileViewer =
+                EditorGUILayout.Foldout(PerUserSettings.SaveEditorProfileViewer, DropDownLabel);
             
             
             // Stop if the dropdown is not opened.
-            if (!UtilEditor.SettingsAssetEditor.ProfileViewerExpanded) return;
+            if (!PerUserSettings.SaveEditorProfileViewer) return;
             if (UtilEditor.SaveProfiles.Data == null) return;
             
             
@@ -127,7 +127,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 }
             }
                 
-            GUI.backgroundColor = UtilEditor.SettingsAssetEditor.BackgroundColor;
+            GUI.backgroundColor = Color.white;
             
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndHorizontal();

@@ -91,7 +91,7 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             GUI.color = HasKey ? UtilEditor.Green : UtilEditor.Red;
             EditorGUILayout.LabelField((HasKey).ToString());
-            GUI.color = UtilEditor.SettingsAssetEditor.BackgroundColor;
+            GUI.color = Color.white;
             
             EditorGUILayout.EndHorizontal();
 

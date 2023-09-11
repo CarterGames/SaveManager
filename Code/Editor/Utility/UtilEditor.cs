@@ -81,7 +81,6 @@ namespace CarterGames.Assets.SaveManager.Editor
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         private static SettingsAssetRuntime settingsCache;
         private static SerializedObject settingsObjectCache;
-        private static SettingsAssetEditor settingsAssetEditorCache;
         private static SerializedObject editorSettingsObjectCache;
         private static SaveProfilesStore saveProfilesStoreCache;
         private static SaveData saveDataCache;
@@ -233,21 +232,8 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// Gets/Sets the save manager editor settings asset.
         /// </summary>
         public static SerializedObject SettingsObject => ScriptableRef.RuntimeSettingsObject;
-
-
-        /// <summary>
-        /// Gets/Sets the save manager editor settings asset.
-        /// </summary>
-        public static SettingsAssetEditor SettingsAssetEditor => ScriptableRef.EditorSettings;
-
-
-        /// <summary>
-        /// Gets/Sets the save manager editor settings asset.
-        /// </summary>
-        public static SerializedObject EditorSettingsObject => ScriptableRef.EditorSettingsObject;
-
-
-
+        
+        
         /// <summary>
         /// Gets/Sets the save manager save profiles asset.
         /// </summary>
@@ -385,11 +371,6 @@ namespace CarterGames.Assets.SaveManager.Editor
                 saveDataCache = SaveData;
             }
 
-            if (settingsAssetEditorCache == null)
-            {
-                settingsAssetEditorCache = SettingsAssetEditor;
-            }
-
             if (saveProfilesStoreCache == null)
             {
                 saveProfilesStoreCache = SaveProfiles;
@@ -431,7 +412,6 @@ namespace CarterGames.Assets.SaveManager.Editor
             dataObj.Update();
 
             Settings.Initialize();
-            SettingsAssetEditor.Initialize();
             
             if (!EncryptionKeyAsset.HasKey)
             {

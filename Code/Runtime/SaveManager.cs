@@ -41,6 +41,10 @@ namespace CarterGames.Assets.SaveManager
 
         // The actual save data asset holding the data in the project.
         private static SaveData SaveData => AssetAccessor.GetAsset<SettingsAssetRuntime>().SaveData;
+        
+        
+        // The load handler cache for the save manager.
+        private static ILoadHandler loadHandler;
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
@@ -95,10 +99,6 @@ namespace CarterGames.Assets.SaveManager
         /// A lookup of all the loaded data.
         /// </summary>
         private static SerializableDictionary<string, SerializableDictionary<string, string>> LoadedDataLookup { get; set; } = new SerializableDictionary<string, SerializableDictionary<string, string>>();
-
-
-
-        private static ILoadHandler loadHandler;
         
         #endregion
 

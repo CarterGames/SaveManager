@@ -43,7 +43,7 @@ namespace CarterGames.Assets.SaveManager
 #pragma warning restore
         
         [SerializeField] private SaveData saveDataAsset;
-
+        
         [SerializeField] private EncryptionOption encryptionOption;
         [SerializeField] private bool prettify;
         [SerializeField] private bool autoLoadOnEntry = true;

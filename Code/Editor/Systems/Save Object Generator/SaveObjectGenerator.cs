@@ -21,25 +21,17 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             EditorGUILayout.LabelField("Save Object Name", EditorStyles.boldLabel);
             
-            EditorGUI.BeginChangeCheck();
-            UtilEditor.EditorSettingsObject.FindProperty("lastSaveObjectName").stringValue = EditorGUILayout.TextField(UtilEditor.EditorSettingsObject.FindProperty("lastSaveObjectName").stringValue);
-            if (EditorGUI.EndChangeCheck())
-            {
-                UtilEditor.EditorSettingsObject.ApplyModifiedProperties();
-                UtilEditor.EditorSettingsObject.Update();
-            }
+            PerUserSettings.LastSaveObjectName = EditorGUILayout.TextField(PerUserSettings.LastSaveObjectName);
 
-
-            EditorGUI.BeginDisabledGroup(UtilEditor.EditorSettingsObject.FindProperty("lastSaveObjectName").stringValue.Length <= 0);
+            EditorGUI.BeginDisabledGroup(PerUserSettings.LastSaveObjectName.Length <= 0);
             string path = string.Empty;
             
             if (GUILayout.Button("Create Save Object"))
             {
-                path = EditorUtility.SaveFilePanelInProject("Save New Save Object Class", UtilEditor.EditorSettingsObject.FindProperty("lastSaveObjectName").stringValue + "SaveObject", "cs", "");
+                path = EditorUtility.SaveFilePanelInProject("Save New Save Object Class", PerUserSettings.LastSaveObjectName + "SaveObject", "cs", "");
                 
-                UtilEditor.EditorSettingsObject.FindProperty("lastSaveObjectFileName").stringValue =
+                PerUserSettings.LastSaveObjectFileName =
                     path.Split('/')[path.Split('/').Length - 1].Replace(".cs", string.Empty);
-                UtilEditor.EditorSettingsObject.ApplyModifiedProperties();
                 
                 var script = AssetDatabase.FindAssets($"t:Script {nameof(SaveObjectGenerator)}")[0];
                 var pathToTextFile = AssetDatabase.GUIDToAssetPath(script);
@@ -48,17 +40,14 @@ namespace CarterGames.Assets.SaveManager.Editor
                 
                 TextAsset template = AssetDatabase.LoadAssetAtPath<TextAsset>(pathToTextFile);
                 template = new TextAsset(template.text);
-                var replace = template.text.Replace("%SaveObjectName%",
-                    UtilEditor.EditorSettingsObject.FindProperty("lastSaveObjectFileName").stringValue);
+                var replace = template.text.Replace("%SaveObjectName%", PerUserSettings.LastSaveObjectFileName);
 
                 File.WriteAllText(path, replace);
                 EditorUtility.SetDirty(AssetDatabase.LoadAssetAtPath<TextAsset>(pathToTextFile));
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
 
-                UtilEditor.EditorSettingsObject.FindProperty("justCreatedSaveObject").boolValue = true;
-                UtilEditor.EditorSettingsObject.ApplyModifiedProperties();
-                UtilEditor.EditorSettingsObject.Update();
+                PerUserSettings.JustCreatedSaveObject = true;
                 
                 EditorUtility.RequestScriptReload();
             }
@@ -73,7 +62,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             if (EditorUtility.DisplayDialog("Create Instance",
                     "Do you want to create a new instance of the save object you just made?", "Yes", "Cancel"))
             {
-                var parse = "Save." + UtilEditor.EditorSettingsObject.FindProperty("lastSaveObjectFileName").stringValue;
+                var parse = "Save." + PerUserSettings.LastSaveObjectFileName;
 
 
                 var types = AppDomain.CurrentDomain
@@ -85,7 +74,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 var instance = CreateInstance(types);
                 
                 var script =
-                    AssetDatabase.FindAssets($"t:Script {UtilEditor.EditorSettingsObject.FindProperty("lastSaveObjectFileName").stringValue}")[0];
+                    AssetDatabase.FindAssets($"t:Script {PerUserSettings.LastSaveObjectFileName}")[0];
                 var pathToTextFile = AssetDatabase.GUIDToAssetPath(script);
 
                 pathToTextFile = pathToTextFile.Replace(".cs", ".asset");
@@ -98,11 +87,9 @@ namespace CarterGames.Assets.SaveManager.Editor
         [DidReloadScripts]
         private static void TryCreateInstanceIfMade()
         {
-            if (!UtilEditor.EditorSettingsObject.FindProperty("justCreatedSaveObject").boolValue) return;
+            if (!PerUserSettings.JustCreatedSaveObject) return;
                 
-            UtilEditor.EditorSettingsObject.FindProperty("justCreatedSaveObject").boolValue = false;
-            UtilEditor.EditorSettingsObject.ApplyModifiedProperties();
-            UtilEditor.EditorSettingsObject.Update();
+            PerUserSettings.JustCreatedSaveObject = false;
             
             CreateSaveObjectInstance();
             AssetDatabase.SaveAssets();

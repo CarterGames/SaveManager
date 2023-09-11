@@ -29,7 +29,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         private const string OverrideNo = "Cancel";
 
         // User fields
-        private static string profileName = UtilEditor.SettingsAssetEditor.LastSaveProfileName;
+        private static string profileName = PerUserSettings.LastProfileName;
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Draw Methods
@@ -41,12 +41,12 @@ namespace CarterGames.Assets.SaveManager.Editor
         public static void DrawDisplay()
         {
             // Draws the dropdown for this GUI.
-            UtilEditor.SettingsAssetEditor.ProfileCreatorExpanded =
-                EditorGUILayout.Foldout(UtilEditor.SettingsAssetEditor.ProfileCreatorExpanded, DropDownLabel);
+            PerUserSettings.SaveEditorProfileCreator =
+                EditorGUILayout.Foldout(PerUserSettings.SaveEditorProfileCreator, DropDownLabel);
 
             
             // Stop if the dropdown is not opened.
-            if (!UtilEditor.SettingsAssetEditor.ProfileCreatorExpanded) return;
+            if (!PerUserSettings.SaveEditorProfileCreator) return;
 
             
             // Draws the help box section.
@@ -139,7 +139,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 OnCreateProfilePressed();
             }
 
-            GUI.backgroundColor = UtilEditor.SettingsAssetEditor.BackgroundColor;
+            GUI.backgroundColor = Color.white;
             
             EditorGUI.EndDisabledGroup();
             
@@ -179,8 +179,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <param name="value">The value to set to.</param>
         private static void UpdateSavedProfileName(string value)
         {
-            UtilEditor.SettingsAssetEditor.LastSaveProfileName = value;
-            EditorUtility.SetDirty(UtilEditor.SettingsAssetEditor);
+            PerUserSettings.LastProfileName = value;
             AssetDatabase.SaveAssets();
         }
     }

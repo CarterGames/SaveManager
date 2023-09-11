@@ -33,7 +33,7 @@ namespace CarterGames.Assets.SaveManager.Encryption
         /// <summary>
         /// Doesn't use encryption & the save data will be saved in plain JSON text.
         /// </summary>
-        [InspectorName("Disabled (Not Recommended)")] Disabled,
+        [InspectorName("Disabled (Not Recommended | Debug)")] Disabled,
         
         
         /// <summary>

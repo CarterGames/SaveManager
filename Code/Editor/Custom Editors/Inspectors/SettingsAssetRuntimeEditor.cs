@@ -130,7 +130,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 SettingsService.OpenProjectSettings(UtilEditor.SettingsWindowPath);
             }
             
-            GUI.backgroundColor = UtilEditor.SettingsAssetEditor.BackgroundColor;
+            GUI.backgroundColor = Color.white;
         }
     }
 }

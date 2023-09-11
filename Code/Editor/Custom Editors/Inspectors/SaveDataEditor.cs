@@ -54,7 +54,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             {
                 UtilEditor.ForceUpdateSaveDataAsset();
             }
-            GUI.backgroundColor = UtilEditor.SettingsAssetEditor.BackgroundColor;
+            GUI.backgroundColor = Color.white;
             
             GUILayout.Space(2.5f);
 
