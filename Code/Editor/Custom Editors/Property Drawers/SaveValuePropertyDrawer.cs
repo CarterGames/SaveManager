@@ -35,15 +35,12 @@ namespace CarterGames.Assets.SaveManager.Editor
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (property.serializedObject == null) return;
-
-            if (Event.current.isMouse && Event.current.button == 1)
-            {
-                OnPropertyContextMenu(new GenericMenu(), property);
-            }
             
             EditorGUI.BeginProperty(position, label, property);
-            EditorGUILayout.BeginVertical("HelpBox");
+ 
+            var container = EditorGUILayout.BeginVertical(property.isExpanded ? "HelpBox" : "Box");
     
+            position.height = container.height;
             EditorGUILayout.BeginHorizontal();
             property.isExpanded = EditorGUILayout.Foldout(property.isExpanded, label);
             
@@ -80,6 +77,8 @@ namespace CarterGames.Assets.SaveManager.Editor
                 EditorGUI.indentLevel--;
             }
             
+            GUILayout.Space(2f);
+            
             EditorGUILayout.EndVertical();
             EditorGUI.EndProperty();
         }
@@ -89,7 +88,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             return EditorGUIUtility.standardVerticalSpacing;
         }
-    
+        
     
         private static void ResetToDefault(SerializedProperty prop)
         {
@@ -113,8 +112,10 @@ namespace CarterGames.Assets.SaveManager.Editor
                         "Reset", "Cancel"))
                 {
                     ResetToDefault(property.FindPropertyRelative("value"));
+                    
                     property.serializedObject.ApplyModifiedProperties();
                     property.serializedObject.Update();
+                    
                     EditorUtility.SetDirty(property.serializedObject.targetObject);
                     SaveManager.Save();
                     return;
@@ -122,18 +123,6 @@ namespace CarterGames.Assets.SaveManager.Editor
             }
     
             GUI.backgroundColor = Color.white;
-        }
-        
-
-        private void OnPropertyContextMenu(GenericMenu menu, SerializedProperty property)
-        {
-            var propertyCopy = property.Copy();
-            menu.AddItem(new GUIContent("Copy Value"), false, () =>
-            {
-                GUIUtility.systemCopyBuffer = property.FindPropertyRelative("value").ToString();
-            });
-            
-            menu.ShowAsContext();
         }
     }
 }

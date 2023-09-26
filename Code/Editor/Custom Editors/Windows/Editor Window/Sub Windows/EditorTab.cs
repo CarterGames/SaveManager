@@ -88,7 +88,7 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
             EditorGUILayout.Space(5f);
             EditorGUILayout.EndScrollView();
             
-            UtilEditor.CreateDeselectZone(ref deselectRect);
+            // UtilEditor.CreateDeselectZone(ref deselectRect);
         }
 
 
@@ -110,7 +110,7 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
                 }
                 
                 
-                EditorGUILayout.BeginVertical("HelpBox");
+                EditorGUILayout.BeginVertical(editorsLookup[pair.Key].serializedObject.FindProperty("isExpanded").boolValue ? "HelpBox" : "Box");
                 
                 EditorGUILayout.BeginHorizontal();
                 
@@ -157,7 +157,6 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
                 
                 if (editorsLookup[pair.Key].serializedObject.FindProperty("isExpanded").boolValue)
                 {
-                    // TODO - Refactor this to have the current GUI as a different class. And have the normal OnInspectorGUI use a readonly style for each field so it can only be edited in the editor window.
                     editorsLookup[pair.Key].EditorWindowGUI();
                     GUILayout.Space(1.5f);
                 }
@@ -165,6 +164,8 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
                 EditorGUI.EndDisabledGroup();
                 
                 EditorGUILayout.EndVertical();
+                
+                GUILayout.Space(4f);
             }
         }
 
