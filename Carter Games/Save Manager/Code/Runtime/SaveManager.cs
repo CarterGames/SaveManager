@@ -286,6 +286,12 @@ namespace CarterGames.Assets.SaveManager
         /// <returns>The data loaded from the file.</returns>
         private static SerializableDictionary<string, SerializableDictionary<string, string>> LoadFromFile()
         {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            loadHandler = new WebSaveHandler();
+#else
+            loadHandler = new StandardSaveHandler();
+#endif  
+            
             return loadHandler.LoadFromFile(SavePath);
         }
 

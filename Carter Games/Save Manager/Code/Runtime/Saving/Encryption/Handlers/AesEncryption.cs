@@ -24,13 +24,14 @@ namespace CarterGames.Assets.SaveManager.Encryption
                     iAes.KeySize = 256;
                     iAes.Key = AssetAccessor.GetAsset<EncryptionKeyAsset>().SaveEncryptionKey;
                 }
-                        
-                        
+                
+                iAes.GenerateIV();
+                
                 var inputIv = iAes.IV;
                 fStream.Write(inputIv, 0, inputIv.Length);
                         
                 var iStream = new CryptoStream(fStream, iAes.CreateEncryptor(iAes.Key, iAes.IV), CryptoStreamMode.Write);
-                        
+                
                 using (var writer = new StreamWriter(iStream))
                 {
                     writer.WriteLine(jsonData);
@@ -49,23 +50,27 @@ namespace CarterGames.Assets.SaveManager.Encryption
         {
             var fStream = new FileStream(AssetAccessor.GetAsset<SettingsAssetRuntime>().SavePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             var oAes = Aes.Create();
+
+            oAes.Key = AssetAccessor.GetAsset<EncryptionKeyAsset>().SaveEncryptionKey;
+            
             var outputIv = new byte[oAes.IV.Length];
-
-
+            
             // Read the IV from the file.
             fStream.Read(outputIv, 0, outputIv.Length);
+            oAes.IV = outputIv;
 
             // Create CryptoStream, wrapping FileStream
-            var oStream = new CryptoStream(fStream, oAes.CreateDecryptor(AssetAccessor.GetAsset<EncryptionKeyAsset>().SaveEncryptionKey, outputIv), CryptoStreamMode.Read);
+            var oStream = new CryptoStream(fStream, oAes.CreateDecryptor(oAes.Key, oAes.IV), CryptoStreamMode.Read);
             
-            var reader = new StreamReader(fStream);
-            var text = reader.ReadToEnd();
-            
-            reader.Close();
-            oStream.Close();
-            fStream.Close();
+            using (var reader = new StreamReader(oStream))
+            {
+                var text = reader.ReadToEnd();
+                
+                oStream.Close();
+                fStream.Close();
 
-            return text;
+                return text;
+            }
         }
     }
 }

@@ -43,6 +43,38 @@ namespace CarterGames.Assets.SaveManager.Editor
             TryInitialize();
         }
 
+
+        /// <summary>
+        /// Initializes the save data on project load
+        /// </summary>
+        [InitializeOnLoadMethod]
+        private static void TryInitSave()
+        {
+            if (SessionState.GetBool("HasLoaded", false)) return;
+            DelayUpdate();
+        }
+
+
+        /// <summary>
+        /// Listen for a delayed update to ensure the editor is all loaded before loading data.
+        /// </summary>
+        private static void DelayUpdate()
+        {
+            EditorApplication.delayCall -= LoadOnProjectOpen;
+            EditorApplication.delayCall += LoadOnProjectOpen;
+        }
+
+
+        /// <summary>
+        /// Loads the latest data into the save system for use.
+        /// </summary>
+        private static void LoadOnProjectOpen()
+        {
+            EditorApplication.delayCall -= LoadOnProjectOpen;
+            SaveManager.Load();
+            SessionState.SetBool("HasLoaded", true);
+        }
+        
         
         /// <summary>
         /// Creates the scriptable objects for the asset if they don't exist yet.
