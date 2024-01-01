@@ -107,13 +107,13 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
 
                     var saveObjectsInCategory = SaveCategoryAttributeHelper.GetObjectsInCategory(category);
 
-                    EditorGUILayout.LabelField(category, EditorStyles.boldLabel);
-
                     if (didHaveUncategorized && !hasDrawnLine && saveObjectsInCategory.Count > 0)
                     {
                         UtilEditor.DrawHorizontalGUILine();
                         hasDrawnLine = true;
                     }
+                    
+                    EditorGUILayout.LabelField(category, EditorStyles.boldLabel);
 
                     foreach (var saveObject in saveObjectsInCategory)
                     {
