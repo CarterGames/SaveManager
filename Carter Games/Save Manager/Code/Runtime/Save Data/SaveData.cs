@@ -67,7 +67,7 @@ namespace CarterGames.Assets.SaveManager
 
                 foreach (var saveValue in Data)
                 {
-                    var data = saveValue.GetSaveValue();
+                    var data = saveValue.GetSaveValues();
 
                     var converted = new SerializableDictionary<string, string>();
 

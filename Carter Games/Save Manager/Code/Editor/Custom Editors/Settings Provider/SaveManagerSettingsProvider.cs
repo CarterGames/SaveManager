@@ -235,10 +235,22 @@ namespace CarterGames.Assets.SaveManager.Editor
                     PerUserSettings.VersionValidationAutoCheckOnLoad);
                 
                 // Show Logs...
-                EditorGUILayout.PropertyField(SettingsAssetObject.Fp("showLogs"), Logs);
+                PerUserSettingsRuntime.ShowDebugLogs = EditorGUILayout.Toggle(Logs, PerUserSettingsRuntime.ShowDebugLogs);
                 
                 // Editor Only Setting....
                 PerUserSettings.ShowSaveKeys = EditorGUILayout.Toggle(SaveKeysToggle, PerUserSettings.ShowSaveKeys);
+                
+                // Use save categories...
+                EditorGUI.BeginChangeCheck();
+                
+                PerUserSettings.SaveEditorOrganiseByCategory = EditorGUILayout.Toggle(new GUIContent("Show Save Categories",
+                        "Organises the save editor by category attribute [SaveCategory()]."),
+                    PerUserSettings.SaveEditorOrganiseByCategory);
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    SaveManagerEditorWindow.RequestRepaint.Raise();
+                }
                 
                 if (GUILayout.Button("Reset Settings"))
                 {
@@ -247,7 +259,6 @@ namespace CarterGames.Assets.SaveManager.Editor
                             "Reset Settings", "Cancel"))
                     {
                         PerUserSettings.ResetPrefs();
-                        // PerUserSettingsRuntime.ResetPrefs();
                     }
                 }
                 

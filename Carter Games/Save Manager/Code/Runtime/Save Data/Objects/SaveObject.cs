@@ -60,7 +60,7 @@ namespace CarterGames.Assets.SaveManager
             get
             {
                 if (lookupCache is { } && lookupCache.Count > 0) return lookupCache;
-                lookupCache = GetSaveValue();
+                lookupCache = GetSaveValues();
                 return lookupCache;
             }
         }
@@ -156,7 +156,7 @@ namespace CarterGames.Assets.SaveManager
         /// Gets the save values on this object.
         /// </summary>
         /// <returns>A dictionary as an object.</returns>
-        public virtual SerializableDictionary<string, SaveValueBase> GetSaveValue()
+        public virtual SerializableDictionary<string, SaveValueBase> GetSaveValues()
         {
             var dic = new SerializableDictionary<string, SaveValueBase>();
 
@@ -228,6 +228,40 @@ namespace CarterGames.Assets.SaveManager
 
             if (!Lookup.ContainsKey(key)) return;
             Lookup[key].ResetValue();
+        }
+        
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Save Object Attributes
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+        /// <summary>
+        /// Defines the save category of a save object. Cannot be applied to any other class except save objects.
+        /// </summary>
+        [AttributeUsage(AttributeTargets.Class)]
+        protected sealed class SaveCategoryAttribute : Attribute
+        {
+            /// <summary>
+            /// The name of the category to use.
+            /// </summary>
+            public string Category;
+
+
+            /// <summary>
+            /// The order of the object in the category.
+            /// </summary>
+            public int OrderInCategory;
+            
+            
+            /// <summary>
+            /// Defines a save category with the entered value.
+            /// </summary>
+            /// <param name="category">The name of the category to use.</param>
+            /// <param name="order">The order of the object in the category. Def = 0.</param>
+            public SaveCategoryAttribute(string category, int order = 0)
+            {
+                Category = category;
+                OrderInCategory = order;
+            }
         }
     }
 }

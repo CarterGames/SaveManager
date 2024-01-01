@@ -45,7 +45,7 @@ namespace CarterGames.Assets.SaveManager
         /// <summary>
         /// Gets if the logs should be shown.
         /// </summary>
-        private static bool ShowLogs => AssetAccessor.GetAsset<SettingsAssetRuntime>().ShowLogs;
+        private static bool ShowLogs => PerUserSettingsRuntime.ShowDebugLogs;
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods

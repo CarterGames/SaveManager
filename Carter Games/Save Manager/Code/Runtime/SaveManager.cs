@@ -314,7 +314,7 @@ namespace CarterGames.Assets.SaveManager
                     
                     foreach (var pair in jsonData[saveObject.SaveKey])
                     {
-                        var t = saveObject.GetSaveValue()[pair.Key].GetType();
+                        var t = saveObject.GetSaveValues()[pair.Key].GetType();
                         saveObject.SetValue(pair.Key, ((SaveValueBase) JsonUtility.FromJson(jsonData[saveObject.SaveKey][pair.Key], t)).ValueObject);
                     }
                 }
@@ -529,7 +529,7 @@ namespace CarterGames.Assets.SaveManager
 
             if (!SaveDataLookup.ContainsKey(saveKey)) return null;
             
-            var d = SaveDataLookup[saveKey].GetSaveValue();
+            var d = SaveDataLookup[saveKey].GetSaveValues();
             var converted = new SerializableDictionary<string, string>();
 
             foreach (var pair in d)
@@ -599,7 +599,7 @@ namespace CarterGames.Assets.SaveManager
             if (!TryGetSaveValuesLookup(saveObject.SaveKey, out var data)) return;
             
             
-            var d = saveObject.GetSaveValue();
+            var d = saveObject.GetSaveValues();
             var converted = new SerializableDictionary<string, string>();
 
             foreach (var pair in d)

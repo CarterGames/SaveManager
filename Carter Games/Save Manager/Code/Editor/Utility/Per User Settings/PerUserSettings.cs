@@ -55,6 +55,8 @@ namespace CarterGames.Assets.SaveManager.Editor
         
         private static readonly string SaveEditorTabScrollRectPosId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_EditorTabScrollRectPos";
         private static readonly string SaveProfileTabScrollRectPosId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_ProfileTabScrollRectPos";
+        
+        private static readonly string SaveEditorOrganiseByCategoryId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_OrganiseByCategory";
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
@@ -63,6 +65,9 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// The unique if for the assets settings to be per project...
         /// </summary>
+        /// <remarks>
+        /// Saved to player pref to allow settings to be different per project in the same editor version.
+        /// </remarks>
         private static string UniqueId => (string)GetOrCreateValue<string>(UniqueIdId, SettingType.PlayerPref, Guid.NewGuid().ToString());
         
         
@@ -71,7 +76,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         public static bool VersionValidationAutoCheckOnLoad
         {
-            get => (bool) GetOrCreateValue<bool>(AutoValidationAutoCheckId, SettingType.EditorPref);
+            get => (bool) GetOrCreateValue<bool>(AutoValidationAutoCheckId, SettingType.EditorPref, true);
             set => SetValue<bool>(AutoValidationAutoCheckId, SettingType.EditorPref, value);
         }
         
@@ -187,6 +192,13 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             get => (Vector2)GetOrCreateValue<Vector2>(SaveProfileTabScrollRectPosId, SettingType.EditorPref);
             set => SetValue<Vector2>(SaveProfileTabScrollRectPosId, SettingType.EditorPref, value);
+        }
+        
+        
+        public static bool SaveEditorOrganiseByCategory
+        {
+            get => (bool)GetOrCreateValue<bool>(SaveEditorOrganiseByCategoryId, SettingType.EditorPref, true);
+            set => SetValue<bool>(SaveEditorOrganiseByCategoryId, SettingType.EditorPref, value);
         }
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -403,6 +415,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             LastSaveObjectName = string.Empty;
             LastSaveObjectFileName = string.Empty;
             JustCreatedSaveObject = false;
+            SaveEditorOrganiseByCategory = true;
         }
     }
 }

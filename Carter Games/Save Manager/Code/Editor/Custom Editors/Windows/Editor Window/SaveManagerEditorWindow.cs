@@ -51,6 +51,9 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// Raises when a new save object is added to the data.
         /// </summary>
         public static readonly Evt SaveObjectAddedToSaveData = new Evt();
+        
+        
+        public static readonly Evt RequestRepaint = new Evt();
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Window Access Method
@@ -79,6 +82,8 @@ namespace CarterGames.Assets.SaveManager.Editor
         private void OnGUI()
         {
             Initialize();
+            
+            RequestRepaint.Add(Repaint);
             
             EditorGUILayout.Space(17.5f);
 

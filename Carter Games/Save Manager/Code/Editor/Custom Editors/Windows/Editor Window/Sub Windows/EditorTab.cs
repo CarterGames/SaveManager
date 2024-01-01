@@ -10,11 +10,12 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+        private const string DemoSaveObjectFullName = "CarterGames.Assets.SaveManager.Demo.ExampleSaveObject";
         
         private Dictionary<SaveObject, SaveObjectEditor> editorsLookup;
         private Dictionary<SaveObject, SerializedObject> soLookup;
-        private Dictionary<SaveObject, SerializedObject> demoLookup;
-        
+
         private static Rect deselectRect;
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -25,9 +26,8 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
         {
             soLookup = new Dictionary<SaveObject, SerializedObject>();
             editorsLookup = new Dictionary<SaveObject, SaveObjectEditor>();
-            demoLookup = new Dictionary<SaveObject, SerializedObject>();
         }
-        
+
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Draw Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -35,7 +35,7 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
         public void DrawTab(List<SaveObject> saveObjects)
         {
             if (saveObjects.Count <= 0) return;
-            
+
             if (Application.isPlaying)
             {
                 EditorGUILayout.HelpBox(
@@ -43,7 +43,8 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
                     MessageType.Info);
             }
 
-            PerUserSettings.SaveEditorTabScrollRectPos = EditorGUILayout.BeginScrollView(PerUserSettings.SaveEditorTabScrollRectPos);
+            PerUserSettings.SaveEditorTabScrollRectPos =
+                EditorGUILayout.BeginScrollView(PerUserSettings.SaveEditorTabScrollRectPos);
 
             foreach (var saveObj in saveObjects)
             {
@@ -57,36 +58,21 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
                 {
                     sObj = new SerializedObject(saveObj);
                 }
-                
 
-                if (saveObj.GetType().FullName == "CarterGames.Assets.SaveManager.Demo.ExampleSaveObject")
-                {
-                    if (demoLookup.ContainsKey(saveObj)) continue;
-                    demoLookup.Add(saveObj, sObj);
-                }
-                else
-                {
-                    if (soLookup.ContainsKey(saveObj)) continue;
-                    soLookup.Add(saveObj, sObj);
-                }
+
+                if (soLookup.ContainsKey(saveObj)) continue;
+                soLookup.Add(saveObj, sObj);
             }
 
 
             if (soLookup.Count > 0)
             {
-                DrawSaveObjects(" Save Objects", ref soLookup);
+                DrawSaveObjects();
             }
-                
-            
-            if (demoLookup.Count > 0)
-            {
-                GUILayout.Space(12.5f);
-                DrawSaveObjects(" Demo Save Objects", ref demoLookup);
-            }
-            
+
             EditorGUILayout.Space(5f);
             EditorGUILayout.EndScrollView();
-            
+
             // UtilEditor.CreateDeselectZone(ref deselectRect);
         }
 
@@ -94,79 +80,143 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
         /// <summary>
         /// Draws a collection of save objects.
         /// </summary>
-        /// <param name="sectionName">The name for the section.</param>
-        /// <param name="lookup">The lookup for the objects.</param>
-        private void DrawSaveObjects(string sectionName, ref Dictionary<SaveObject, SerializedObject> lookup)
+        private void DrawSaveObjects()
         {
-            EditorGUILayout.LabelField(sectionName, EditorStyles.boldLabel);
-            
-            
-            foreach (var pair in lookup)
+            if (PerUserSettings.SaveEditorOrganiseByCategory)
             {
-                if (!editorsLookup.ContainsKey(pair.Key))
-                {
-                    editorsLookup.Add(pair.Key, (SaveObjectEditor) UnityEditor.Editor.CreateEditor(pair.Key));
-                }
-                
-                
-                EditorGUILayout.BeginVertical(editorsLookup[pair.Key].serializedObject.Fp("isExpanded").boolValue ? "HelpBox" : "Box");
-                
-                EditorGUILayout.BeginHorizontal();
-                
-                EditorGUI.BeginChangeCheck();
 
-                editorsLookup[pair.Key].serializedObject.Fp("isExpanded").boolValue =
-                    EditorGUILayout.Foldout(editorsLookup[pair.Key].serializedObject.Fp("isExpanded").boolValue, pair.Key.name);
-                
-                if (EditorGUI.EndChangeCheck())
+                var didHaveUncategorized = false;
+                var hasDrawnLine = false;
+
+
+                // Uncategorized Save Objects
+                /* ────────────────────────────────────────────────────────────────────────────────────────────────── */
+                foreach (var saveObject in SaveCategoryAttributeHelper.GetObjectsInCategory("Uncategorized"))
                 {
-                    editorsLookup[pair.Key].serializedObject.ApplyModifiedProperties();
-                    editorsLookup[pair.Key].serializedObject.Update();
-                    
-                    SaveManager.Save();
+                    if (saveObject.GetType().FullName == DemoSaveObjectFullName) continue;
+                    DrawSaveObjectEditor(saveObject);
+                    didHaveUncategorized = true;
                 }
 
-                EditorGUI.BeginDisabledGroup(Application.isPlaying);
-                GUI.backgroundColor = UtilEditor.Red;
-            
-                if (GUILayout.Button("-", GUILayout.Width(25)))
+
+                // Categorized Save Objects
+                /* ────────────────────────────────────────────────────────────────────────────────────────────────── */
+                foreach (var category in SaveCategoryAttributeHelper.GetCategoryNames())
                 {
-                    if (EditorUtility.DisplayDialog("Reset Save Object",
-                            "Are you sure you want to reset all values on this save object?", "Reset", "Cancel"))
+                    if (category.Equals("Uncategorized")) continue;
+
+                    var saveObjectsInCategory = SaveCategoryAttributeHelper.GetObjectsInCategory(category);
+
+                    EditorGUILayout.LabelField(category, EditorStyles.boldLabel);
+
+                    if (didHaveUncategorized && !hasDrawnLine && saveObjectsInCategory.Count > 0)
                     {
-                        // Reset Save Object
-                        pair.Key.ResetObjectSaveValues();
-                        
-                        editorsLookup[pair.Key].serializedObject.ApplyModifiedProperties();
-                        editorsLookup[pair.Key].serializedObject.Update();
-                        
-                        SaveManager.Save();
-                        GUI.FocusControl(null);
+                        UtilEditor.DrawHorizontalGUILine();
+                        hasDrawnLine = true;
+                    }
 
-                        return;
+                    foreach (var saveObject in saveObjectsInCategory)
+                    {
+                        if (saveObject.GetType().FullName == DemoSaveObjectFullName)
+                            continue;
+                        DrawSaveObjectEditor(saveObject);
                     }
                 }
-
-                GUI.backgroundColor = Color.white;
-                
-                EditorGUILayout.EndHorizontal();
-                
-                GUILayout.Space(2.5f);
-
-                
-                if (editorsLookup[pair.Key].serializedObject.Fp("isExpanded").boolValue)
-                {
-                    editorsLookup[pair.Key].EditorWindowGUI();
-                    GUILayout.Space(1.5f);
-                }
-                
-                EditorGUI.EndDisabledGroup();
-                
-                EditorGUILayout.EndVertical();
-                
-                GUILayout.Space(4f);
             }
+            else
+            {
+                // Non-Categorized - But without demo save object.
+                /* ────────────────────────────────────────────────────────────────────────────────────────────────── */
+                foreach (var objKp in soLookup)
+                {
+                    if (objKp.Key.GetType().FullName == DemoSaveObjectFullName) continue;
+                    DrawSaveObjectEditor(objKp.Key);
+                }
+            }
+
+
+            // Demo Save Object
+            /* ────────────────────────────────────────────────────────────────────────────────────────────────────── */
+            var demoSaveObject = soLookup.FirstOrDefault(t =>
+                t.Key.GetType().FullName == DemoSaveObjectFullName).Key;
+            
+            if (demoSaveObject == null) return;
+            
+            UtilEditor.DrawHorizontalGUILine();
+            EditorGUILayout.LabelField("Asset Demo Save Object", EditorStyles.boldLabel);
+            DrawSaveObjectEditor(demoSaveObject);
         }
+
+
+        private void DrawSaveObjectEditor(SaveObject targetSaveObject)
+        {
+            if (!editorsLookup.ContainsKey(targetSaveObject))
+            {
+                editorsLookup.Add(targetSaveObject,
+                    (SaveObjectEditor)UnityEditor.Editor.CreateEditor(targetSaveObject));
+            }
+
+            EditorGUILayout.BeginVertical(editorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue
+                ? "HelpBox"
+                : "Box");
+
+            EditorGUILayout.BeginHorizontal();
+
+            EditorGUI.BeginChangeCheck();
+
+            editorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue =
+                EditorGUILayout.Foldout(editorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue,
+                    targetSaveObject.name);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                editorsLookup[targetSaveObject].serializedObject.ApplyModifiedProperties();
+                editorsLookup[targetSaveObject].serializedObject.Update();
+
+                SaveManager.Save();
+            }
+
+            EditorGUI.BeginDisabledGroup(Application.isPlaying);
+            GUI.backgroundColor = UtilEditor.Red;
+
+            if (GUILayout.Button("-", GUILayout.Width(25)))
+            {
+                if (EditorUtility.DisplayDialog("Reset Save Object",
+                        "Are you sure you want to reset all values on this save object?", "Reset", "Cancel"))
+                {
+                    // Reset Save Object
+                    targetSaveObject.ResetObjectSaveValues();
+
+                    editorsLookup[targetSaveObject].serializedObject.ApplyModifiedProperties();
+                    editorsLookup[targetSaveObject].serializedObject.Update();
+
+                    SaveManager.Save();
+                    GUI.FocusControl(null);
+
+                    return;
+                }
+            }
+
+            GUI.backgroundColor = Color.white;
+
+            EditorGUILayout.EndHorizontal();
+
+            GUILayout.Space(2.5f);
+
+
+            if (editorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue)
+            {
+                editorsLookup[targetSaveObject].EditorWindowGUI();
+                GUILayout.Space(1.5f);
+            }
+
+            EditorGUI.EndDisabledGroup();
+
+            EditorGUILayout.EndVertical();
+
+            GUILayout.Space(4f);
+        }
+
 
 
         public void RepaintAll()

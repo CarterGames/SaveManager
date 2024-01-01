@@ -48,7 +48,6 @@ namespace CarterGames.Assets.SaveManager
         [SerializeField] private bool prettify;
         [SerializeField] private bool autoLoadOnEntry = true;
         [SerializeField] private bool autoSaveOnExit = true;
-        [SerializeField] private bool showLogs;
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
@@ -104,12 +103,6 @@ namespace CarterGames.Assets.SaveManager
         /// The current encryption option selected by the user.
         /// </summary>
         public EncryptionOption Encryption => encryptionOption;
-        
-        
-        /// <summary>
-        /// Defines if the asset will throw log messages at you or not. 
-        /// </summary>
-        public bool ShowLogs => showLogs;
         
         
         /// <summary>
