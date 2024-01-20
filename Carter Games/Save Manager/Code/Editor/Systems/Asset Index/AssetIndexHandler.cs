@@ -135,6 +135,8 @@ namespace CarterGames.Assets.SaveManager.Editor
 
         private static void UpdateIndexReferences(IReadOnlyList<SaveManagerAsset> foundAssets, SerializedObject indexProp)
         {
+            indexProp.Fp("assets").Fpr("list").ClearArray();
+            
             for (var i = 0; i < foundAssets.Count; i++)
             {
                 for (var j = 0; j < indexProp.Fp("assets").Fpr("list").arraySize; j++)

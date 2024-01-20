@@ -21,6 +21,8 @@
  * THE SOFTWARE.
  */
 
+using System.IO;
+using System.Reflection;
 using UnityEditor;
 
 namespace CarterGames.Assets.SaveManager.Editor
@@ -71,7 +73,10 @@ namespace CarterGames.Assets.SaveManager.Editor
         private static void LoadOnProjectOpen()
         {
             EditorApplication.delayCall -= LoadOnProjectOpen;
-            SaveManager.Load();
+
+            // Initializes the Save Manager and loads the data for use.
+            typeof(SaveManager).GetMethod("Initialize", BindingFlags.NonPublic | BindingFlags.Static)?.Invoke(null, null);
+            
             SessionState.SetBool("HasLoaded", true);
         }
         

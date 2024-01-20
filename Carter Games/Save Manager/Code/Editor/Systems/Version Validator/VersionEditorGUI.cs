@@ -43,10 +43,11 @@ namespace CarterGames.Assets.SaveManager.Editor
             if (!GUILayout.Button("Check For Updates", GUILayout.MaxWidth(135))) return;
             
             VersionChecker.GetLatestVersions();
+            
             VersionChecker.ResponseReceived.AddAnonymous("versionCheckManual", () => ShowResponseDialogue());
         }
-
-
+        
+        
         /// <summary>
         /// Shows the response to a version check call as a dialogue box.
         /// </summary>
@@ -55,9 +56,16 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             VersionChecker.ResponseReceived.RemoveAnonymous("versionCheckManual");
             
-            if (!VersionChecker.IsLatestVersion)
+            if (VersionChecker.IsNewerVersion)
             {
-                if (EditorUtility.DisplayDialog($"{VersionInfo.Key} | Update Checker",
+                if (!showIfUptoDate) return;
+                EditorUtility.DisplayDialog("Update Checker",
+                    $"You are using a newer version than the currently released one.\n\nYours: {VersionInfo.ProjectVersionNumber}\nLatest: {VersionChecker.LatestVersionNumberString}",
+                    "Continue");
+            }
+            else if (!VersionChecker.IsLatestVersion)
+            {
+                if (EditorUtility.DisplayDialog("Update Checker",
                         $"You are using an older version of this package.\n\nCurrent: {VersionInfo.ProjectVersionNumber}\nLatest: {VersionChecker.LatestVersionNumberString}",
                         "Latest Release", "Continue"))
                 {
@@ -67,8 +75,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             else
             {
                 if (!showIfUptoDate) return;
-                
-                EditorUtility.DisplayDialog($"{VersionInfo.Key} | Update Checker",
+                EditorUtility.DisplayDialog("Update Checker",
                     "You are using the latest version!",
                     "Continue");
             }

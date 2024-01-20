@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2018-Present Carter Games
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -38,7 +38,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// The key for the session pref... should be per asset based on the version key to check...
         /// </summary>
-        private static readonly string AutoVersionCheckSessionInitKey = $"CarterGames_{VersionInfo.Key.Trim()}_Editor_Settings_AutoVersionCheckRan";
+        private static readonly string AutoVersionCheckSessionInitKey = $"{VersionInfo.Key.Trim()}_Editor_Settings_AutoVersionCheckRan";
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Constructors

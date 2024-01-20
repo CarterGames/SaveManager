@@ -144,6 +144,13 @@ namespace CarterGames.Assets.SaveManager
         private static void Initialize()
         {
             if (IsInitialized) return;
+            
+            // Makes the save file if it doesn't exist yet, as I somehow missed this check on load otherwise.
+            if (!File.Exists(AssetAccessor.GetAsset<SettingsAssetRuntime>().SavePath))
+            {
+                Save();
+            }
+            
 
 #if UNITY_WEBGL && !UNITY_EDITOR
             loadHandler = new WebSaveHandler();
@@ -152,6 +159,7 @@ namespace CarterGames.Assets.SaveManager
 #endif        
             
             TryGenerateSaveLookup();
+            
 
             if (SaveData != null)
             {
