@@ -64,7 +64,11 @@ namespace CarterGames.Assets.SaveManager
             get => value;
             set
             {
-                if (!this.value.Equals(value))
+                if (this.value == null)
+                {
+                    this.value = (T) value;
+                }
+                else if (!this.value.Equals(value))
                 {
                     this.value = (T) value;
                 }
