@@ -160,23 +160,7 @@ namespace CarterGames.Assets.SaveManager
             
             TryGenerateSaveLookup();
             
-
-            if (SaveData != null)
-            {
-                if (AssetAccessor.GetAsset<SettingsAssetRuntime>().AutoLoad)
-                {
-                    LoadedDataLookup = LoadFromFile();
-                }
-                else
-                {
-                    LoadedDataLookup = new SerializableDictionary<string, SerializableDictionary<string, string>>();
-                }
-            }
-            else
-            {
-                LoadedDataLookup = new SerializableDictionary<string, SerializableDictionary<string, string>>();
-            }
-
+            LoadedDataLookup = LoadFromFile();
 
             foreach (var saveValue in SaveDataLookup.ToList())
             {
@@ -298,7 +282,7 @@ namespace CarterGames.Assets.SaveManager
             loadHandler = new WebSaveHandler();
 #else
             loadHandler = new StandardSaveHandler();
-#endif  
+#endif
             
             return loadHandler.LoadFromFile(SavePath);
         }

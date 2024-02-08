@@ -46,7 +46,6 @@ namespace CarterGames.Assets.SaveManager.Editor
         
         private static readonly GUIContent EncryptionOption = new GUIContent("Encryption Option", "Sets which encryption setting the save will use.");
         private static readonly GUIContent PrettyFormat = new GUIContent("Pretty Save Formatting?","Formats the save file into a more readable format when saving.");
-        private static readonly GUIContent AutoLoad = new GUIContent("Auto Load?","Defines if the game loads on play/entering the game.");
         private static readonly GUIContent AutoSave = new GUIContent("Auto Save?","Defines if the game saves when exiting the game.");
         private static readonly GUIContent SaveKeysToggle = new GUIContent("Show Save Keys?","Defines if the save editor shows the save key for each save value, Use this to condense the UI a tad if you need to.");
         private static readonly GUIContent Logs = new GUIContent("Show Log Messages?", "Shows log messages for any errors as well as some handy debugging information.");
@@ -294,8 +293,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 EditorGUI.BeginDisabledGroup(SettingsAssetObject.Fp("encryptionOption").enumValueIndex.Equals(1));
                 EditorGUILayout.PropertyField(SettingsAssetObject.Fp("prettify"),PrettyFormat);
                 EditorGUI.EndDisabledGroup();
-            
-                EditorGUILayout.PropertyField(SettingsAssetObject.Fp("autoLoadOnEntry"),AutoLoad);
+                
                 EditorGUILayout.PropertyField(SettingsAssetObject.Fp("autoSaveOnExit"),AutoSave);
                 
                 EditorGUILayout.EndVertical();

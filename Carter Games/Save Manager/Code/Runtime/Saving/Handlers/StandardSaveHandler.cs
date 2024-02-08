@@ -106,7 +106,6 @@ namespace CarterGames.Assets.SaveManager
                         stream.Close();
                     }
 
-
                     var dic = new SerializableDictionary<string, SerializableDictionary<string, string>>();
 
                     foreach (var kpair in jsonData)

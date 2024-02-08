@@ -111,9 +111,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.PropertyField(serializedObject.Fp("encryptionOption"), new GUIContent("Encryption Option"));
             EditorGUILayout.PropertyField(serializedObject.Fp("prettify"));
-            EditorGUILayout.PropertyField(serializedObject.Fp("autoLoadOnEntry"));
             EditorGUILayout.PropertyField(serializedObject.Fp("autoSaveOnExit"));
-            EditorGUILayout.PropertyField(serializedObject.Fp("showLogs"));
             EditorGUI.EndDisabledGroup();
         }
 
