@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11010672a3811f84e8d31964f42df820, type: 3}
   m_Name: Example Save Object
   m_EditorClassIdentifier: 
-  isExpanded: 1
+  isExpanded: 0
   saveKey: Example
   playerName:
     key: examplePlayerName
