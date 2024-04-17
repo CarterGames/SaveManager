@@ -41,7 +41,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// The download Url for the latest version of this package.
         /// </summary>
-        public const string DownloadBaseUrl = "https://github.com/CarterGames/Common/releases/tag/";
+        public const string DownloadBaseUrl = "https://github.com/CarterGames/SaveManager/releases/tag/";
         
         
         /// <summary>

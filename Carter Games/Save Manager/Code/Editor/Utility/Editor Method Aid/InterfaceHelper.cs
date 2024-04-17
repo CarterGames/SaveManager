@@ -21,30 +21,24 @@
  * THE SOFTWARE.
  */
 
-using UnityEditor;
+using System;
+using System.Linq;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
-    public static class SaveManagerMenuItems
+    public static class InterfaceHelper
     {
-        [MenuItem("Tools/Carter Games/Save Manager/Load Save Data", priority = 30)]
-        public static void ManualLoadGame()
+        /// <summary>
+        /// Gets all the interface implementations and returns the result (Editor Only)
+        /// </summary>
+        /// <returns>An Array of the interface type</returns>
+        public static T[] GetAllInterfacesInstancesOfType<T>()
         {
-            SaveManager.Load(new StandardSaveHandler().LoadFromFile(UtilEditor.AssetGlobalRuntimeSettings.SavePath));
-        }
-        
-        
-        [MenuItem("Tools/Carter Games/Save Manager/Save, Save Data", priority = 31)]
-        public static void ManualSaveGame()
-        {
-            SaveManager.Save();
-        }
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(x => x.GetTypes())
+                .Where(x => x.IsClass && typeof(T).IsAssignableFrom(x));
 
-
-        [MenuItem("Tools/Carter Games/Save Manager/Reset All Save Data", priority = 33)]
-        public static void ManualResetData()
-        {
-            SaveManager.Clear();
+            return types.Select(type => (T)Activator.CreateInstance(type)).ToArray();
         }
     }
 }

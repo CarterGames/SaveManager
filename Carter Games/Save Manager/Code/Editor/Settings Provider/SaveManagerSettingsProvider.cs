@@ -74,12 +74,12 @@ namespace CarterGames.Assets.SaveManager.Editor
             {
                 if (settingsAssetObject != null) return settingsAssetObject;
 
-                if (!UtilEditor.AssetIndex.Lookup.ContainsKey(typeof(SettingsAssetRuntime).ToString()))
+                if (!UtilEditor.AssetIndex.Lookup.ContainsKey(typeof(AssetGlobalRuntimeSettings).ToString()))
                 {
                     UtilEditor.Initialize();
                 }
                 
-                settingsAssetObject = new SerializedObject(UtilEditor.AssetIndex.Lookup[typeof(SettingsAssetRuntime).ToString()][0]);
+                settingsAssetObject = new SerializedObject(UtilEditor.AssetIndex.Lookup[typeof(AssetGlobalRuntimeSettings).ToString()][0]);
                 return settingsAssetObject;
             }
         }
@@ -195,7 +195,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 EditorUtility.RevealInFinder(UtilEditor.Settings.SavePath.Replace("save.sf", string.Empty));
             }
             
-            GUI.backgroundColor = UtilEditor.SettingsAssetEditor.BackgroundColor;
+            GUI.backgroundColor = Color.white;
             
             EditorGUILayout.EndHorizontal();
 #else
@@ -205,12 +205,12 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             if (GUILayout.Button(ExplorerButtonLabel))
             {
-                if (!Directory.Exists(UtilEditor.Settings.SavePath))
+                if (!Directory.Exists(UtilEditor.AssetGlobalRuntimeSettings.SavePath))
                 {
-                    FileEditorUtil.CreateToDirectory(UtilEditor.Settings.SavePath);
+                    FileEditorUtil.CreateToDirectory(UtilEditor.AssetGlobalRuntimeSettings.SavePath);
                 }
                 
-                EditorUtility.RevealInFinder(UtilEditor.Settings.SavePath.Replace("save.sf", string.Empty));
+                EditorUtility.RevealInFinder(UtilEditor.AssetGlobalRuntimeSettings.SavePath.Replace("save.sf", string.Empty));
             }
             
             GUI.backgroundColor = Color.white;

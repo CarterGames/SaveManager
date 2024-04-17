@@ -40,7 +40,7 @@ namespace CarterGames.Assets.SaveManager
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
         // The actual save data asset holding the data in the project.
-        private static SaveData SaveData => AssetAccessor.GetAsset<SettingsAssetRuntime>().SaveData;
+        private static SaveData SaveData => AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().SaveData;
         
         
         // The load handler cache for the save manager.
@@ -74,19 +74,19 @@ namespace CarterGames.Assets.SaveManager
         /// <summary>
         /// Gets the save path for the current save setup.
         /// </summary>
-        private static string SavePath => AssetAccessor.GetAsset<SettingsAssetRuntime>().SavePath;
+        private static string SavePath => AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().SavePath;
 
 
         /// <summary>
         /// Gets the save path for the current save setup.
         /// </summary>
-        private static bool Prettify => AssetAccessor.GetAsset<SettingsAssetRuntime>().Prettify;
+        private static bool Prettify => AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().Prettify;
 
 
         /// <summary>
         /// Gets the current encryption setting setup.
         /// </summary>
-        private static EncryptionOption EncryptionSetting => AssetAccessor.GetAsset<SettingsAssetRuntime>().Encryption;
+        private static EncryptionOption EncryptionSetting => AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().Encryption;
         
         
         /// <summary>
@@ -146,7 +146,7 @@ namespace CarterGames.Assets.SaveManager
             if (IsInitialized) return;
             
             // Makes the save file if it doesn't exist yet, as I somehow missed this check on load otherwise.
-            if (!File.Exists(AssetAccessor.GetAsset<SettingsAssetRuntime>().SavePath))
+            if (!File.Exists(AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().SavePath))
             {
                 Save();
             }

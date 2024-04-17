@@ -31,13 +31,31 @@ namespace CarterGames.Assets.SaveManager.Editor
     /// <summary>
     /// Handles the setup of the asset index for runtime references to scriptable objects used for the asset.
     /// </summary>
-    public sealed class AssetIndexHandler : IPreprocessBuildWithReport
+    public sealed class AssetIndexHandler : IPreprocessBuildWithReport, IAssetEditorInitialize
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
-        private const string AssetFilter = "t:savemanagerasset";
+        private static readonly string AssetFilter = $"t:{nameof(SaveManagerAsset)}";
+        
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   IAssetEditorInitialize Implementation
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+        /// <summary>
+        /// Defines the order that this initializer run at.
+        /// </summary>
+        public int InitializeOrder => 1;
+
+        
+        /// <summary>
+        /// Runs when the asset initialize flow is used.
+        /// </summary>
+        public void OnEditorInitialized()
+        {
+            UpdateIndex();
+        }
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   IPreprocessBuildWithReport Implementation

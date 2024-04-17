@@ -94,7 +94,7 @@ namespace CarterGames.Assets.SaveManager
             {
                 try
                 {
-                    using (var stream = new FileStream(AssetAccessor.GetAsset<SettingsAssetRuntime>().SavePath,
+                    using (var stream = new FileStream(AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().SavePath,
                                FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                     {
                         using (var reader = new StreamReader(stream))

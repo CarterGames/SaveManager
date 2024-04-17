@@ -29,7 +29,7 @@ namespace CarterGames.Assets.SaveManager.Editor
     /// <summary>
     /// A custom inspector for the settings asset scriptable object.
     /// </summary>
-    [CustomEditor(typeof(SettingsAssetRuntime))]
+    [CustomEditor(typeof(AssetGlobalRuntimeSettings))]
     public sealed class SettingsAssetRuntimeEditor : UnityEditor.Editor
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -89,7 +89,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         private void DrawDataSettings()
         {
-            UtilEditor.DrawSoScriptSection(target as SettingsAssetRuntime);
+            UtilEditor.DrawSoScriptSection(target as AssetGlobalRuntimeSettings);
 
             GUILayout.Space(12.5f);
 

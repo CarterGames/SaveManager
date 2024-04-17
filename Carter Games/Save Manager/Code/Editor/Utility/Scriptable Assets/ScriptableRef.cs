@@ -46,7 +46,7 @@ namespace CarterGames.Assets.SaveManager.Editor
 
         // Asset Filters
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        private static readonly string RuntimeSettingsFilter = $"t:{typeof(SettingsAssetRuntime).FullName}";
+        private static readonly string RuntimeSettingsFilter = $"t:{typeof(AssetGlobalRuntimeSettings).FullName}";
         private static readonly string AssetIndexFilter = $"t:{typeof(AssetIndex).FullName}";
         private static readonly string SaveProfilesStoreFilter = $"t:{typeof(SaveProfilesStore).FullName}";
         private static readonly string SaveDataFilter = $"t:{typeof(SaveData).FullName}";
@@ -55,7 +55,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         
         // Asset Caches
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        private static SettingsAssetRuntime settingsAssetRuntimeCache;
+        private static AssetGlobalRuntimeSettings assetGlobalRuntimeSettingsCache;
         private static AssetIndex assetIndexCache;
         private static SaveProfilesStore saveProfilesStoreCache;
         private static SaveData saveDataCache;
@@ -99,8 +99,8 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// The runtime settings for the asset.
         /// </summary>
-        public static SettingsAssetRuntime RuntimeSettings =>
-            FileEditorUtil.CreateSoGetOrAssignAssetCache(ref settingsAssetRuntimeCache, RuntimeSettingsFilter, SettingsAssetPath, AssetName, $"{AssetName}/Data/Runtime Settings.asset");
+        public static AssetGlobalRuntimeSettings RuntimeAssetGlobalRuntimeSettings =>
+            FileEditorUtil.CreateSoGetOrAssignAssetCache(ref assetGlobalRuntimeSettingsCache, RuntimeSettingsFilter, SettingsAssetPath, AssetName, $"{AssetName}/Data/Runtime Settings.asset");
         
         
         /// <summary>
@@ -130,7 +130,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// The runtime SerializedObject for the asset.
         /// </summary>
         public static SerializedObject RuntimeSettingsObject =>
-            FileEditorUtil.CreateGetOrAssignSerializedObjectCache(ref settingsAssetRuntimeObjectCache, RuntimeSettings);
+            FileEditorUtil.CreateGetOrAssignSerializedObjectCache(ref settingsAssetRuntimeObjectCache, RuntimeAssetGlobalRuntimeSettings);
         
         // Assets Initialized Check
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -142,5 +142,63 @@ namespace CarterGames.Assets.SaveManager.Editor
             File.Exists(AssetIndexPath) && File.Exists(SettingsAssetPath) &&
             File.Exists(EncryptionKeyAssetPath) &&
             File.Exists(SaveDataPath) && File.Exists(CapturesObjectAssetPath);
+        
+        
+        /// <summary>
+        /// Tries to create any missing assets when called.
+        /// </summary>
+        public static void TryCreateAssets()
+        {
+            if (assetIndexCache == null)
+            {
+                FileEditorUtil.CreateSoGetOrAssignAssetCache(
+                    ref assetIndexCache, 
+                    AssetIndexFilter, 
+                    AssetIndexPath,
+                    AssetName, $"{AssetName}/Resources/Asset Index.asset");
+            }
+
+            
+            if (assetGlobalRuntimeSettingsCache == null)
+            {
+                FileEditorUtil.CreateSoGetOrAssignAssetCache(
+                    ref assetGlobalRuntimeSettingsCache, 
+                    RuntimeSettingsFilter, 
+                    SettingsAssetPath, 
+                    AssetName, $"{AssetName}/Data/Runtime Settings.asset");
+            }
+            
+            
+            if (saveProfilesStoreCache == null)
+            {
+                FileEditorUtil.CreateSoGetOrAssignAssetCache(
+                    ref saveProfilesStoreCache,
+                    SaveProfilesStoreFilter,
+                    CapturesObjectAssetPath,
+                    AssetName, $"{AssetName}/Data/Save Profiles Container.asset");
+            }
+            
+            
+            if (encryptionKeyAssetCache == null)
+            {
+                FileEditorUtil.CreateSoGetOrAssignAssetCache(
+                    ref encryptionKeyAssetCache, 
+                    SaveDataEncryptionKeyFilter, 
+                    EncryptionKeyAssetPath, 
+                    AssetName, $"{AssetName}/Data/Encryption Key.asset");
+
+            }
+            
+            
+            if (saveDataCache == null)
+            {
+                FileEditorUtil.CreateSoGetOrAssignAssetCache(
+                    ref saveDataCache,
+                    SaveDataFilter,
+                    SaveDataPath,
+                    AssetName, $"{AssetName}/Data/Save Data.asset");
+
+            }
+        }
     }
 }

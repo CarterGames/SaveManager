@@ -68,7 +68,7 @@ namespace CarterGames.Assets.SaveManager.Encryption
         /// <param name="jsonData">The json string to use.</param>
         public static void EncryptData(string jsonData)
         {
-            switch (AssetAccessor.GetAsset<SettingsAssetRuntime>().Encryption)
+            switch (AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().Encryption)
             {
                 case EncryptionOption.Aes:
                     GetHandler(EncryptionOption.Aes, typeof(AesEncryption)).Encrypt(jsonData);

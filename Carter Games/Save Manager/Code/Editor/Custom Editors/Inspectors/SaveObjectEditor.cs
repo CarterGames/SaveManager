@@ -121,16 +121,16 @@ namespace CarterGames.Assets.SaveManager.Editor
                 serializedObject.Update();
 
                 // Adds to save data if it doesn't exist.
-                if (UtilEditor.Settings.SaveData.Data.Contains((SaveObject)target)) return;
+                if (UtilEditor.AssetGlobalRuntimeSettings.SaveData.Data.Contains((SaveObject)target)) return;
                 
-                UtilEditor.Settings.SaveData.Data.Add((SaveObject)target);
+                UtilEditor.AssetGlobalRuntimeSettings.SaveData.Data.Add((SaveObject)target);
                         
                 propertiesLookup = new Dictionary<string, SerializedProperty>()
                 {
                     { "SaveKey", serializedObject.Fp("saveKey") },
                 };
                 
-                EditorUtility.SetDirty(UtilEditor.Settings.SaveData);
+                EditorUtility.SetDirty(UtilEditor.AssetGlobalRuntimeSettings.SaveData);
 
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();

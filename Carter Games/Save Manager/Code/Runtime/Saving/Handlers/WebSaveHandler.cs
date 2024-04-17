@@ -99,7 +99,7 @@ namespace CarterGames.Assets.SaveManager
                 {
                     SerializableDictionary<string, SerializableDictionary<string, string>> jsonData;
 
-                    using (var stream = new FileStream(AssetAccessor.GetAsset<SettingsAssetRuntime>().SavePath,
+                    using (var stream = new FileStream(AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().SavePath,
                                FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                     {
                         using (var reader = new StreamReader(stream))

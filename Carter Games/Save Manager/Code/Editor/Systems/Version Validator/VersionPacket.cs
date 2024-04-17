@@ -46,6 +46,6 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// The data received for this package.
         /// </summary>
-        public VersionData Data => data.First(t => t.Key.Equals(VersionInfo.Key));
+        public VersionData Data => data.FirstOrDefault(t => t.Key.Equals(VersionInfo.Key));
     }
 }

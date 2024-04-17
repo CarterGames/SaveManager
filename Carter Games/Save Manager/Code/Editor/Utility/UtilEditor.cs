@@ -75,7 +75,7 @@ namespace CarterGames.Assets.SaveManager.Editor
 
         // Asset Caches
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        private static SettingsAssetRuntime settingsCache;
+        private static AssetGlobalRuntimeSettings assetGlobalRuntimeSettingsCache;
         private static SerializedObject settingsObjectCache;
         private static SerializedObject editorSettingsObjectCache;
         private static SaveProfilesStore saveProfilesStoreCache;
@@ -207,7 +207,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// Gets/Sets the save manager settings asset.
         /// </summary>
-        public static SettingsAssetRuntime Settings => ScriptableRef.RuntimeSettings;
+        public static AssetGlobalRuntimeSettings AssetGlobalRuntimeSettings => ScriptableRef.RuntimeAssetGlobalRuntimeSettings;
 
 
         /// <summary>
@@ -343,9 +343,9 @@ namespace CarterGames.Assets.SaveManager.Editor
                 assetIndexCache = AssetIndex;
             }
             
-            if (settingsCache == null)
+            if (assetGlobalRuntimeSettingsCache == null)
             {
-                settingsCache = Settings;
+                assetGlobalRuntimeSettingsCache = AssetGlobalRuntimeSettings;
             }
 
             if (saveDataCache == null)
@@ -370,7 +370,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             AssetDatabase.Refresh();
             
 
-            var dataObj = new SerializedObject(Settings);
+            var dataObj = new SerializedObject(AssetGlobalRuntimeSettings);
             dataObj.Fp("saveDataAsset").objectReferenceValue = SaveData;
             dataObj.ApplyModifiedProperties();
             dataObj.Update();
@@ -393,7 +393,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             dataObj.ApplyModifiedProperties();
             dataObj.Update();
 
-            Settings.Initialize();
+            AssetGlobalRuntimeSettings.Initialize();
             
             if (!EncryptionKeyAsset.HasKey)
             {

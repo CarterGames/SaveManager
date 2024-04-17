@@ -56,6 +56,15 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             VersionChecker.ResponseReceived.RemoveAnonymous("versionCheckManual");
             
+            if (VersionChecker.Versions.Data == null)
+            {
+                EditorUtility.DisplayDialog("Update Checker",
+                    $"Either you are offline or the system for version checking is broken or missing an entry.",
+                    "Continue");
+                
+                return;
+            }
+            
             if (VersionChecker.IsNewerVersion)
             {
                 if (!showIfUptoDate) return;

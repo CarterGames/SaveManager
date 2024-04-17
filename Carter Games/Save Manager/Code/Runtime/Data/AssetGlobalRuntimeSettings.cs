@@ -31,7 +31,7 @@ namespace CarterGames.Assets.SaveManager
     /// Handles the runtime settings for the save manager asset.
     /// </summary>
     [CreateAssetMenu(fileName = "Runtime Settings", menuName = "Carter Games/Save Manager/Runtime Settings Asset", order = 2)]
-    public sealed class SettingsAssetRuntime : SaveManagerAsset
+    public sealed class AssetGlobalRuntimeSettings : SaveManagerAsset
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields

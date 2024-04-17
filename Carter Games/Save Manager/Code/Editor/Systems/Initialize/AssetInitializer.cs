@@ -21,105 +21,92 @@
  * THE SOFTWARE.
  */
 
-using System;
-using UnityEngine;
+using System.Linq;
+using System.Threading.Tasks;
+using CarterGames.Common;
+using UnityEditor;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
     /// <summary>
-    /// A copy of the Json data for each entry stored on the server.
+    /// Handles any initial listeners in the project for the asset.
     /// </summary>
-    [Serializable]
-    public sealed class VersionData
+    public static class AssetInitializer
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        
-        [SerializeField] private string key;
-        [SerializeField] private string version;
-        [SerializeField] private string releaseDate;
 
+        // The key for if the asset has been initialized.
+        private static readonly string AssetInitializeKey = $"{FileEditorUtil.AssetName}_Session_EditorInitialize";
+        
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        
-        /// <summary>
-        /// The key for the entry.
-        /// </summary>
-        public string Key
-        {
-            get => key;
-            set => key = value;
-        }
-        
-        
-        /// <summary>
-        /// The version for the entry.
-        /// </summary>
-        public string Version
-        {
-            get => version;
-            set => version = value;
-        }        
-        
-        
-        /// <summary>
-        /// The release date for the entry.
-        /// </summary>
-        public string ReleaseDate
-        {
-            get => releaseDate;
-            set => releaseDate = value;
-        }
-
 
         /// <summary>
-        /// The version number for the entry.
+        /// Gets if the asset is initialized or not. 
         /// </summary>
-        public VersionNumber VersionNumber => new VersionNumber(Version);
+        public static bool IsInitialized
+        {
+            get => SessionState.GetBool(AssetInitializeKey, false);
+            private set => SessionState.SetBool(AssetInitializeKey, value);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Events
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+        /// <summary>
+        /// Is raised when the asset is initialized.
+        /// </summary>
+        public static readonly Evt Initialized = new Evt();
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         /// <summary>
-        /// Gets if the entry version number matches the entered string.
+        /// Initializes the editor logic for the asset when called.
         /// </summary>
-        /// <param name="toCompare">The version string to compare.</param>
-        /// <returns>If the entry is a match or not on all values (major/minor/patch).</returns>
-        public bool Match(string toCompare)
+        [InitializeOnLoadMethod]
+        private static void TryInitialize()
         {
-            var current = VersionNumber;
-            var remote = new VersionNumber(toCompare);
-
-            return current.Major.Equals(remote.Major) && 
-                   current.Minor.Equals(remote.Minor) && 
-                   current.Patch.Equals(remote.Patch);
+            if (IsInitialized) return;
+            InitializeEditorClasses();
         }
-                
-        
-        /// <summary>
-        /// Gets if the entry is a higher version than the converted version.
-        /// </summary>
-        /// <param name="toCompare">The version string to compare.</param>
-        /// <returns>If the entry is greater on any (major/minor/patch) value.</returns>
-        public bool IsHigherVersion(string toCompare)
-        {
-            var current = VersionNumber;
-            var remote = new VersionNumber(toCompare);
 
-            if (Match(toCompare))
+
+        /// <summary>
+        /// Runs through all interfaces for initializing the editor asset logic and runs each in the defined order.
+        /// </summary>
+        private static async void InitializeEditorClasses()
+        {
+            var initClasses = InterfaceHelper.GetAllInterfacesInstancesOfType<IAssetEditorInitialize>();
+            
+            if (initClasses.Length > 0)
             {
-                return false;
+                foreach (var init in initClasses.OrderBy(t => t.InitializeOrder))
+                {
+                    init.OnEditorInitialized();
+                    await Task.Yield();
+                }
             }
+
+            OnAllClassesInitialized();
+        }
+        
+
+        /// <summary>
+        /// Runs any post initialize logic to complete the process.
+        /// </summary>
+        private static void OnAllClassesInitialized()
+        {
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
             
-            if (current.Major < remote.Major) return true;
-            if (current.Major.Equals(remote.Major) && current.Minor < remote.Minor) return true; 
-            
-            return current.Major.Equals(remote.Major) &&
-                   current.Minor.Equals(remote.Minor) &&
-                   current.Patch < remote.Patch;
+            IsInitialized = true;
+            Initialized.Raise();
         }
     }
 }

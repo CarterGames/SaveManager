@@ -37,7 +37,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             var profileSavePath = $"{savePath}/{captureName}.json";
             
-            var json = JsonUtility.ToJson(UtilEditor.Settings.SaveData.SerializableData, true);
+            var json = JsonUtility.ToJson(UtilEditor.AssetGlobalRuntimeSettings.SaveData.SerializableData, true);
             
             FileEditorUtil.CreateToDirectory(profileSavePath);
             AssetDatabase.SaveAssets();

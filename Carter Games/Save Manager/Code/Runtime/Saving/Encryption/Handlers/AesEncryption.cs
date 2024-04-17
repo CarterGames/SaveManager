@@ -36,7 +36,7 @@ namespace CarterGames.Assets.SaveManager.Encryption
         {
             var iAes = Aes.Create();
                     
-            using (var fStream = new FileStream(AssetAccessor.GetAsset<SettingsAssetRuntime>().SavePath, FileMode.OpenOrCreate))
+            using (var fStream = new FileStream(AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().SavePath, FileMode.OpenOrCreate))
             {
                 if (!AssetAccessor.GetAsset<EncryptionKeyAsset>().HasKey)
                 {
@@ -71,7 +71,7 @@ namespace CarterGames.Assets.SaveManager.Encryption
         /// <returns>The decrypted data.</returns>
         public string Decrypt()
         {
-            var fStream = new FileStream(AssetAccessor.GetAsset<SettingsAssetRuntime>().SavePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var fStream = new FileStream(AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().SavePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             var oAes = Aes.Create();
 
             oAes.Key = AssetAccessor.GetAsset<EncryptionKeyAsset>().SaveEncryptionKey;

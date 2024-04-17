@@ -46,7 +46,7 @@ namespace CarterGames.Assets.SaveManager
         [RuntimeInitializeOnLoadMethod]
         private static void SetupInstance()
         {
-            if (!AssetAccessor.GetAsset<SettingsAssetRuntime>().AutoSave) return;
+            if (!AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().AutoSave) return;
             if (instance != null) return;
 
             var obj = new GameObject("Auto Save (Save Manager)");
@@ -64,7 +64,7 @@ namespace CarterGames.Assets.SaveManager
         /// </summary>
         private void OnApplicationQuit()
         {
-            if (!AssetAccessor.GetAsset<SettingsAssetRuntime>().AutoSave) return;
+            if (!AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().AutoSave) return;
             SaveManager.Save(false);
         }
 

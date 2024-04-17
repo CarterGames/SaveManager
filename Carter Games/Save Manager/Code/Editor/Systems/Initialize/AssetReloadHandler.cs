@@ -21,81 +21,66 @@
  * THE SOFTWARE.
  */
 
-using System;
-using System.Collections.Generic;
-using CarterGames.Assets.SaveManager.Serializiation;
-using UnityEngine;
+using System.Threading.Tasks;
+using CarterGames.Common;
+using UnityEditor;
+using UnityEditor.Callbacks;
 
-namespace CarterGames.Assets.SaveManager
+namespace CarterGames.Assets.SaveManager.Editor
 {
     /// <summary>
-    /// The save data that is actually saved.
+    /// Handles any reload listeners in the project for the asset.
     /// </summary>
-    [Serializable]
-    [CreateAssetMenu(fileName = "Save Data", menuName = "Carter Games/Save Manager/Save Data", order = 4)]
-    public sealed class SaveData : SaveManagerAsset
+    public static class AssetReloadHandler
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Fields
-        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        
-        [SerializeField] private List<SaveObject> saveData;
-
-        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Properties
+        |   Events
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         /// <summary>
-        /// A list of all the save objects stored on this save data.
+        /// Raises when the reload has occured.
         /// </summary>
-        public List<SaveObject> Data
-        {
-            get => saveData;
-            set => saveData = value;
-        }
-
-
-        /// <summary>
-        /// The serialized data that is saved.
-        /// </summary>
-        public SerializableDictionary<string, SerializableDictionary<string, string>> SerializableData
-        {
-            get
-            {
-                // List<string> = Dictionary<string, SaveValueBase>
-                var items = new SerializableDictionary<string, SerializableDictionary<string, string>>();
-
-                foreach (var saveValue in Data)
-                {
-                    var data = saveValue.GetSaveValues();
-
-                    var converted = new SerializableDictionary<string, string>();
-
-                    foreach (var v in data.Values)
-                    {
-                        converted.Add(v.key, JsonUtility.ToJson(v, AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().Prettify));
-                    }
-                    
-                    items.Add(saveValue.SaveKey, converted);
-                }
-
-                return items;
-            }
-        }
+        public static readonly Evt Reloaded = new Evt();
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         /// <summary>
-        /// Initializes the save data for use.
+        /// Add subscription to the delay call when scripts reload.
         /// </summary>
-        public void Initialize()
+        [DidReloadScripts]
+        private static void FireReloadCalls()
         {
-            foreach (var saveValue in saveData)
+            if (EditorApplication.isCompiling || EditorApplication.isUpdating)
             {
-                SaveManager.RegisterObject(saveValue);
+                EditorApplication.delayCall -= CallListeners;
+                EditorApplication.delayCall += CallListeners;
+                return;
             }
+            
+            EditorApplication.delayCall -= CallListeners;
+            EditorApplication.delayCall += CallListeners;
+        }
+        
+
+        /// <summary>
+        /// Updates all the listeners when called.
+        /// </summary>
+        private static async void CallListeners()
+        {
+            var reloadClasses = InterfaceHelper.GetAllInterfacesInstancesOfType<IAssetEditorReload>();
+            
+            if (reloadClasses.Length > 0)
+            {
+                foreach (var init in reloadClasses)
+                {
+                    init.OnEditorReloaded();
+                    await Task.Yield();
+                }
+            }
+            
+            Reloaded.Raise();
         }
     }
 }

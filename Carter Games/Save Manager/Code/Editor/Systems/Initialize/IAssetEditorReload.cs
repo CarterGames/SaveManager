@@ -21,30 +21,10 @@
  * THE SOFTWARE.
  */
 
-using UnityEditor;
-
 namespace CarterGames.Assets.SaveManager.Editor
 {
-    public static class SaveManagerMenuItems
+    public interface IAssetEditorReload
     {
-        [MenuItem("Tools/Carter Games/Save Manager/Load Save Data", priority = 30)]
-        public static void ManualLoadGame()
-        {
-            SaveManager.Load(new StandardSaveHandler().LoadFromFile(UtilEditor.AssetGlobalRuntimeSettings.SavePath));
-        }
-        
-        
-        [MenuItem("Tools/Carter Games/Save Manager/Save, Save Data", priority = 31)]
-        public static void ManualSaveGame()
-        {
-            SaveManager.Save();
-        }
-
-
-        [MenuItem("Tools/Carter Games/Save Manager/Reset All Save Data", priority = 33)]
-        public static void ManualResetData()
-        {
-            SaveManager.Clear();
-        }
+        void OnEditorReloaded();
     }
 }

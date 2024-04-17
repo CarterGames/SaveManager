@@ -21,77 +21,43 @@
  * THE SOFTWARE.
  */
 
-using System.IO;
-using System.Reflection;
-using UnityEditor;
-
 namespace CarterGames.Assets.SaveManager.Editor
 {
     /// <summary>
-    /// Handles the auto setup of the save manager when the assets are changed in the project.
+    /// Handles any logic for generating/updating the scriptable objects for the asset where needed.
     /// </summary>
-    public class AssetInitializer : AssetPostprocessor
+    public class ScriptableObjectInitialize : IAssetEditorInitialize, IAssetEditorReload
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Methods
+        |   IAssetEditorInitialize
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         /// <summary>
-        /// Runs after assets have imported / script reload etc at a safe time to edit assets.
+        /// Defines the order that this initializer run at.
         /// </summary>
-        private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets,
-            string[] movedFromAssetPaths)
-        {
-            TryInitialize();
-        }
-
-
-        /// <summary>
-        /// Initializes the save data on project load
-        /// </summary>
-        [InitializeOnLoadMethod]
-        private static void TryInitSave()
-        {
-            if (SessionState.GetBool("HasLoaded", false)) return;
-            DelayUpdate();
-        }
-
-
-        /// <summary>
-        /// Listen for a delayed update to ensure the editor is all loaded before loading data.
-        /// </summary>
-        private static void DelayUpdate()
-        {
-            EditorApplication.delayCall -= LoadOnProjectOpen;
-            EditorApplication.delayCall += LoadOnProjectOpen;
-        }
-
-
-        /// <summary>
-        /// Loads the latest data into the save system for use.
-        /// </summary>
-        private static void LoadOnProjectOpen()
-        {
-            EditorApplication.delayCall -= LoadOnProjectOpen;
-
-            // Initializes the Save Manager and loads the data for use.
-            typeof(SaveManager).GetMethod("Initialize", BindingFlags.NonPublic | BindingFlags.Static)?.Invoke(null, null);
-            
-            SessionState.SetBool("HasLoaded", true);
-        }
+        public int InitializeOrder => -1;
         
+
+        /// <summary>
+        /// Runs when the asset initialize flow is used.
+        /// </summary>
+        public void OnEditorInitialized()
+        {
+            if (ScriptableRef.HasAllAssets) return;
+            ScriptableRef.TryCreateAssets();
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   IAssetEditorReload
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         /// <summary>
-        /// Creates the scriptable objects for the asset if they don't exist yet.
+        /// Runs when the asset reload flow is used.
         /// </summary>
-        private static void TryInitialize()
+        public void OnEditorReloaded()
         {
-            LegacyIndexRemovalTool.TryRemoveOldIndex();
-            
-            if (UtilEditor.HasInitialized) return;
-            UtilEditor.Initialize();
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            if (ScriptableRef.HasAllAssets) return;
+            ScriptableRef.TryCreateAssets();
         }
     }
 }

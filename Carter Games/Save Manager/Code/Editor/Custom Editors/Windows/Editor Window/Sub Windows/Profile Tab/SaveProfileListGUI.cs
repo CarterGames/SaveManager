@@ -214,7 +214,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             }
             catch (Exception e)
             {
-                SmLog.Error($"Failed to read to {UtilEditor.Settings.SavePath} with the exception: {e}");
+                SmLog.Error($"Failed to read to {UtilEditor.AssetGlobalRuntimeSettings.SavePath} with the exception: {e}");
                 return;
             }
 
@@ -225,7 +225,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             }
 
             // Updates the data in the editor & in the actual save.
-            EditorUtility.SetDirty(UtilEditor.Settings);
+            EditorUtility.SetDirty(UtilEditor.AssetGlobalRuntimeSettings);
             AssetDatabase.SaveAssets();
             SaveManager.Save();
         }
