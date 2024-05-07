@@ -68,7 +68,7 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
 
             PerUserSettings.SaveEditorTabScrollRectPos =
                 EditorGUILayout.BeginScrollView(PerUserSettings.SaveEditorTabScrollRectPos);
-
+            
             foreach (var saveObj in saveObjects)
             {
                 SerializedObject sObj;
@@ -95,8 +95,13 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
 
             EditorGUILayout.Space(5f);
             EditorGUILayout.EndScrollView();
-
-            // UtilEditor.CreateDeselectZone(ref deselectRect);
+            
+            // Force update all elements...
+            foreach (var lookup in editorsLookup)
+            {
+                lookup.Value.serializedObject.ApplyModifiedProperties();
+                lookup.Value.serializedObject.Update();
+            }
         }
 
 
@@ -229,7 +234,15 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
 
             if (editorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue)
             {
+                EditorGUI.BeginChangeCheck();
                 editorsLookup[targetSaveObject].EditorWindowGUI();
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    editorsLookup[targetSaveObject].serializedObject.ApplyModifiedProperties();
+                    editorsLookup[targetSaveObject].serializedObject.Update();
+                }
+                
                 GUILayout.Space(1.5f);
             }
 
