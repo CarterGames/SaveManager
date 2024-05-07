@@ -72,7 +72,6 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             DrawInfoSection();
             EditorGUILayout.Space(3.5f);
-            
             DrawValuesSection();
             
             // Applies changes only if there are changes made.
@@ -96,10 +95,6 @@ namespace CarterGames.Assets.SaveManager.Editor
             EditorGUILayout.Space(3.5f);
             InspectorDrawValues();
             
-            // Applies changes only if there are changes made.
-            if (!EditorGUI.EndChangeCheck()) return;
-            
-            serializedObject.ApplyModifiedProperties();
             serializedObject.Update();
         }
 
@@ -193,7 +188,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             UtilEditor.DrawHorizontalGUILine();
             
             var prop = serializedObject.GetIterator();
-
+            
             if (prop.NextVisible(true))
             {
                 while (prop.NextVisible(false))
@@ -233,7 +228,6 @@ namespace CarterGames.Assets.SaveManager.Editor
                     if (propertiesLookup.ContainsKey(prop.name)) continue;
                     
                     EditorGUI.indentLevel++;
-                    
                     
                     EditorGUILayout.PropertyField(serializedObject.Fp(prop.name).Fpr("value"), new GUIContent(prop.displayName), true);
                     
