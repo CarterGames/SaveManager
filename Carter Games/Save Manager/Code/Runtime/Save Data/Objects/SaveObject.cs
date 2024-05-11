@@ -130,6 +130,7 @@ namespace CarterGames.Assets.SaveManager
             
             foreach (var t in saveValues)
             {
+                if (t == null) continue;
                 if (!t.GetType().IsSubclassOf(typeof(SaveValueBase))) continue;
                 var sv = (SaveValueBase)t;
                 if (!data.ContainsKey(sv.key)) continue;
@@ -168,6 +169,7 @@ namespace CarterGames.Assets.SaveManager
             
             for (var i = 0; i < saveValues.Length; i++)
             {
+                if (saveValues[i] == null) continue;
                 if (!saveValues[i].GetType().IsSubclassOf(typeof(SaveValueBase))) continue;
                 var sv = (SaveValueBase) saveValues[i];
                 dic.Add(sv.key, sv);
