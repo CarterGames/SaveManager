@@ -145,8 +145,7 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
 
                     foreach (var saveObject in saveObjectsInCategory)
                     {
-                        if (saveObject.GetType().FullName == DemoSaveObjectFullName)
-                            continue;
+                        if (saveObject.GetType().FullName == DemoSaveObjectFullName) continue;
                         DrawSaveObjectEditor(saveObject);
                     }
                 }
