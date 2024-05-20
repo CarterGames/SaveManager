@@ -76,7 +76,7 @@ namespace CarterGames.Assets.SaveManager
         private void OnApplicationFocus(bool hasFocus)
         {
 #if !UNITY_EDITOR
-            if (!AssetAccessor.GetAsset<SettingsAssetRuntime>().AutoSave) return;
+            if (!AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().AutoSave) return;
             if (hasFocus) return;
             SaveManager.Save(false);
 #endif
