@@ -21,87 +21,73 @@
  * THE SOFTWARE.
  */
 
-using CarterGames.Common;
-using UnityEngine;
-using UnityEngine.Networking;
+using UnityEditor;
+using UnityEditor.PackageManager;
+using UnityEditor.PackageManager.Requests;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
     /// <summary>
-    /// Handles checking for the latest version.
+    /// A class to help redirect the user to the right update location for the asset. In theory...
     /// </summary>
-    public static class VersionChecker
+    public sealed class InstallMethodChecker : IAssetEditorInitialize
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Fields
+        |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
-        /// <summary>
-        /// The download URL for the latest version.
-        /// </summary>
-        public static string DownloadURL => VersionInfo.DownloadBaseUrl + Versions.Data.Version;
-        
-
-        /// <summary>
-        /// Gets if the latest version is this version.
-        /// </summary>
-        public static bool IsLatestVersion => Versions.Data.Match(VersionInfo.ProjectVersionNumber);
-        
-        
-        /// <summary>
-        /// Gets if the version here is higher that the latest version.
-        /// </summary>
-        public static bool IsNewerVersion => Versions.Data.IsHigherVersion(VersionInfo.ProjectVersionNumber);
-        
-        
-        /// <summary>
-        /// Gets the version data downloaded.
-        /// </summary>
-        public static VersionPacket Versions { get; private set; }
+        private static ListRequest PackageManifestRequest { get; set; }
 
         
-        /// <summary>
-        /// The latest version string.
-        /// </summary>
-        public static string LatestVersionNumberString => Versions.Data.Version;
+        private static bool HasChecked
+        {
+            get => SessionState.GetBool("VersionValidation_InstallMethod_Checked", false);
+            set => SessionState.SetBool("VersionValidation_InstallMethod_Checked", value);
+        }
+        
+        
+        public static bool IsPackageInstalled
+        {
+            get => SessionState.GetBool("VersionValidation_InstallMethod_IsPackageManager", false);
+            set => SessionState.SetBool("VersionValidation_InstallMethod_IsPackageManager", value);
+        }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Events
+        |   IAssetEditorInitialize Implementation
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
-        /// <summary>
-        /// Raises when the data has been downloaded.
-        /// </summary>
-        public static Evt ResponseReceived { get; private set; } = new Evt();
+        public int InitializeOrder { get; }
+        
+        
+        public void OnEditorInitialized()
+        {
+            if (HasChecked) return;
+            
+            PackageManifestRequest = Client.List();
+            
+            EditorApplication.update -= OnPackageManagerGetResolved;
+            EditorApplication.update += OnPackageManagerGetResolved;
+        }
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
-        /// <summary>
-        /// Gets the latest version data when called.
-        /// </summary>
-        public static void GetLatestVersions()
+        private static void OnPackageManagerGetResolved()
         {
-            RequestLatestVersionData();
-        }
+            if (!PackageManifestRequest.IsCompleted) return;
+            
+            EditorApplication.update -= OnPackageManagerGetResolved;
 
+            if (PackageManifestRequest.Status != StatusCode.Success) return;
 
-        /// <summary>
-        /// Makes the web request & handles the response.
-        /// </summary>
-        private static void RequestLatestVersionData()
-        {
-            var request = UnityWebRequest.Get(VersionInfo.ValidationUrl);
-            var async = request.SendWebRequest();
+            HasChecked = true;
 
-            async.completed += (a) =>
+            foreach (var result in PackageManifestRequest.Result)
             {
-                if (request.result != UnityWebRequest.Result.Success) return;
-
-                Versions = JsonUtility.FromJson<VersionPacket>(request.downloadHandler.text);
-                ResponseReceived.Raise();
-            };
+                if (result.packageId.Equals("games.carter.thecart")) continue;
+                IsPackageInstalled = true;
+            }
         }
     }
 }
