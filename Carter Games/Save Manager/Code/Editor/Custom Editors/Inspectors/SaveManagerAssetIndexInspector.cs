@@ -95,7 +95,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             EditorGUI.indentLevel++;
             
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
-            EditorGUILayout.PropertyField(serializedObject.Fp("assets"));
+            EditorGUILayout.PropertyField(serializedObject.Fp("assets").Fpr("list"));
             EditorGUI.EndDisabledGroup();
             
             EditorGUI.indentLevel--;
