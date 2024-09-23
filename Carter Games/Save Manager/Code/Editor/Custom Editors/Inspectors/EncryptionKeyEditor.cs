@@ -111,6 +111,10 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             GUILayout.Space(2.5f);
             EditorGUILayout.EndVertical();
+            
+            
+            
+            base.OnInspectorGUI();
         }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────

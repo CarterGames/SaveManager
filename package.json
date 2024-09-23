@@ -1,0 +1,15 @@
+{
+  "name": "games.carter.savemanager",
+  "version": "2.2.0",
+  "displayName": "Save Manager",
+  "description": "A free, scriptable object based, local save system for Unity. Works on all platforms using standard JSON Utility.",
+  "unity": "2020.3",
+  "unityRelease": "0f1",
+  "documentationUrl": "https://carter.games/savemanager",
+  "licensesUrl": "https://github.com/CarterGames/SaveManager/blob/main/LICENSE",
+  "author": {
+    "name": "Carter Games",
+    "email": "hello@carter.games",
+    "url": "https://carter.games/savemanager"
+  }
+}

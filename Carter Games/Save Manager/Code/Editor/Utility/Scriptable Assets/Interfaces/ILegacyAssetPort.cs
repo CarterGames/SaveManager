@@ -21,37 +21,15 @@
  * THE SOFTWARE.
  */
 
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace CarterGames.Assets.SaveManager.Editor
 {
-    [Serializable]
-    [CreateAssetMenu(fileName = "Save Profile Store", menuName = "Carter Games/Save Manager/Save Profile Store", order = 6)]
-    public sealed class SaveProfilesStore : SaveManagerAsset
-    { 
-        [SerializeField] private List<TextAsset> profiles; 
-        
-        
-        public List<TextAsset> Data
-        {
-            get => profiles;
-            set => profiles = value;
-        }
-
-
-        public void AddProfile(TextAsset saveData)
-        {
-            profiles ??= new List<TextAsset>();
-            profiles.Add(saveData);
-        }
-
-        
-        public void RemoveProfile(TextAsset profile)
-        {
-            if (!profiles.Contains(profile)) return;
-            profiles.Remove(profile);
-        }
-    }
+	/// <summary>
+	/// Implement to port from an older asset setup to a newer one.
+	/// </summary>
+	public interface ILegacyAssetPort
+	{
+		string LegacyPath { get; }
+		bool CanPort { get; }
+		void PortAsset();
+	}
 }

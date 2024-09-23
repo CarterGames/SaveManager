@@ -199,7 +199,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             // Null Data
             if (data == null)
             {
-                SmLog.Normal("No data found in the profile, so nothing was loaded.");
+                SaveManagerLogger.Log("No data found in the profile, so nothing was loaded.");
                 return;
             }
             
@@ -214,7 +214,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             }
             catch (Exception e)
             {
-                SmLog.Error($"Failed to read to {UtilEditor.AssetGlobalRuntimeSettings.SavePath} with the exception: {e}");
+                SaveManagerLogger.LogError($"Failed to read to {UtilEditor.AssetGlobalRuntimeSettings.SavePath} with the exception: {e}");
                 return;
             }
 

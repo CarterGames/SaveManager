@@ -21,7 +21,10 @@
  * THE SOFTWARE.
  */
 
-using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using CarterGames.Common;
 using UnityEditor;
 
 namespace CarterGames.Assets.SaveManager.Editor
@@ -34,39 +37,16 @@ namespace CarterGames.Assets.SaveManager.Editor
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        
-        // Asset Paths
-        /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        private static readonly string AssetIndexPath = $"{AssetBasePath}/Carter Games/{AssetName}/Resources/Asset Index.asset";
-        private static readonly string SettingsAssetPath = $"{AssetBasePath}/Carter Games/{AssetName}/Data/Runtime Settings.asset";
-        private static readonly string CapturesObjectAssetPath = $"{AssetBasePath}/Carter Games/{AssetName}/Data/Save Profiles Container.asset";
-        private static readonly string SaveDataPath = $"{AssetBasePath}/Carter Games/{AssetName}/Data/Save Data.asset";
-        private static readonly string EncryptionKeyAssetPath = $"{AssetBasePath}/Carter Games/{AssetName}/Data/Encryption Key.asset";
-        
 
-        // Asset Filters
-        /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        private static readonly string RuntimeSettingsFilter = $"t:{typeof(AssetGlobalRuntimeSettings).FullName}";
-        private static readonly string AssetIndexFilter = $"t:{typeof(AssetIndex).FullName}";
-        private static readonly string SaveProfilesStoreFilter = $"t:{typeof(SaveProfilesStore).FullName}";
-        private static readonly string SaveDataFilter = $"t:{typeof(SaveData).FullName}";
-        private static readonly string SaveDataEncryptionKeyFilter = $"t:{typeof(EncryptionKeyAsset).FullName}";
-        
-        
-        // Asset Caches
-        /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        private static AssetGlobalRuntimeSettings assetGlobalRuntimeSettingsCache;
-        private static AssetIndex assetIndexCache;
-        private static SaveProfilesStore saveProfilesStoreCache;
-        private static SaveData saveDataCache;
-        private static EncryptionKeyAsset encryptionKeyAssetCache;
-        
-        
-        // SerializedObject Caches
-        /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        private static SerializedObject settingsAssetRuntimeObjectCache;
-        private static SerializedObject settingsAssetEditorObjectCache;
+        private static readonly string Root = $"Assets/Plugins/Carter Games/";
+        private static readonly string PathResources = $"{AssetName}/Resources/";
+        private static readonly string PathData = $"{AssetName}/Data/";
 
+        public static readonly string FullPathResources = $"{Root}{PathResources}";
+        public static readonly string FullPathData = $"{Root}{PathData}";
+        
+        private static Dictionary<Type, IScriptableAssetDef<SaveManagerAsset>> cacheLookup;
+        
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -84,64 +64,46 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// Gets the asset name stored in the file util editor class.
         /// </summary>
         private static string AssetName => FileEditorUtil.AssetName;
-
         
-        // Asset Properties
+        
+        // Asset References
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
-        /// <summary>
-        /// The asset index for the asset.
-        /// </summary>
-        public static AssetIndex AssetIndex =>
-            FileEditorUtil.CreateSoGetOrAssignAssetCache(ref assetIndexCache, AssetIndexFilter, AssetIndexPath, AssetName, $"{AssetName}/Resources/Asset Index.asset");
-        
         
         /// <summary>
-        /// The runtime settings for the asset.
+        /// Handles a lookup of all the assets in the project.
         /// </summary>
-        public static AssetGlobalRuntimeSettings RuntimeAssetGlobalRuntimeSettings =>
-            FileEditorUtil.CreateSoGetOrAssignAssetCache(ref assetGlobalRuntimeSettingsCache, RuntimeSettingsFilter, SettingsAssetPath, AssetName, $"{AssetName}/Data/Runtime Settings.asset");
-        
-        
-        /// <summary>
-        /// The save profiles for the asset.
-        /// </summary>
-        public static SaveProfilesStore SaveProfiles =>
-            FileEditorUtil.CreateSoGetOrAssignAssetCache(ref saveProfilesStoreCache, SaveProfilesStoreFilter, CapturesObjectAssetPath, AssetName, $"{AssetName}/Data/Save Profiles Container.asset");
+        private static Dictionary<Type, IScriptableAssetDef<SaveManagerAsset>> AssetLookup
+        {
+            get
+            {
+                if (cacheLookup != null)
+                {
+                    if (cacheLookup.Count > 0) return cacheLookup;
+                }
+                
+                cacheLookup = new Dictionary<Type, IScriptableAssetDef<SaveManagerAsset>>();
 
+                foreach (var elly in AssemblyHelper.GetClassesOfType<IScriptableAssetDef<SaveManagerAsset>>())
+                {
+                    cacheLookup.Add(elly.AssetType, elly);
+                }
+                
+                return cacheLookup;
+            }   
+        }
         
-        /// <summary>
-        /// The save data for the asset.
-        /// </summary>
-        public static SaveData SaveData =>
-            FileEditorUtil.CreateSoGetOrAssignAssetCache(ref saveDataCache, SaveDataFilter, SaveDataPath, AssetName, $"{AssetName}/Data/Save Data.asset");
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Methods
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
-        
-        /// <summary>
-        /// The encryption key asset for the asset.
-        /// </summary>
-        public static EncryptionKeyAsset EncryptionKey =>
-            FileEditorUtil.CreateSoGetOrAssignAssetCache(ref encryptionKeyAssetCache, SaveDataEncryptionKeyFilter, EncryptionKeyAssetPath, AssetName, $"{AssetName}/Data/Encryption Key.asset");
-        
-        // Object Properties
-        /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        
-        /// <summary>
-        /// The runtime SerializedObject for the asset.
-        /// </summary>
-        public static SerializedObject RuntimeSettingsObject =>
-            FileEditorUtil.CreateGetOrAssignSerializedObjectCache(ref settingsAssetRuntimeObjectCache, RuntimeAssetGlobalRuntimeSettings);
-        
-        // Assets Initialized Check
-        /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-
         /// <summary>
         /// Gets if all the assets needed for the asset to function are in the project at the expected paths.
         /// </summary>
-        public static bool HasAllAssets =>
-            File.Exists(AssetIndexPath) && File.Exists(SettingsAssetPath) &&
-            File.Exists(EncryptionKeyAssetPath) &&
-            File.Exists(SaveDataPath) && File.Exists(CapturesObjectAssetPath);
+        public static bool HasAllAssets()
+        {
+            return AssetLookup.All(t => HasAsset(t.Value));
+        }
         
         
         /// <summary>
@@ -149,56 +111,94 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         public static void TryCreateAssets()
         {
-            if (assetIndexCache == null)
+            foreach (var entry in AssetLookup)
             {
-                FileEditorUtil.CreateSoGetOrAssignAssetCache(
-                    ref assetIndexCache, 
-                    AssetIndexFilter, 
-                    AssetIndexPath,
-                    AssetName, $"{AssetName}/Resources/Asset Index.asset");
+                entry.Value.TryCreate();
+            }
+        }
+        
+
+        /// <summary>
+        /// Gets a scriptable asset definition.
+        /// </summary>
+        /// <typeparam name="T">The type of the scriptable asset.</typeparam>
+        /// <returns>The asset definition found.</returns>
+        public static IScriptableAssetDef<T> GetAssetDef<T>() where T : SaveManagerAsset
+        {
+            if (AssetLookup.ContainsKey(typeof(T)))
+            {
+                return (IScriptableAssetDef<T>) AssetLookup[typeof(T)];
             }
 
-            
-            if (assetGlobalRuntimeSettingsCache == null)
-            {
-                FileEditorUtil.CreateSoGetOrAssignAssetCache(
-                    ref assetGlobalRuntimeSettingsCache, 
-                    RuntimeSettingsFilter, 
-                    SettingsAssetPath, 
-                    AssetName, $"{AssetName}/Data/Runtime Settings.asset");
-            }
-            
-            
-            if (saveProfilesStoreCache == null)
-            {
-                FileEditorUtil.CreateSoGetOrAssignAssetCache(
-                    ref saveProfilesStoreCache,
-                    SaveProfilesStoreFilter,
-                    CapturesObjectAssetPath,
-                    AssetName, $"{AssetName}/Data/Save Profiles Container.asset");
-            }
-            
-            
-            if (encryptionKeyAssetCache == null)
-            {
-                FileEditorUtil.CreateSoGetOrAssignAssetCache(
-                    ref encryptionKeyAssetCache, 
-                    SaveDataEncryptionKeyFilter, 
-                    EncryptionKeyAssetPath, 
-                    AssetName, $"{AssetName}/Data/Encryption Key.asset");
+            return null;
+        }
+        
+        
+        /// <summary>
+        /// Tries to get a scriptable asset definition.
+        /// </summary>
+        /// <param name="asset">The asset found.</param>
+        /// <typeparam name="T">The type of the scriptable asset.</typeparam>
+        /// <returns>If it was successful or not.</returns>
+        public static bool TryGetAssetDef<T>(out IScriptableAssetDef<T> asset) where T : SaveManagerAsset
+        {
+            asset = GetAssetDef<T>();
+            return asset != null;
+        }
+        
 
-            }
-            
-            
-            if (saveDataCache == null)
-            {
-                FileEditorUtil.CreateSoGetOrAssignAssetCache(
-                    ref saveDataCache,
-                    SaveDataFilter,
-                    SaveDataPath,
-                    AssetName, $"{AssetName}/Data/Save Data.asset");
+        /// <summary>
+        /// Gets if an asset if currently in the project.
+        /// </summary>
+        /// <param name="def">The definition to check</param>
+        /// <typeparam name="T">The type of the scriptable asset.</typeparam>
+        /// <returns>If the asset exists.</returns>
+        private static bool HasAsset<T>(IScriptableAssetDef<T> def) where T : SaveManagerAsset
+        {
+            return AssetDatabaseHelper.FileIsInProject<T>(def.DataAssetPath);
+        }
+        
+        
+        /// <summary>
+        /// Tries to create the asset requested.
+        /// </summary>
+        /// <param name="def">The definition to use.</param>
+        /// <param name="cache">The cache for the definition.</param>
+        /// <typeparam name="T">The type of the scriptable asset.</typeparam>
+        public static void TryCreateAsset<T>(IScriptableAssetDef<T> def, ref T cache) where T : SaveManagerAsset
+        {
+            if (cache != null) return;
+            GetOrCreateAsset(def, ref cache);
+        }
+        
 
-            }
+        /// <summary>
+        /// Gets the existing reference or creates on if its not in the project currently.
+        /// </summary>
+        /// <param name="def">The definition to use.</param>
+        /// <param name="cache">The cache for the definition.</param>
+        /// <typeparam name="T">The type of the scriptable asset.</typeparam>
+        /// <returns>The asset reference.</returns>
+        public static T GetOrCreateAsset<T>(IScriptableAssetDef<T> def, ref T cache) where T : SaveManagerAsset
+        {
+            return FileEditorUtil.CreateSoGetOrAssignAssetCache(
+                ref cache, 
+                def.DataAssetFilter, 
+                def.DataAssetPath, 
+                AssetName, $"{PathData}{def.DataAssetFileName}");
+        }
+
+        
+        /// <summary>
+        /// Gets the existing reference or creates on if its not in the project currently.
+        /// </summary>
+        /// <param name="def">The definition to use.</param>
+        /// <param name="objCache">The cache for the definition.</param>
+        /// <typeparam name="T">The type of the scriptable asset.</typeparam>
+        /// <returns>The object reference</returns>
+        public static SerializedObject GetOrCreateAssetObject<T>(IScriptableAssetDef<T> def, ref SerializedObject objCache) where T : SaveManagerAsset
+        {
+            return FileEditorUtil.CreateGetOrAssignSerializedObjectCache(ref objCache, def.AssetRef);
         }
     }
 }

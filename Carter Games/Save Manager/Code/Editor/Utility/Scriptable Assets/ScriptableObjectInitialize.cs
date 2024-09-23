@@ -26,7 +26,7 @@ namespace CarterGames.Assets.SaveManager.Editor
     /// <summary>
     /// Handles any logic for generating/updating the scriptable objects for the asset where needed.
     /// </summary>
-    public class ScriptableObjectInitialize : IAssetEditorInitialize, IAssetEditorReload
+    public sealed class ScriptableObjectInitialize : IAssetEditorInitialize, IAssetEditorReload
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   IAssetEditorInitialize
@@ -43,7 +43,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         public void OnEditorInitialized()
         {
-            if (ScriptableRef.HasAllAssets) return;
+            if (ScriptableRef.HasAllAssets()) return;
             ScriptableRef.TryCreateAssets();
         }
 
@@ -56,7 +56,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         public void OnEditorReloaded()
         {
-            if (ScriptableRef.HasAllAssets) return;
+            if (ScriptableRef.HasAllAssets()) return;
             ScriptableRef.TryCreateAssets();
         }
     }

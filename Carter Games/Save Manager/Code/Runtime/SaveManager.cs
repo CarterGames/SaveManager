@@ -251,7 +251,7 @@ namespace CarterGames.Assets.SaveManager
                 }
                 catch (Exception e)
                 {
-                    SmLog.Error($"Failed to write to {SavePath} without encryption with the exception: {e}");
+                    SaveManagerLogger.LogError($"Failed to write to {SavePath} without encryption with the exception: {e}");
                 }
             }
             else
@@ -262,7 +262,7 @@ namespace CarterGames.Assets.SaveManager
                 }
                 catch (Exception e)
                 {
-                    SmLog.Error($"Failed to write to {SavePath} with the exception: {e}");
+                    SaveManagerLogger.LogError($"Failed to write to {SavePath} with the exception: {e}");
                 }
             }
             

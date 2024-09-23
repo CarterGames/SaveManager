@@ -40,7 +40,7 @@ namespace CarterGames.Assets.SaveManager.Editor
 
         // Paths
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        public const string SettingsWindowPath = "Project/Carter Games/Save Manager";
+        public const string SettingsWindowPath = "Carter Games/Assets/Save Manager";
         public static readonly string CapturesSavePath = $"{AssetBasePath}/Carter Games/Save Manager/Data/Save Profiles/";
 
 
@@ -199,7 +199,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             get
             {
                 AssetIndexHandler.UpdateIndex();
-                return ScriptableRef.HasAllAssets;
+                return ScriptableRef.HasAllAssets();
             }
         }
 
@@ -207,37 +207,31 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// Gets/Sets the save manager settings asset.
         /// </summary>
-        public static AssetGlobalRuntimeSettings AssetGlobalRuntimeSettings => ScriptableRef.RuntimeAssetGlobalRuntimeSettings;
-
-
-        /// <summary>
-        /// Gets/Sets the save manager editor settings asset.
-        /// </summary>
-        public static SerializedObject SettingsObject => ScriptableRef.RuntimeSettingsObject;
+        public static AssetGlobalRuntimeSettings AssetGlobalRuntimeSettings => ScriptableRef.GetAssetDef<AssetGlobalRuntimeSettings>().AssetRef;
         
         
         /// <summary>
         /// Gets/Sets the save manager save profiles asset.
         /// </summary>
-        public static SaveProfilesStore SaveProfiles => ScriptableRef.SaveProfiles;
+        public static SaveProfilesStore SaveProfiles => ScriptableRef.GetAssetDef<SaveProfilesStore>().AssetRef;
 
 
         /// <summary>
         /// Gets/Sets the save manager save data asset.
         /// </summary>
-        public static SaveData SaveData => ScriptableRef.SaveData;
+        public static SaveData SaveData => ScriptableRef.GetAssetDef<SaveData>().AssetRef;
 
 
         /// <summary>
         /// Gets/Sets the save manager save data asset.
         /// </summary>
-        public static EncryptionKeyAsset EncryptionKeyAsset => ScriptableRef.EncryptionKey;
+        public static EncryptionKeyAsset EncryptionKeyAsset => ScriptableRef.GetAssetDef<EncryptionKeyAsset>().AssetRef;
         
         
         /// <summary>
         /// Gets/Sets the save manager save data asset.
         /// </summary>
-        public static AssetIndex AssetIndex => ScriptableRef.AssetIndex;
+        public static AssetIndex AssetIndex => ScriptableRef.GetAssetDef<AssetIndex>().AssetRef;
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Draw Methods

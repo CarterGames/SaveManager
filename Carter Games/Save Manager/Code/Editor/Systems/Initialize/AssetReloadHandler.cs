@@ -21,6 +21,7 @@
  * THE SOFTWARE.
  */
 
+using System.Linq;
 using System.Threading.Tasks;
 using CarterGames.Common;
 using UnityEditor;
@@ -69,7 +70,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         private static async void CallListeners()
         {
-            var reloadClasses = InterfaceHelper.GetAllInterfacesInstancesOfType<IAssetEditorReload>();
+            var reloadClasses = AssemblyHelper.GetClassesOfType<IAssetEditorReload>().ToArray();
             
             if (reloadClasses.Length > 0)
             {

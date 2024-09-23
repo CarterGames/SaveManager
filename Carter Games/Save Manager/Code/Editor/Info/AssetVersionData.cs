@@ -21,24 +21,25 @@
  * THE SOFTWARE.
  */
 
-using System;
-using System.Linq;
-
 namespace CarterGames.Assets.SaveManager.Editor
 {
-    public static class InterfaceHelper
+    /// <summary>
+    /// Contains details for the asset.
+    /// </summary>
+    public static class AssetVersionData
     {
         /// <summary>
-        /// Gets all the interface implementations and returns the result (Editor Only)
+        /// The version number of the asset.
         /// </summary>
-        /// <returns>An Array of the interface type</returns>
-        public static T[] GetAllInterfacesInstancesOfType<T>()
-        {
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(x => x.GetTypes())
-                .Where(x => x.IsClass && typeof(T).IsAssignableFrom(x));
-
-            return types.Select(type => (T)Activator.CreateInstance(type)).ToArray();
-        }
+        public static string VersionNumber => "2.2.0";
+        
+        
+        /// <summary>
+        /// The date this release of the asset was submitted for release.
+        /// </summary>
+        /// <remarks>
+        /// Asset owner is in the UK, so its D/M/Y format.
+        /// </remarks>
+        public static string ReleaseDate => "2024/09/21";
     }
 }

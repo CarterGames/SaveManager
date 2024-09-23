@@ -21,25 +21,23 @@
  * THE SOFTWARE.
  */
 
+using System;
+using UnityEditor;
+
 namespace CarterGames.Assets.SaveManager.Editor
 {
-    /// <summary>
-    /// Contains details for the asset.
-    /// </summary>
-    public static class AssetVersionData
-    {
-        /// <summary>
-        /// The version number of the asset.
-        /// </summary>
-        public static string VersionNumber => "2.1.8";
-        
-        
-        /// <summary>
-        /// The date this release of the asset was submitted for release.
-        /// </summary>
-        /// <remarks>
-        /// Asset owner is in the UK, so its D/M/Y format.
-        /// </remarks>
-        public static string ReleaseDate => "20/05/2024";
-    }
+	/// <summary>
+	/// Implement to define a scriptable asset in the asset.
+	/// </summary>
+	/// <typeparam name="T">The type of the asset itself.</typeparam>
+	public interface IScriptableAssetDef<out T> where T : SaveManagerAsset
+	{
+		Type AssetType { get; }
+		string DataAssetFileName { get; }
+		string DataAssetFilter { get; }
+		string DataAssetPath { get; }
+		T AssetRef { get; }
+		SerializedObject ObjectRef { get; }
+		void TryCreate();
+	}
 }
