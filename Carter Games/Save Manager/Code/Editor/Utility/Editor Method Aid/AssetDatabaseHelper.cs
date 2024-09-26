@@ -118,7 +118,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 return true;
             }
 
-            result = assets.Where(t => AssetDatabase.GUIDToAssetPath(t) != expectedPath);
+            result = assets.Where(t => AssetDatabase.GUIDToAssetPath(t) != expectedPath).Select(AssetDatabase.GUIDToAssetPath);
             return true;
         }
     }

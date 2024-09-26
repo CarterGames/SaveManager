@@ -61,17 +61,21 @@ namespace CarterGames.Assets.SaveManager.Editor
 		{
 			TryCreate();
 			
-			var assets = AssetDatabaseHelper.GetAssetPathNotAtPath<AssetIndex>(DataAssetPath).ToArray();
+			var assets = AssetDatabaseHelper.GetAssetPathNotAtPath<SaveProfilesStore>(DataAssetPath).ToArray();
 
 			if (assets.Length <= 0) return;
 
-			SerializedPropertyHelper.TransferProperties(ObjectRef,
-				new SerializedObject(AssetDatabase.LoadAssetAtPath(assets[0], typeof(SaveProfilesStore))));
+			SerializedPropertyHelper.TransferProperties(
+				new SerializedObject(AssetDatabase.LoadAssetAtPath(assets[0], typeof(SaveProfilesStore))), ObjectRef);
 
 			ObjectRef.ApplyModifiedProperties();
 			ObjectRef.Update();
 
-			AssetDatabase.DeleteAsset(assets[0]);
+			foreach (var entry in assets)
+			{
+				AssetDatabase.DeleteAsset(entry);
+			}
+			
 			AssetDatabase.SaveAssets();
 		}
 	}
