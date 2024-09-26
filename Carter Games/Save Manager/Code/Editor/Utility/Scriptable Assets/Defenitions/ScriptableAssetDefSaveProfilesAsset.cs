@@ -23,6 +23,7 @@
 
 
 using System;
+using System.Linq;
 using UnityEditor;
 
 namespace CarterGames.Assets.SaveManager.Editor
@@ -54,21 +55,23 @@ namespace CarterGames.Assets.SaveManager.Editor
 		// ILegacyAssetPort Implementation
 		/* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 		
-		public string LegacyPath => $"{FileEditorUtil.AssetBasePath}/Carter Games/{FileEditorUtil.AssetName}/Data/Save Profiles Container.asset";
-		
-		public bool CanPort => AssetDatabaseHelper.FileIsInProject<SaveProfilesStore>(LegacyPath);
+		public bool CanPort => AssetDatabaseHelper.TypeExistsElsewhere<SaveProfilesStore>(DataAssetPath);
 		
 		public void PortAsset()
 		{
 			TryCreate();
 			
+			var assets = AssetDatabaseHelper.GetAssetPathNotAtPath<AssetIndex>(DataAssetPath).ToArray();
+
+			if (assets.Length <= 0) return;
+
 			SerializedPropertyHelper.TransferProperties(ObjectRef,
-				new SerializedObject(AssetDatabase.LoadAssetAtPath(LegacyPath, typeof(SaveProfilesStore))));
+				new SerializedObject(AssetDatabase.LoadAssetAtPath(assets[0], typeof(SaveProfilesStore))));
 
 			ObjectRef.ApplyModifiedProperties();
 			ObjectRef.Update();
-			
-			AssetDatabase.DeleteAsset(LegacyPath);
+
+			AssetDatabase.DeleteAsset(assets[0]);
 			AssetDatabase.SaveAssets();
 		}
 	}

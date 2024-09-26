@@ -192,19 +192,6 @@ namespace CarterGames.Assets.SaveManager.Editor
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
         /// <summary>
-        /// Gets if there is a settings asset in the project.
-        /// </summary>
-        public static bool HasInitialized
-        {
-            get
-            {
-                AssetIndexHandler.UpdateIndex();
-                return ScriptableRef.HasAllAssets();
-            }
-        }
-
-
-        /// <summary>
         /// Gets/Sets the save manager settings asset.
         /// </summary>
         public static AssetGlobalRuntimeSettings AssetGlobalRuntimeSettings => ScriptableRef.GetAssetDef<AssetGlobalRuntimeSettings>().AssetRef;

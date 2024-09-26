@@ -53,18 +53,24 @@ namespace CarterGames.Assets.SaveManager.Editor
 		// ILegacyAssetPort Implementation
 		/* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 		
-		public string LegacyPath => $"{FileEditorUtil.AssetBasePath}/Carter Games/{FileEditorUtil.AssetName}/Resources/Asset Index.asset";
-		
-		public bool CanPort => AssetDatabaseHelper.FileIsInProject<AssetIndex>(LegacyPath);
+		public bool CanPort => AssetDatabaseHelper.TypeExistsElsewhere<AssetIndex>(DataAssetPath);
 		
 
 		public void PortAsset()
 		{
 			TryCreate();
+
+			var assets = AssetDatabaseHelper.GetAssetPathNotAtPath<AssetIndex>(DataAssetPath);
+
+			if (assets != null)
+			{
+				foreach (var entry in assets)
+				{
+					AssetDatabase.DeleteAsset(entry);
+				}
+			}
 			
-			AssetDatabase.DeleteAsset(LegacyPath);
 			AssetDatabase.SaveAssets();
-			
 			AssetIndexHandler.UpdateIndex();
 		}
 	}

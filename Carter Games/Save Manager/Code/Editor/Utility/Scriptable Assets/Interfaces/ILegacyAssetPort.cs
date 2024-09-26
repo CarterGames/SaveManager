@@ -28,7 +28,6 @@ namespace CarterGames.Assets.SaveManager.Editor
 	/// </summary>
 	public interface ILegacyAssetPort
 	{
-		string LegacyPath { get; }
 		bool CanPort { get; }
 		void PortAsset();
 	}

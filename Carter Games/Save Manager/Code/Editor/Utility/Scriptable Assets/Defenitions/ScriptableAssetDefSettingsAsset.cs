@@ -22,6 +22,7 @@
  */
 
 using System;
+using System.Linq;
 using UnityEditor;
 
 namespace CarterGames.Assets.SaveManager.Editor
@@ -53,23 +54,24 @@ namespace CarterGames.Assets.SaveManager.Editor
 		// ILegacyAssetPort Implementation
 		/* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 		
-		public string LegacyPath => $"{FileEditorUtil.AssetBasePath}/Carter Games/{FileEditorUtil.AssetName}/Data/Runtime Settings.asset";
+		public bool CanPort => AssetDatabaseHelper.TypeExistsElsewhere<AssetGlobalRuntimeSettings>(DataAssetPath);
 		
-		public bool CanPort => AssetDatabaseHelper.FileIsInProject<AssetGlobalRuntimeSettings>(LegacyPath);
 		
 		public void PortAsset()
 		{
 			TryCreate();
 			
-			SerializedPropertyHelper.TransferProperties(ObjectRef,
-				new SerializedObject(AssetDatabase.LoadAssetAtPath(LegacyPath, typeof(AssetGlobalRuntimeSettings))));
+			var assets = AssetDatabaseHelper.GetAssetPathNotAtPath<AssetIndex>(DataAssetPath).ToArray();
 
-			ObjectRef.Fp("saveDataAsset").objectReferenceValue = AssetRef;
-			
+			if (assets.Length <= 0) return;
+
+			SerializedPropertyHelper.TransferProperties(ObjectRef,
+				new SerializedObject(AssetDatabase.LoadAssetAtPath(assets[0], typeof(AssetGlobalRuntimeSettings))));
+
 			ObjectRef.ApplyModifiedProperties();
 			ObjectRef.Update();
-			
-			AssetDatabase.DeleteAsset(LegacyPath);
+
+			AssetDatabase.DeleteAsset(assets[0]);
 			AssetDatabase.SaveAssets();
 		}
 	}

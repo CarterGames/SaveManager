@@ -22,6 +22,7 @@
  */
 
 using System;
+using System.Linq;
 using UnityEditor;
 
 namespace CarterGames.Assets.SaveManager.Editor
@@ -53,23 +54,24 @@ namespace CarterGames.Assets.SaveManager.Editor
 		// ILegacyAssetPort Implementation
 		/* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 		
-		public string LegacyPath => $"{FileEditorUtil.AssetBasePath}/Carter Games/{FileEditorUtil.AssetName}/Data/Encryption Key.asset";
+		public bool CanPort => AssetDatabaseHelper.TypeExistsElsewhere<EncryptionKeyAsset>(DataAssetPath);
 
-		
-		public bool CanPort => AssetDatabaseHelper.FileIsInProject<EncryptionKeyAsset>(LegacyPath);
-		
 
 		public void PortAsset()
 		{
 			TryCreate();
 
+			var assets = AssetDatabaseHelper.GetAssetPathNotAtPath<AssetIndex>(DataAssetPath).ToArray();
+
+			if (assets.Length <= 0) return;
+
 			SerializedPropertyHelper.TransferProperties(ObjectRef,
-				new SerializedObject(AssetDatabase.LoadAssetAtPath(LegacyPath, typeof(EncryptionKeyAsset))));
-			
+				new SerializedObject(AssetDatabase.LoadAssetAtPath(assets[0], typeof(EncryptionKeyAsset))));
+
 			ObjectRef.ApplyModifiedProperties();
 			ObjectRef.Update();
-			
-			AssetDatabase.DeleteAsset(LegacyPath);
+
+			AssetDatabase.DeleteAsset(assets[0]);
 			AssetDatabase.SaveAssets();
 		}
 	}

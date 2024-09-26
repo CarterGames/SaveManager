@@ -21,6 +21,8 @@
  * THE SOFTWARE.
  */
 
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 
 namespace CarterGames.Assets.SaveManager.Editor
@@ -33,10 +35,91 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <param name="path">The path top find.</param>
         /// <typeparam name="T">The type to try and get.</typeparam>
         /// <returns>If the asset exists in the asset database.</returns>
-        public static bool FileIsInProject<T>(string path)
+        public static bool FileIsInProject<T>(string path) where T : SaveManagerAsset
         {
             if (string.IsNullOrEmpty(path)) return false;
             return AssetDatabase.LoadAssetAtPath(path, typeof(T)) != null;
+        }
+        
+        
+        
+        /// <summary>
+        /// Gets the string paths for any asset of the type not in the expected location.
+        /// </summary>
+        /// <param name="expectedPath">The path the asset should be at.</param>
+        /// <typeparam name="T">The type to check for.</typeparam>
+        /// <returns>The paths for any asset not where it should be.</returns>
+        public static IEnumerable<string> GetAssetPathNotAtPath<T>(string expectedPath) where T : SaveManagerAsset
+        {
+            if (TryGetPathsToAssetsNotAtPath<T>(expectedPath, out var result))
+            {
+                return result;
+            }
+
+            return null;
+        }
+        
+        
+        /// <summary>
+        /// Returns if an instance of the asset type is not where it should be.
+        /// </summary>
+        /// <param name="expectedPath">The path it should be at.</param>
+        /// <typeparam name="T">The type to try and get.</typeparam>
+        /// <returns>If the asset correctly exists in the asset database.</returns>
+        public static bool TypeExistsElsewhere<T>(string expectedPath) where T : SaveManagerAsset
+        {
+            return TryGetTypeNotAtPath<T>(expectedPath, out _);
+        }
+
+
+        /// <summary>
+        /// A helper method to get assets of a type not at the expected path.
+        /// </summary>
+        /// <param name="expectedPath">The path the asset should be at.</param>
+        /// <param name="result">The result of the operation.</param>
+        /// <typeparam name="T">The type to try and get.</typeparam>
+        /// <returns>If it was successful at finding any assets at the wrong path.</returns>
+        private static bool TryGetTypeNotAtPath<T>(string expectedPath, out IEnumerable<T> result) where T : SaveManagerAsset
+        {
+            if (!TryGetPathsToAssetsNotAtPath<T>(expectedPath, out var paths))
+            {
+                result = null;
+                return false;
+            }
+            
+            result = paths.Select(t => AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(t)));
+            return true;
+        }
+        
+        
+        /// <summary>
+        /// A helper method to get paths of any asset of a type not at the expected path.
+        /// </summary>
+        /// <param name="expectedPath">The path the asset should be at.</param>
+        /// <param name="result">The result of the operation.</param>
+        /// <typeparam name="T">The type to try and get.</typeparam>
+        /// <returns>If it was successful at finding any assets at the wrong path.</returns>
+        private static bool TryGetPathsToAssetsNotAtPath<T>(string expectedPath, out IEnumerable<string> result) where T : SaveManagerAsset
+        {
+            result = null;
+            
+            if (string.IsNullOrEmpty(expectedPath)) return false;
+            var assets = AssetDatabase.FindAssets($"t:{typeof(T).FullName}");
+
+            if (assets.Length <= 1)
+            {
+                if (AssetDatabase.GUIDToAssetPath(assets.First()) == expectedPath) return false;
+                
+                result = new string[1]
+                {
+                    AssetDatabase.GUIDToAssetPath(assets.First()) 
+                };
+                
+                return true;
+            }
+
+            result = assets.Where(t => AssetDatabase.GUIDToAssetPath(t) != expectedPath);
+            return true;
         }
     }
 }
