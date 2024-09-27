@@ -12,13 +12,13 @@
 ![Static Badge](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 <br><br>
 ## Key Features
-✔️ Save editor window for edit the save in edit mode<br>
+✔️ Save editor window for editing the save data in edit mode<br>
 ✔️ Save profiles to load save states in the editor<br>
 ✔️ Modular save setup<br>
-✔️ Save Encryption avalible with AES Encryption <br>
+✔️ Save Encryption available with AES Encryption <br>
 ✔️ Auto Save & Load Options<br>
 ✔️ WebGL support!<br>
-✔️ Custom savable dictionary type incluided.<br>
+✔️ Custom savable dictionary type included.<br>
 ✔️ Regularly updated and maintained with ❤️
 <br><br>
 ## How To Install
@@ -44,10 +44,10 @@ Either download and import the package from the releases section or the <a href=
 The asset is now installed, just make your save objects and save values to start saving elements of your game. You can see how to do this <a href="https://carter.games/docs/savemanager-2x/how-to-make-save-data/">here</a>. You can manually save the game by calling SaveManager.Save() & SaveManager.Load() respectively.
 <br><br>
 ## Documentation
-You can access a online of the documentation here: <a href="https://carter.games/savemanager">Online Documentation</a>. A offline copy if provided with the package and asset if needed. 
+You can access a online of the documentation here: <a href="https://carter.games/savemanager">Online Documentation</a>. An offline copy is provided with the package and asset if needed. 
 <br><br>
 ## Unity Supported Versions
-The asset is developed and maintained in 2020.3.x and make use for avalible .Net updates in the version. Older versions of Unity are not supported for this asset. The asset has been tested pre-release in versions: 2020.3.0f1 & 2022.2.15f1.
+The asset is developed and maintained in 2020.3.x and make use of available .Net updates in the version. Older versions of Unity are not supported for this asset. The asset has been tested pre-release in its development version: 2020.3.0f1.
 <br><br>
 ## Authors
 - <a href="https://github.com/JonathanMCarter">Jonathan Carter</a>
