@@ -86,5 +86,30 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             return property.FindPropertyRelative(propName);
         }
+
+
+        /// <summary>
+        /// Copies data from one instance of an asset to another.
+        /// </summary>
+        /// <param name="read">The asset to read from.</param>
+        /// <param name="target">The asset to assign to.</param>
+        public static void TransferProperties(SerializedObject read, SerializedObject target)
+        {
+            var dest = target;
+            var propIterator = read.GetIterator();
+            
+            if (propIterator.NextVisible(true))
+            {
+                while (propIterator.NextVisible(true))
+                {
+                    var propElement = dest.FindProperty(propIterator.name);
+                    
+                    if (propElement == null || propElement.propertyType != propIterator.propertyType) continue;
+                    dest.CopyFromSerializedProperty(propIterator);
+                }
+            }
+            
+            dest.ApplyModifiedProperties();
+        }
     }
 }

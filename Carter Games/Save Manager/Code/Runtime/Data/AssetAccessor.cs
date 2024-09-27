@@ -36,7 +36,7 @@ namespace CarterGames.Assets.SaveManager
         |   Fields
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
      
-        private const string IndexPath = "Asset Index";
+        private const string IndexPath = "[Save Manager] Asset Index";
         
         // A cache of all the assets found...
         private static AssetIndex indexCache;

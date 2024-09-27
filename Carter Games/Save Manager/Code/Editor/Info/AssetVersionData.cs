@@ -21,37 +21,25 @@
  * THE SOFTWARE.
  */
 
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace CarterGames.Assets.SaveManager.Editor
 {
-    [Serializable]
-    [CreateAssetMenu(fileName = "Save Profile Store", menuName = "Carter Games/Save Manager/Save Profile Store", order = 6)]
-    public sealed class SaveProfilesStore : SaveManagerAsset
-    { 
-        [SerializeField] private List<TextAsset> profiles; 
+    /// <summary>
+    /// Contains details for the asset.
+    /// </summary>
+    public static class AssetVersionData
+    {
+        /// <summary>
+        /// The version number of the asset.
+        /// </summary>
+        public static string VersionNumber => "2.2.0";
         
         
-        public List<TextAsset> Data
-        {
-            get => profiles;
-            set => profiles = value;
-        }
-
-
-        public void AddProfile(TextAsset saveData)
-        {
-            profiles ??= new List<TextAsset>();
-            profiles.Add(saveData);
-        }
-
-        
-        public void RemoveProfile(TextAsset profile)
-        {
-            if (!profiles.Contains(profile)) return;
-            profiles.Remove(profile);
-        }
+        /// <summary>
+        /// The date this release of the asset was submitted for release.
+        /// </summary>
+        /// <remarks>
+        /// Asset owner is in the UK, so its D/M/Y format.
+        /// </remarks>
+        public static string ReleaseDate => "2024/09/27";
     }
 }

@@ -21,24 +21,14 @@
  * THE SOFTWARE.
  */
 
-using System;
-using System.Linq;
-
 namespace CarterGames.Assets.SaveManager.Editor
 {
-    public static class InterfaceHelper
-    {
-        /// <summary>
-        /// Gets all the interface implementations and returns the result (Editor Only)
-        /// </summary>
-        /// <returns>An Array of the interface type</returns>
-        public static T[] GetAllInterfacesInstancesOfType<T>()
-        {
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(x => x.GetTypes())
-                .Where(x => x.IsClass && typeof(T).IsAssignableFrom(x));
-
-            return types.Select(type => (T)Activator.CreateInstance(type)).ToArray();
-        }
-    }
+	/// <summary>
+	/// Implement to port from an older asset setup to a newer one.
+	/// </summary>
+	public interface ILegacyAssetPort
+	{
+		bool CanPort { get; }
+		void PortAsset();
+	}
 }

@@ -28,7 +28,7 @@ namespace CarterGames.Assets.SaveManager
     /// <summary>
     /// A logging class for messages within the asset.
     /// </summary>
-    public static class SmLog
+    public static class SaveManagerLogger
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Constants
@@ -55,7 +55,7 @@ namespace CarterGames.Assets.SaveManager
         /// Displays a normal debug message for the build versions asset...
         /// </summary>
         /// <param name="message">The message to show...</param>
-        public static void Normal(string message)
+        public static void Log(string message)
         {
             if (!ShowLogs) return;
             Debug.Log($"{LogPrefix}{message}");
@@ -66,7 +66,7 @@ namespace CarterGames.Assets.SaveManager
         /// Displays a warning debug message for the build versions asset...
         /// </summary>
         /// <param name="message">The message to show...</param>
-        public static void Warning(string message) 
+        public static void LogWarning(string message) 
         {
             if (!ShowLogs) return;
             Debug.LogWarning($"{LogPrefix}{WarningPrefix}{message}");
@@ -77,7 +77,7 @@ namespace CarterGames.Assets.SaveManager
         /// Displays a error debug message for the build versions asset...
         /// </summary>
         /// <param name="message">The message to show...</param>
-        public static void Error(string message)
+        public static void LogError(string message)
         {
             if (!ShowLogs) return;
             Debug.LogError($"{LogPrefix}{ErrorPrefix}{message}");

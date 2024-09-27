@@ -89,7 +89,7 @@ namespace CarterGames.Assets.SaveManager
                 }
                 catch (Exception e)
                 {
-                    SmLog.Error($"Failed to read to {savePath} with the exception: {e}");
+                    SaveManagerLogger.LogError($"Failed to read to {savePath} with the exception: {e}");
                     return new SerializableDictionary<string, SerializableDictionary<string, string>>();
                 }
             }
@@ -134,7 +134,7 @@ namespace CarterGames.Assets.SaveManager
                 }
                 catch (Exception e)
                 {
-                    SmLog.Error($"Failed to read to {savePath} with the exception: {e}");
+                    SaveManagerLogger.LogError($"Failed to read to {savePath} with the exception: {e}");
                     return new SerializableDictionary<string, SerializableDictionary<string, string>>();
                 }
             }
@@ -150,7 +150,7 @@ namespace CarterGames.Assets.SaveManager
         /// <param name="path">The path to create the file in.</param>
         private void CreateFile(string path)
         {
-            SmLog.Normal("File does not exist to load at the current save path.");
+            SaveManagerLogger.Log("File does not exist to load at the current save path.");
                 
             var split = path.Split('/');
             var pathBuilt = string.Empty;

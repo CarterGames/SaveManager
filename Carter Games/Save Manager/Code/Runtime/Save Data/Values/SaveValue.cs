@@ -37,10 +37,8 @@ namespace CarterGames.Assets.SaveManager
         |   Fields
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */ 
         
-        /// <summary>
-        /// The value of the save value.
-        /// </summary>
         [SerializeField] private T value;
+        [SerializeField] private T defaultValue;
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
@@ -107,6 +105,7 @@ namespace CarterGames.Assets.SaveManager
         {
             this.key = key;
             this.value = value;
+            defaultValue = value;
         }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -116,8 +115,7 @@ namespace CarterGames.Assets.SaveManager
         /// <summary>
         /// Initializes the save value for use.
         /// </summary>
-        /// <param name="defaultValue">The default value to initialise to.</param>
-        public void Initialize(T defaultValue)
+        public void Initialize()
         {
             ValueObject = defaultValue;
         }
@@ -137,9 +135,9 @@ namespace CarterGames.Assets.SaveManager
         /// <summary>
         /// Resets the save value to its default setup.
         /// </summary>
-        public override void ResetValue()
+        public override void ResetValue(bool useDefault = true)
         {
-            Value = default;
+            Value = useDefault ? defaultValue : default;
         }
     }
 }

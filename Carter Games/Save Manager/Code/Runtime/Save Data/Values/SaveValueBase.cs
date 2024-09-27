@@ -57,7 +57,7 @@ namespace CarterGames.Assets.SaveManager
         /// <summary>
         /// Reset the value on call.
         /// </summary>
-        public abstract void ResetValue();
+        public abstract void ResetValue(bool useDefault = true);
         
         
         /// <summary>

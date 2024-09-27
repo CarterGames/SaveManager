@@ -94,7 +94,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         [MenuItem("Tools/Carter Games/Save Manager/Edit Settings", priority = 0)]
         public static void OpenSettings()
         {
-            SettingsService.OpenProjectSettings("Project/Carter Games/Save Manager");
+            SettingsService.OpenProjectSettings("Carter Games/Assets/Save Manager");
         }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────

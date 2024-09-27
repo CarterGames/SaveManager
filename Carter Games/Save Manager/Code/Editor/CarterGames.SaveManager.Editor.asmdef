@@ -1,5 +1,5 @@
 {
-    "name": "CarterGames.Assets.SaveManager.Editor",
+    "name": "CarterGames.SaveManager.Editor",
     "rootNamespace": "CarterGames.Assets.SaveManager.Editor",
     "references": [
         "GUID:5fed357a0eb29414bb1d1667107777c5",

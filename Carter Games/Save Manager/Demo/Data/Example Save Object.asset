@@ -16,13 +16,17 @@ MonoBehaviour:
   saveKey: Example
   playerName:
     key: examplePlayerName
-    value: Isabelle
+    value: Emily
+    defaultValue: 
   playerHealth:
     key: examplePlayerHealth
     value: -102
+    defaultValue: 0
   playerPosition:
     key: examplePlayerPosition
     value: {x: 0, y: 0, z: 0}
+    defaultValue: {x: 0, y: 0, z: 0}
   playerShield:
     key: examplePlayerShield
     value: 4
+    defaultValue: 0
