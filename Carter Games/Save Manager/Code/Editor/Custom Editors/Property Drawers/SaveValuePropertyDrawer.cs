@@ -72,6 +72,13 @@ namespace CarterGames.Assets.SaveManager.Editor
                     SaveManager.Save();
                 }
                 
+                if (PerUserSettings.ShowDefaultValues)
+                {
+                    EditorGUI.BeginDisabledGroup(true);
+                    EditorGUILayout.PropertyField(property.Fpr("defaultValue"), new GUIContent("Default Value"));
+                    EditorGUI.EndDisabledGroup();
+                }
+                
                 EditorGUILayout.EndVertical();
                 
                 EditorGUI.indentLevel--;

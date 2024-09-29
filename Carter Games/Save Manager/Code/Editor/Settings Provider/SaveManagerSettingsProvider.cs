@@ -48,6 +48,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         private static readonly GUIContent PrettyFormat = new GUIContent("Pretty Save Formatting?","Formats the save file into a more readable format when saving.");
         private static readonly GUIContent AutoSave = new GUIContent("Auto Save?","Defines if the game saves when exiting the game.");
         private static readonly GUIContent SaveKeysToggle = new GUIContent("Show Save Keys?","Defines if the save editor shows the save key for each save value, Use this to condense the UI a tad if you need to.");
+        private static readonly GUIContent SaveDefaultsToggle = new GUIContent("Show Default Values?","Defines if the save editor shows the default value for each save value, Use this to condense the UI a tad if you need to.");
         private static readonly GUIContent Logs = new GUIContent("Show Log Messages?", "Shows log messages for any errors as well as some handy debugging information.");
 
         private const string ExplorerButtonLabel = "Open Save Path In Explorer";
@@ -238,6 +239,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 
                 // Editor Only Setting....
                 PerUserSettings.ShowSaveKeys = EditorGUILayout.Toggle(SaveKeysToggle, PerUserSettings.ShowSaveKeys);
+                PerUserSettings.ShowDefaultValues = EditorGUILayout.Toggle(SaveDefaultsToggle, PerUserSettings.ShowDefaultValues);
                 
                 // Use save categories...
                 EditorGUI.BeginChangeCheck();

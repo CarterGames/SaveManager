@@ -53,22 +53,6 @@ namespace CarterGames.Assets.SaveManager
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
         /// <summary>
-        /// Gets the default save path per platform, you cannot edit this.
-        /// </summary>
-        public string DefaultSavePath
-        {
-            get
-            {
-#if UNITY_WEBGL && !UNITY_EDITOR
-                return defaultSavePathWeb.ParseSavePath();
-#else
-                return defaultSavePath.ParseSavePath();
-#endif
-            }
-        }
-        
-
-        /// <summary>
         /// Gets the save path for the game save data.
         /// </summary>
         public string SavePath
@@ -77,6 +61,8 @@ namespace CarterGames.Assets.SaveManager
             {
 #if UNITY_WEBGL && !UNITY_EDITOR
                 return defaultSavePathWeb.ParseSavePath();
+#elif UNITY_EDITOR
+                return ("%Application.persistentDataPath%/EditorSave/save.sf").ParseSavePath();
 #else
                 return defaultSavePath.ParseSavePath();
 #endif

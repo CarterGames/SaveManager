@@ -204,8 +204,15 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
             }
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
-            GUI.backgroundColor = UtilEditor.Red;
+            GUI.backgroundColor = Color.cyan;
 
+            if (GUILayout.Button("Defaults", GUILayout.Width(75)))
+            {
+                SaveDefaultsWindow.ShowDefaultsWindow(targetSaveObject, editorsLookup[targetSaveObject].serializedObject);
+            }
+            
+            GUI.backgroundColor = UtilEditor.Red;
+            
             if (GUILayout.Button("-", GUILayout.Width(25)))
             {
                 if (EditorUtility.DisplayDialog("Reset Save Object",

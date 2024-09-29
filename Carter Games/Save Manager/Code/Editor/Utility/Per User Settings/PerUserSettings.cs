@@ -48,6 +48,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         private static readonly string SaveEditorProfileViewerId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_EditorProfileViewerShown";
         private static readonly string SaveLastProfileNameId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_LastProfileName";
         private static readonly string ShowSaveKeysId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_ShowSaveKeys";
+        private static readonly string ShowDefaultValuesId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_ShowDefaultValues";
         
         private static readonly string LastSaveObjectNameId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_LastSaveObjectName";
         private static readonly string LastSaveObjectFileNameId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_LastSaveObjectFileName";
@@ -148,6 +149,16 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             get => (bool)GetOrCreateValue<bool>(ShowSaveKeysId, SettingType.EditorPref);
             set => SetValue<bool>(ShowSaveKeysId, SettingType.EditorPref, value);
+        }
+        
+        
+        /// <summary>
+        /// Should the editor show the default values for the save values in-line in the editor.
+        /// </summary>
+        public static bool ShowDefaultValues
+        {
+            get => (bool)GetOrCreateValue<bool>(ShowDefaultValuesId, SettingType.EditorPref, false);
+            set => SetValue<bool>(ShowDefaultValuesId, SettingType.EditorPref, value);
         }
         
         

@@ -237,17 +237,21 @@ namespace CarterGames.Assets.SaveManager
             {
                 try
                 {
-                    using (var stream = new FileStream(SavePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Write))
+                    if (!File.Exists(SavePath))
                     {
-                        using (var writer = new StreamWriter(stream))
-                        {
-                            stream.SetLength(0);
-                            writer.Write(jsonString);
-                            writer.Close();
-                        }
-                        
-                        stream.Close();
+                        CreateToDirectory(SavePath);
                     }
+                    
+                    using var stream = new FileStream(SavePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+                    
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        stream.SetLength(0);
+                        writer.Write(jsonString);
+                        writer.Close();
+                    }
+                        
+                    stream.Close();
                 }
                 catch (Exception e)
                 {
@@ -269,6 +273,24 @@ namespace CarterGames.Assets.SaveManager
 #if UNITY_WEBGL && !UNITY_EDITOR
             Application.ExternalEval("_JS_FileSystem_Sync();");
 #endif
+        }
+        
+        
+        private static void CreateToDirectory(string path)
+        {
+            var currentPath = string.Empty;
+            var split = path.Split('/');
+
+            for (var i = 0; i < path.Split('/').Length; i++)
+            {
+                var element = path.Split('/')[i];
+                currentPath += element + "/";
+
+                if (i.Equals(split.Length - 1))continue;
+                if (Directory.Exists(currentPath))continue;
+                
+                Directory.CreateDirectory(currentPath);
+            }
         }
 
         
