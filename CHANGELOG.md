@@ -1,3 +1,15 @@
+# 2.3.0
+## Asset changes
+
+- New editor only save so the build save is in the normal location.
+- New save defaults setup that lets users assign defaults outside of constructors when creating save values.
+- Save defaults now apply when making a build to all save objects so builds don't have persistent data from editor saves.
+- New setting to see save defaults in the editor tab like save keys
+- New editor GUI on save objects to see default values.
+- Removed some older 2.0.x legacy issue fixers.
+- Removed some now redundant API bits. 
+
+
 # 2.2.0
 ## Asset changes
 
