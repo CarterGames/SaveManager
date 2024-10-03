@@ -41,7 +41,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         // Paths
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         public const string SettingsWindowPath = "Carter Games/Assets/Save Manager";
-        public static readonly string CapturesSavePath = $"{AssetBasePath}/Carter Games/Save Manager/Data/Save Profiles/";
+        public static readonly string CapturesSavePath = $"{ScriptableRef.FullPathData}/Save Profiles/";
 
 
         // Filters
@@ -120,13 +120,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-
-        /// <summary>
-        /// Gets the path where the asset code is located.
-        /// </summary>
-        private static string AssetBasePath => FileEditorUtil.AssetBasePath;
-
-
+        
         // Textures/Graphics
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 

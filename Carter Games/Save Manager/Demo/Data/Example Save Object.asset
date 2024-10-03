@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11010672a3811f84e8d31964f42df820, type: 3}
   m_Name: Example Save Object
   m_EditorClassIdentifier: 
-  isExpanded: 0
+  isExpanded: 1
   saveKey: Example
   playerName:
     key: examplePlayerName
-    value: Emily
-    defaultValue: 
+    value: Annie
+    defaultValue: Emily
   playerHealth:
     key: examplePlayerHealth
-    value: -102
+    value: 100
     defaultValue: 0
   playerPosition:
     key: examplePlayerPosition
-    value: {x: 0, y: 0, z: 0}
+    value: {x: 1, y: 2, z: 3}
     defaultValue: {x: 0, y: 0, z: 0}
   playerShield:
     key: examplePlayerShield

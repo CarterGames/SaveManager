@@ -94,6 +94,8 @@ namespace CarterGames.Assets.SaveManager.Editor
             InspectorDrawInfoSection();
             EditorGUILayout.Space(3.5f);
             InspectorDrawValues();
+            EditorGUILayout.Space(3.5f);
+            InspectorDrawDefaultValues();
             
             serializedObject.Update();
         }
@@ -230,6 +232,44 @@ namespace CarterGames.Assets.SaveManager.Editor
                     EditorGUI.indentLevel++;
                     
                     EditorGUILayout.PropertyField(serializedObject.Fp(prop.name).Fpr("value"), new GUIContent(prop.displayName), true);
+                    
+                    EditorGUI.indentLevel--;
+                }
+            }
+            
+            EditorGUI.EndDisabledGroup();
+            
+            EditorGUILayout.Space(1.5f);
+            EditorGUILayout.EndVertical();
+        }
+        
+        
+        /// <summary>
+        /// Draws the default values section for the save object.
+        /// </summary>
+        private void InspectorDrawDefaultValues()
+        {
+            if (!targetSaveObject.IsInitialized) return;
+            
+            EditorGUILayout.BeginVertical("HelpBox");
+            EditorGUILayout.Space(.5f);
+            
+            EditorGUILayout.LabelField("Default Values", EditorStyles.boldLabel);
+            UtilEditor.DrawHorizontalGUILine();
+            
+            var prop = serializedObject.GetIterator();
+
+            EditorGUI.BeginDisabledGroup(true);
+            
+            if (prop.NextVisible(true))
+            {
+                while (prop.NextVisible(false))
+                {
+                    if (propertiesLookup.ContainsKey(prop.name)) continue;
+                    
+                    EditorGUI.indentLevel++;
+                    
+                    EditorGUILayout.PropertyField(serializedObject.Fp(prop.name).Fpr("defaultValue"), new GUIContent(prop.displayName), true);
                     
                     EditorGUI.indentLevel--;
                 }

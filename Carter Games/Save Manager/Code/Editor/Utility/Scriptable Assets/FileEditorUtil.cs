@@ -44,75 +44,9 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         public const string AssetName = "Save Manager";
         
-        
-        /// <summary>
-        /// The path to a script in the asset to verify the asset base path.
-        /// </summary>
-        private static readonly string BasePathScriptPath = $"/Carter Games/{AssetName}/Code/Editor/Utility/{BasePathScriptName}.cs";
-        
-        
-        /// <summary>
-        /// The base path check script name.
-        /// </summary>
-        private const string BasePathScriptName = "UtilEditor";
-        
-        
-        /// <summary>
-        /// The base path cache.
-        /// </summary>
-        private static string basePath = "";
-
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Properties
+        |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        
-        /// <summary>
-        /// The base path for the asset code.
-        /// </summary>
-        public static string AssetBasePath
-        {
-            get
-            {
-                if (basePath.Length > 0) return basePath;
-                basePath = GetBaseAssetPath();
-                return basePath;
-            }
-        }
-
-        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Getter Methods
-        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        
-        /// <summary>
-        /// Gets the base path of the asset code, will break if the code is split up by the user.
-        /// </summary>
-        /// <returns>The base path found.</returns>
-        private static string GetBaseAssetPath()
-        {
-            string path = string.Empty;
-            var containsChecks = new List<string> { AssetName, $"/{BasePathScriptName}.cs" };
-            
-            foreach (var scriptFound in AssetDatabase.FindAssets($"t:Script {nameof(UtilEditor)}"))
-            {
-                path = AssetDatabase.GUIDToAssetPath(scriptFound);
-
-                foreach (var check in containsChecks)
-                {
-                    if (!path.Contains(check)) goto SkipAndLoop;
-                }
-                
-                path = AssetDatabase.GUIDToAssetPath(scriptFound);
-                path = path.Replace(BasePathScriptPath, "");
-                
-                return path;
-                
-                // Skips the return as the path contained an invalid element for the asset...
-                SkipAndLoop: ;
-            }
-
-            return path;
-        }
-        
         
         /// <summary>
         /// Gets a script file in the asset.

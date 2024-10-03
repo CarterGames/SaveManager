@@ -54,11 +54,6 @@ namespace CarterGames.Assets.SaveManager.Editor
         // Helper Properties
         /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
-        /// <summary>
-        /// Gets the path where the asset code is located.
-        /// </summary>
-        private static string AssetBasePath => FileEditorUtil.AssetBasePath;
-        
         
         /// <summary>
         /// Gets the asset name stored in the file util editor class.
