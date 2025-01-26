@@ -21,9 +21,13 @@
  * THE SOFTWARE.
  */
 
+using System;
+using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
@@ -100,14 +104,17 @@ namespace CarterGames.Assets.SaveManager.Editor
         private static void ResetToDefault(SerializedProperty prop)
         {
             var field = prop.serializedObject.targetObject.GetType()
-                .GetField(prop.propertyPath.Split('.')[0],
+                .GetField(prop.propertyPath.Split('.')[0].Trim(),
                     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+            Undo.RecordObject(prop.serializedObject.targetObject, "Save Value reset to default value");
             
-            field.GetValue(prop.serializedObject.targetObject).GetType()
-                .GetMethod("ResetValue", BindingFlags.Public | BindingFlags.Instance).Invoke(field.GetValue(prop.serializedObject.targetObject), null);
+            field.FieldType
+                .GetMethod("ResetValue", BindingFlags.Public | BindingFlags.Instance)
+                .Invoke(field.GetValue(prop.serializedObject.targetObject), new object[1] { true });
         }
-    
-    
+        
+        
         private void DrawResetButton(SerializedProperty property)
         {
             GUI.backgroundColor = UtilEditor.Red;
@@ -118,12 +125,11 @@ namespace CarterGames.Assets.SaveManager.Editor
                         $"Are you sure you want to reset {property.name} to its default value.",
                         "Reset", "Cancel"))
                 {
-                    ResetToDefault(property.Fpr("value"));
+                    ResetToDefault(property);
                     
                     property.serializedObject.ApplyModifiedProperties();
                     property.serializedObject.Update();
                     
-                    EditorUtility.SetDirty(property.serializedObject.targetObject);
                     SaveManager.Save();
                     return;
                 }

@@ -22,6 +22,8 @@
  */
 
 using System;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager
@@ -137,7 +139,17 @@ namespace CarterGames.Assets.SaveManager
         /// </summary>
         public override void ResetValue(bool useDefault = true)
         {
-            Value = useDefault ? defaultValue : default;
+            try
+            {
+                ValueObject = Activator.CreateInstance(typeof(T), useDefault ? defaultValue : default(T));
+            }
+#pragma warning disable 0168
+            catch (Exception e)
+            {
+                // Reflection reset if ^ doesn't work.
+                GetType().GetProperty("ValueObject", BindingFlags.Public | BindingFlags.Instance).SetValue(this, useDefault ? defaultValue : default(T));
+            }
+#pragma warning restore
         }
     }
 }

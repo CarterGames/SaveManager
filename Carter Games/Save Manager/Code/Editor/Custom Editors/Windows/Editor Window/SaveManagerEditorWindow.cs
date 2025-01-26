@@ -38,8 +38,6 @@ namespace CarterGames.Assets.SaveManager.Editor
         
         private static bool isInitialized;
         
-        private List<SaveObject> saveObjects;
-        
         private EditorTab editorTab;
         private ProfileTab profilesTab;
         
@@ -112,13 +110,15 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             EditorGUILayout.Space(7.5f);
 
+            if (!SaveManagerEditorCache.HasCache) return;
+            
             switch (PerUserSettings.SaveEditorTabPos)
             {
                 case 0:
-                    editorTab.DrawTab(saveObjects);
+                    editorTab.DrawTab(SaveManagerEditorCache.SaveObjects);
                     break;
                 case 1:
-                    profilesTab.DrawTab(saveObjects);
+                    profilesTab.DrawTab(SaveManagerEditorCache.SaveObjects);
                     break;
             }
         }
@@ -142,11 +142,6 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             editorTab.Initialize();
             
-            SetSaveObjectsCache();
-            
-            SaveObjectAddedToSaveData.Remove(SetSaveObjectsCache);
-            SaveObjectAddedToSaveData.Add(SetSaveObjectsCache);
-            
             UtilEditor.TryRefreshImageCache();
             
             EditorApplication.delayCall -= editorTab.RepaintAll;
@@ -156,24 +151,6 @@ namespace CarterGames.Assets.SaveManager.Editor
             EditorApplication.playModeStateChanged += OnPlayStateChanged;
             
             isInitialized = true;
-        }
-
-
-        /// <summary>
-        /// Sets the save object cache, used to also refresh it when needed.
-        /// </summary>
-        private void SetSaveObjectsCache()
-        {
-            saveObjects = new List<SaveObject>();
-            saveObjects = UtilEditor.SaveData.Data;
-
-            if (!saveObjects.HasNullEntries()) return;
-            
-            saveObjects = (List<SaveObject>) saveObjects.RemoveMissing().RemoveDuplicates<SaveObject>();
-            UtilEditor.SaveData.Data = saveObjects;
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
         }
 
 

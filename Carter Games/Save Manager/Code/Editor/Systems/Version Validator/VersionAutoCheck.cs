@@ -78,6 +78,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             VersionChecker.GetLatestVersions();
             VersionChecker.ResponseReceived.Add(OnVersionCheckResponse);
+            VersionChecker.ErrorReceived.Add(VersionEditorGUI.ShowErrorDialogue);
         }
 
 
