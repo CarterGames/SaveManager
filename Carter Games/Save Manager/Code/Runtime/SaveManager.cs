@@ -648,12 +648,16 @@ namespace CarterGames.Assets.SaveManager
             
             SaveDataLookup = new Dictionary<string, SaveObject>();
                 
-            foreach (var saveValue in SaveData.Data)
+            foreach (var saveValue in SaveData.Data.Where(t => t != null))
             {
-                if (SaveDataLookup.ContainsKey(saveValue.SaveKey)) 
+                if (SaveDataLookup.ContainsKey(saveValue.SaveKey))
+                {
                     SaveDataLookup[saveValue.SaveKey] = saveValue;
+                }
                 else
+                {
                     SaveDataLookup.Add(saveValue.SaveKey, saveValue);
+                }
             }
         }
 

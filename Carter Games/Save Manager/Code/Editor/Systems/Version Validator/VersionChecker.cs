@@ -58,6 +58,18 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// Gets the version data downloaded.
         /// </summary>
         public static VersionPacket Versions { get; private set; }
+        
+        
+        /// <summary>
+        /// Returns if the system is currently checking for the server version.
+        /// </summary>
+        public static bool IsChecking { get; private set; }
+        
+        
+        /// <summary>
+        /// The error message received on an error.
+        /// </summary>
+        public static string ErrorMessage { get; private set; }
 
         
         /// <summary>
@@ -73,6 +85,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// Raises when the data has been downloaded.
         /// </summary>
         public static Evt ResponseReceived { get; private set; } = new Evt();
+        public static Evt ErrorReceived { get; private set; } = new Evt();
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
@@ -92,13 +105,23 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         private static void RequestLatestVersionData()
         {
+            IsChecking = true;
+            
             var request = UnityWebRequest.Get(VersionInfo.ValidationUrl);
+            request.timeout = 5;
             var async = request.SendWebRequest();
 
             async.completed += (a) =>
             {
-                if (request.result != UnityWebRequest.Result.Success) return;
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    IsChecking = false;
+                    ErrorMessage = request.error;
+                    ErrorReceived.Raise();
+                    return;
+                }
 
+                IsChecking = false;
                 Versions = JsonUtility.FromJson<VersionPacket>(request.downloadHandler.text);
                 ResponseReceived.Raise();
             };

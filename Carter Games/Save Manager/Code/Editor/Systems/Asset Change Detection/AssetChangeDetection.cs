@@ -21,25 +21,35 @@
  * THE SOFTWARE.
  */
 
+using System.Linq;
+using UnityEditor;
+
 namespace CarterGames.Assets.SaveManager.Editor
 {
-    /// <summary>
-    /// Contains details for the asset.
-    /// </summary>
-    public static class AssetVersionData
+    public class AssetChangeDetection : AssetPostprocessor
     {
-        /// <summary>
-        /// The version number of the asset.
-        /// </summary>
-        public static string VersionNumber => "2.3.1";
+        private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets,
+            string[] movedFromAssetPaths)
+        {
+            TryRefreshCacheOnDelete(deletedAssets);
+        }
         
-        
-        /// <summary>
-        /// The date this release of the asset was submitted for release.
-        /// </summary>
-        /// <remarks>
-        /// Asset owner is in the UK, so its D/M/Y format.
-        /// </remarks>
-        public static string ReleaseDate => "2025/01/27";
+
+        private static void TryRefreshCacheOnDelete(string[] deletedAssets)
+        {
+            if (deletedAssets.Length <= 0) return;
+            
+            foreach (var deleted in deletedAssets)
+            {
+                if (!SaveManagerEditorCache.SaveObjectAssetPaths.Contains(deleted)) continue;
+                SaveManagerEditorCache.RefreshCache();
+            }
+
+            UtilEditor.SaveData.Data = SaveManagerEditorCache.SaveObjects.Where(t => t != null).ToList();
+            EditorUtility.SetDirty(UtilEditor.SaveData);
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
     }
 }

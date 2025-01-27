@@ -97,6 +97,8 @@ namespace CarterGames.Assets.SaveManager.Editor
 
 		private static void ShowPropertiesForObject()
 		{
+			selectedObject.Update();
+			
 			var propIterator = selectedObject.GetIterator();
 
 			if (!propIterator.NextVisible(true)) return;
@@ -111,16 +113,23 @@ namespace CarterGames.Assets.SaveManager.Editor
 				
 				EditorGUILayout.BeginVertical("HelpBox");
 				
+				EditorGUI.BeginChangeCheck();
+				
 				EditorGUILayout.PropertyField(selectedObject.Fp(propIterator.name).Fpr("defaultValue"),
 					new GUIContent(propIterator.displayName));
+
+				if (EditorGUI.EndChangeCheck())
+				{
+					Undo.RecordObject(selectedObject.targetObject, "Save Value Default modified");
+					
+					selectedObject.ApplyModifiedProperties();
+					selectedObject.Update();
+				}
 				
 				EditorGUILayout.EndVertical();
 			}
 			
 			GUILayout.Space(3.5f);
-
-			selectedObject.ApplyModifiedProperties();
-			selectedObject.Update();
 		}
 	}
 }

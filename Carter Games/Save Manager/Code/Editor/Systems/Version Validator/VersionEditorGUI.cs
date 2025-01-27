@@ -40,11 +40,22 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         public static void DrawCheckForUpdatesButton()
         {
-            if (!GUILayout.Button("Check For Updates", GUILayout.MaxWidth(135))) return;
+            if (VersionChecker.IsChecking)
+            {
+                GUI.backgroundColor = Color.gray;
+                EditorGUILayout.LabelField("Checking...", new GUIStyle("minibutton"), GUILayout.MaxWidth(135));
+                GUI.backgroundColor = Color.white;
+            }
+            else
+            {
+                if (GUILayout.Button("Check For Updates", GUILayout.MaxWidth(135)))
+                {
+                    VersionChecker.GetLatestVersions();
             
-            VersionChecker.GetLatestVersions();
-            
-            VersionChecker.ResponseReceived.AddAnonymous("versionCheckManual", () => ShowResponseDialogue());
+                    VersionChecker.ResponseReceived.AddAnonymous("versionCheckManual", () => ShowResponseDialogue());
+                    VersionChecker.ErrorReceived.Add(ShowErrorDialogue);
+                }
+            }
         }
         
         
@@ -89,6 +100,19 @@ namespace CarterGames.Assets.SaveManager.Editor
                     "You are using the latest version!",
                     "Continue");
             }
+        }
+
+
+        /// <summary>
+        /// Shows an error dialogue when an error is received instead of data.
+        /// </summary>
+        public static void ShowErrorDialogue()
+        {
+            VersionChecker.ErrorReceived.Remove(ShowErrorDialogue);
+            
+            EditorUtility.DisplayDialog("Update Checker",
+                "Unable to check at this time, please try again later.",
+                "Continue");
         }
     }
 }

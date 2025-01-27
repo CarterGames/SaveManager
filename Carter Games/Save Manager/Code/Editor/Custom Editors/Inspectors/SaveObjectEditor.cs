@@ -39,7 +39,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         private SaveObject targetSaveObject;
-        private Dictionary<string, SerializedProperty> propertiesLookup;
+        private Dictionary<string, SerializedProperty> propertiesLookup = new Dictionary<string, SerializedProperty>();
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Unity Methods
@@ -110,35 +110,31 @@ namespace CarterGames.Assets.SaveManager.Editor
         private void InitializeObject()
         {
             if (targetSaveObject.IsInitialized) return;
-            
-            if (GUILayout.Button("Initialize Save Object"))
+
+            serializedObject.Fp("saveKey").stringValue = Guid.NewGuid().ToString();
+            serializedObject.ApplyModifiedProperties();
+            serializedObject.Update();
+
+            // Adds to save data if it doesn't exist.
+            if (UtilEditor.AssetGlobalRuntimeSettings.SaveData.Data.Contains((SaveObject) target)) return;
+
+            UtilEditor.AssetGlobalRuntimeSettings.SaveData.Data.Add((SaveObject) target);
+
+            propertiesLookup = new Dictionary<string, SerializedProperty>()
             {
-                serializedObject.Fp("saveKey").stringValue = Guid.NewGuid().ToString();
-                serializedObject.ApplyModifiedProperties();
-                serializedObject.Update();
+                {"SaveKey", serializedObject.Fp("saveKey")},
+            };
 
-                // Adds to save data if it doesn't exist.
-                if (UtilEditor.AssetGlobalRuntimeSettings.SaveData.Data.Contains((SaveObject)target)) return;
-                
-                UtilEditor.AssetGlobalRuntimeSettings.SaveData.Data.Add((SaveObject)target);
-                        
-                propertiesLookup = new Dictionary<string, SerializedProperty>()
-                {
-                    { "SaveKey", serializedObject.Fp("saveKey") },
-                };
-                
-                EditorUtility.SetDirty(UtilEditor.AssetGlobalRuntimeSettings.SaveData);
+            EditorUtility.SetDirty(UtilEditor.AssetGlobalRuntimeSettings.SaveData);
 
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
 
-                SaveManagerEditorWindow.SaveObjectAddedToSaveData.Raise();
-
-                Repaint();
-            }
+            SaveManagerEditorCache.RefreshCache();
+            Repaint();
         }
 
-        
+
         /// <summary>
         /// Draws the info section of the save object editor.
         /// </summary>

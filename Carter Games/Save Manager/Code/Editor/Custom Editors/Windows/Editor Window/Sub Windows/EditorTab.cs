@@ -35,21 +35,13 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
         private const string DemoSaveObjectFullName = "CarterGames.Assets.SaveManager.Demo.ExampleSaveObject";
-        
-        private Dictionary<SaveObject, SaveObjectEditor> editorsLookup;
-        private Dictionary<SaveObject, SerializedObject> soLookup;
-
         private static Rect deselectRect;
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Initialize Method
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
-        public void Initialize()
-        {
-            soLookup = new Dictionary<SaveObject, SerializedObject>();
-            editorsLookup = new Dictionary<SaveObject, SaveObjectEditor>();
-        }
+        public void Initialize() { }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Draw Methods
@@ -68,27 +60,8 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
 
             PerUserSettings.SaveEditorTabScrollRectPos =
                 EditorGUILayout.BeginScrollView(PerUserSettings.SaveEditorTabScrollRectPos);
-            
-            foreach (var saveObj in saveObjects)
-            {
-                SerializedObject sObj;
 
-                if (soLookup.ContainsKey(saveObj))
-                {
-                    sObj = soLookup[saveObj];
-                }
-                else
-                {
-                    sObj = new SerializedObject(saveObj);
-                }
-
-
-                if (soLookup.ContainsKey(saveObj)) continue;
-                soLookup.Add(saveObj, sObj);
-            }
-
-
-            if (soLookup.Count > 0)
+            if (SaveManagerEditorCache.SoLookup.Count > 0)
             {
                 DrawSaveObjects();
             }
@@ -97,8 +70,10 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
             EditorGUILayout.EndScrollView();
             
             // Force update all elements...
-            foreach (var lookup in editorsLookup)
+            foreach (var lookup in SaveManagerEditorCache.EditorsLookup)
             {
+                if (lookup.Key == null) continue;
+                
                 lookup.Value.serializedObject.ApplyModifiedProperties();
                 lookup.Value.serializedObject.Update();
             }
@@ -112,7 +87,6 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
         {
             if (PerUserSettings.SaveEditorOrganiseByCategory)
             {
-
                 var didHaveUncategorized = false;
                 var hasDrawnLine = false;
 
@@ -154,7 +128,7 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
             {
                 // Non-Categorized - But without demo save object.
                 /* ────────────────────────────────────────────────────────────────────────────────────────────────── */
-                foreach (var objKp in soLookup)
+                foreach (var objKp in SaveManagerEditorCache.SoLookup)
                 {
                     if (objKp.Key.GetType().FullName == DemoSaveObjectFullName) continue;
                     DrawSaveObjectEditor(objKp.Key);
@@ -164,7 +138,7 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
 
             // Demo Save Object
             /* ────────────────────────────────────────────────────────────────────────────────────────────────────── */
-            var demoSaveObject = soLookup.FirstOrDefault(t =>
+            var demoSaveObject = SaveManagerEditorCache.SoLookup.FirstOrDefault(t =>
                 t.Key.GetType().FullName == DemoSaveObjectFullName).Key;
             
             if (demoSaveObject == null) return;
@@ -177,13 +151,9 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
 
         private void DrawSaveObjectEditor(SaveObject targetSaveObject)
         {
-            if (!editorsLookup.ContainsKey(targetSaveObject))
-            {
-                editorsLookup.Add(targetSaveObject,
-                    (SaveObjectEditor)UnityEditor.Editor.CreateEditor(targetSaveObject));
-            }
-
-            EditorGUILayout.BeginVertical(editorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue
+            if (targetSaveObject == null) return;
+            
+            EditorGUILayout.BeginVertical(SaveManagerEditorCache.EditorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue
                 ? "HelpBox"
                 : "Box");
 
@@ -191,24 +161,20 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
 
             EditorGUI.BeginChangeCheck();
 
-            editorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue =
-                EditorGUILayout.Foldout(editorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue,
-                    targetSaveObject.name);
-
-            if (EditorGUI.EndChangeCheck())
+            if (targetSaveObject != null)
             {
-                editorsLookup[targetSaveObject].serializedObject.ApplyModifiedProperties();
-                editorsLookup[targetSaveObject].serializedObject.Update();
-
-                SaveManager.Save();
+                SaveManagerEditorCache.EditorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue =
+                    EditorGUILayout.Foldout(SaveManagerEditorCache.EditorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue,
+                        targetSaveObject.name);
             }
+            
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             GUI.backgroundColor = Color.cyan;
 
             if (GUILayout.Button("Defaults", GUILayout.Width(75)))
             {
-                SaveDefaultsWindow.ShowDefaultsWindow(targetSaveObject, editorsLookup[targetSaveObject].serializedObject);
+                SaveDefaultsWindow.ShowDefaultsWindow(targetSaveObject, SaveManagerEditorCache.SoLookup[targetSaveObject]);
             }
             
             GUI.backgroundColor = UtilEditor.Red;
@@ -219,10 +185,12 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
                         "Are you sure you want to reset all values on this save object?", "Reset", "Cancel"))
                 {
                     // Reset Save Object
+                    Undo.RecordObject(targetSaveObject, "Save Object reset to default values");
+                    
                     targetSaveObject.ResetObjectSaveValues();
 
-                    editorsLookup[targetSaveObject].serializedObject.ApplyModifiedProperties();
-                    editorsLookup[targetSaveObject].serializedObject.Update();
+                    SaveManagerEditorCache.EditorsLookup[targetSaveObject].serializedObject.ApplyModifiedProperties();
+                    SaveManagerEditorCache.EditorsLookup[targetSaveObject].serializedObject.Update();
 
                     SaveManager.Save();
                     GUI.FocusControl(null);
@@ -238,18 +206,26 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
             GUILayout.Space(2.5f);
 
 
-            if (editorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue)
+            if (SaveManagerEditorCache.EditorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue)
             {
                 EditorGUI.BeginChangeCheck();
-                editorsLookup[targetSaveObject].EditorWindowGUI();
+                SaveManagerEditorCache.EditorsLookup[targetSaveObject].EditorWindowGUI();
 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    editorsLookup[targetSaveObject].serializedObject.ApplyModifiedProperties();
-                    editorsLookup[targetSaveObject].serializedObject.Update();
+                    SaveManagerEditorCache.EditorsLookup[targetSaveObject].serializedObject.ApplyModifiedProperties();
+                    SaveManagerEditorCache.EditorsLookup[targetSaveObject].serializedObject.Update();
                 }
                 
                 GUILayout.Space(1.5f);
+            }
+            
+            if (EditorGUI.EndChangeCheck())
+            {
+                SaveManagerEditorCache.EditorsLookup[targetSaveObject].serializedObject.ApplyModifiedProperties();
+                SaveManagerEditorCache.EditorsLookup[targetSaveObject].serializedObject.Update();
+
+                SaveManager.Save();
             }
 
             EditorGUI.EndDisabledGroup();
@@ -263,7 +239,12 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
 
         public void RepaintAll()
         {
-            foreach (var keyPair in editorsLookup)
+            if (!SaveManagerEditorCache.HasCache)
+            {
+                SaveManagerEditorCache.RefreshCache();
+            }
+            
+            foreach (var keyPair in SaveManagerEditorCache.EditorsLookup)
             {
                 keyPair.Value.serializedObject.Update();
             }
@@ -272,7 +253,12 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
         
         public void RefreshEditor()
         {
-            foreach (var editor in editorsLookup.Values.ToArray())
+            if (!SaveManagerEditorCache.HasCache)
+            {
+                SaveManagerEditorCache.RefreshCache();
+            }
+            
+            foreach (var editor in SaveManagerEditorCache.EditorsLookup.Values.ToArray())
             {
                 editor.serializedObject.ApplyModifiedProperties();
                 editor.serializedObject.Update();
