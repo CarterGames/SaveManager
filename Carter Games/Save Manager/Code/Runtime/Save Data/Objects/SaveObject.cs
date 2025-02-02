@@ -231,7 +231,12 @@ namespace CarterGames.Assets.SaveManager
             if (!Lookup.ContainsKey(key)) return;
             Lookup[key].ResetValue();
         }
-        
+
+        private void OnDestroy()
+        {
+            Debug.Log("Destroyed!");
+        }
+
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Save Object Attributes
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */

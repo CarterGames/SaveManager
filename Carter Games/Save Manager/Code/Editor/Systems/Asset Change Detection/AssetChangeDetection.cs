@@ -41,6 +41,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             foreach (var deleted in deletedAssets)
             {
+                if (SaveManagerEditorCache.SaveObjectAssetPaths == null) goto SkipPoint;
                 if (!SaveManagerEditorCache.SaveObjectAssetPaths.Contains(deleted)) continue;
                 SaveManagerEditorCache.RefreshCache();
             }
@@ -48,6 +49,8 @@ namespace CarterGames.Assets.SaveManager.Editor
             UtilEditor.SaveData.Data = SaveManagerEditorCache.SaveObjects.Where(t => t != null).ToList();
             EditorUtility.SetDirty(UtilEditor.SaveData);
 
+            SkipPoint: ;
+            
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }

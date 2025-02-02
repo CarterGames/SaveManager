@@ -74,6 +74,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         private void OnEnable()
         {
             isInitialized = false;
+            SaveManagerEditorCache.RefreshCache();
         }
         
 
