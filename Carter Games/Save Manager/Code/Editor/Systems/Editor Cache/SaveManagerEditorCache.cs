@@ -7,11 +7,11 @@ namespace CarterGames.Assets.SaveManager.Editor
 {
     public class SaveManagerEditorCache : IAssetEditorInitialize
     {
-        private static List<SaveObject> saveObjects;
-        private static List<string> saveObjectPaths;
+        private static List<SaveObject> saveObjects = new List<SaveObject>();
+        private static List<string> saveObjectPaths = new List<string>();
         
-        private static Dictionary<SaveObject, SaveObjectEditor> editorsLookup;
-        private static Dictionary<SaveObject, SerializedObject> soLookup;
+        private static Dictionary<SaveObject, SaveObjectEditor> editorsLookup = new Dictionary<SaveObject, SaveObjectEditor>();
+        private static Dictionary<SaveObject, SerializedObject> soLookup = new Dictionary<SaveObject, SerializedObject>();
 
 
         public static bool HasCache { get; private set; }
