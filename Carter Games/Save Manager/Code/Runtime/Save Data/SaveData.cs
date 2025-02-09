@@ -76,6 +76,7 @@ namespace CarterGames.Assets.SaveManager
                         converted.Add(v.key, JsonUtility.ToJson(v, AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().Prettify));
                     }
                     
+                    if (string.IsNullOrEmpty(saveValue.SaveKey)) continue;
                     items.Add(saveValue.SaveKey, converted);
                 }
 
