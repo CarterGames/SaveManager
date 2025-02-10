@@ -21,6 +21,7 @@
  * THE SOFTWARE.
  */
 
+using System;
 using CarterGames.Assets.SaveManager.Encryption;
 using CarterGames.Assets.SaveManager.Extensions;
 using UnityEngine;

@@ -21,6 +21,7 @@
  * THE SOFTWARE.
  */
 
+using System;
 using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager
@@ -28,5 +29,6 @@ namespace CarterGames.Assets.SaveManager
     /// <summary>
     /// A base class that just defines a scriptable object type that can be looked up without getting non-asset scriptable objects.
     /// </summary>
+    [Serializable]
     public abstract class SaveManagerAsset : ScriptableObject { }
 }

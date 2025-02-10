@@ -105,6 +105,8 @@ namespace CarterGames.Assets.SaveManager.Editor
                 AssetDatabase.CreateAsset(instance, pathToTextFile);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
+                
+                SaveManagerEditorCache.RefreshCache();
             }
         }
 
@@ -115,7 +117,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             if (!PerUserSettings.JustCreatedSaveObject) return;
                 
             PerUserSettings.JustCreatedSaveObject = false;
-            
+
             CreateSaveObjectInstance();
         }
     }

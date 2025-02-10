@@ -152,6 +152,12 @@ namespace CarterGames.Assets.SaveManager.Editor.SubWindows
         private void DrawSaveObjectEditor(SaveObject targetSaveObject)
         {
             if (targetSaveObject == null) return;
+            if (!SaveManagerEditorCache.HasCache) return;
+            if (!SaveManagerEditorCache.EditorsLookup.ContainsKey(targetSaveObject))
+            {
+                SaveManagerEditorCache.RefreshCache();
+                return;
+            }
             
             EditorGUILayout.BeginVertical(SaveManagerEditorCache.EditorsLookup[targetSaveObject].serializedObject.Fp("isExpanded").boolValue
                 ? "HelpBox"
