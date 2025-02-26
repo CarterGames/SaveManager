@@ -107,7 +107,7 @@ namespace CarterGames.Assets.SaveManager
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
         #region Events
-
+        
         
         /// <summary>
         /// Raises when the game is saved.
@@ -229,9 +229,7 @@ namespace CarterGames.Assets.SaveManager
             }
 #endif
             
-            
             var jsonString = JsonUtility.ToJson(data, Prettify);
-            
             
             if (EncryptionSetting == EncryptionOption.Disabled)
             {
@@ -359,11 +357,25 @@ namespace CarterGames.Assets.SaveManager
 
         #region Save Handling Methods
 
+
+        /// <summary>
+        /// Saves the game when called.
+        /// </summary>
+        /// <param name="callListeners">Should the save listeners be called when saving?</param>
+        public static void Save(bool callListeners = true)
+        {
+            Save(SaveData.SerializableData, callListeners);
+        }
+        
+        
         
         /// <summary>
         /// Saves the game when called.
         /// </summary>
-        public static void Save(bool callListeners = true)
+        /// <param name="data">The data to save.</param>
+        /// <param name="callListeners">Should the save listeners be called when saving?</param>
+        private static void Save(SerializableDictionary<string, SerializableDictionary<string, string>> data,
+            bool callListeners = true)
         {
             IsSaving = true;
             
@@ -379,7 +391,7 @@ namespace CarterGames.Assets.SaveManager
                 RegisterObject(saveValue);
             }
 
-            SaveToFile(SaveData.SerializableData);
+            SaveToFile(data);
             IsSaving = false;
 
             if (callListeners)
@@ -610,7 +622,10 @@ namespace CarterGames.Assets.SaveManager
             }
             
             
-            if (!TryGetSaveValuesLookup(saveObject.SaveKey, out var data)) return;
+            if (!TryGetSaveValuesLookup(saveObject.SaveKey, out var data))
+            {
+                return;
+            }
             
             
             var d = saveObject.GetSaveValues();
@@ -627,13 +642,21 @@ namespace CarterGames.Assets.SaveManager
             if (LoadedDataLookup is { } && LoadedDataLookup.Count > 0)
             {
                 LoadedDataLookup[saveObject.SaveKey] = data;
+                Save(LoadedDataLookup, false);
             }
             else
             {
-                LoadedDataLookup = new SerializableDictionary<string, SerializableDictionary<string, string>>()
+                LoadedDataLookup = loadHandler.LoadFromFile(SavePath);
+
+                if (LoadedDataLookup is null || LoadedDataLookup.Count <= 0)
                 {
-                    { saveObject.SaveKey, data }
-                };
+                    Debug.Log("failed");
+                    SaveManagerLogger.LogWarning("SaveObject/Save: Failed to single object data!");
+                    return;
+                }
+                
+                LoadedDataLookup[saveObject.SaveKey] = data;
+                Save(LoadedDataLookup, true);
             }
         }
 
@@ -681,7 +704,6 @@ namespace CarterGames.Assets.SaveManager
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
         #region Listener Call Methods
-
         
         /// <summary>
         /// Calls for all the ISaveListener implementations to be run if any are found.
