@@ -62,10 +62,10 @@ namespace CarterGames.Assets.SaveManager
         /// <summary>
         /// Runs when the application quits
         /// </summary>
-        private void OnApplicationQuit()
+        private void OnDestroy()
         {
             if (!AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().AutoSave) return;
-            SaveManager.Save(false);
+            SaveManager.Save();
         }
 
 
@@ -78,7 +78,7 @@ namespace CarterGames.Assets.SaveManager
 #if !UNITY_EDITOR
             if (!AssetAccessor.GetAsset<AssetGlobalRuntimeSettings>().AutoSave) return;
             if (hasFocus) return;
-            SaveManager.Save(false);
+            SaveManager.Save();
 #endif
         }
     }

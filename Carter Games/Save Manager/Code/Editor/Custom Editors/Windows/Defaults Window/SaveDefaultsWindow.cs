@@ -124,6 +124,8 @@ namespace CarterGames.Assets.SaveManager.Editor
 					
 					selectedObject.ApplyModifiedProperties();
 					selectedObject.Update();
+					
+					SaveManager.Save();
 				}
 				
 				EditorGUILayout.EndVertical();
