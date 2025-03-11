@@ -188,12 +188,12 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             if (GUILayout.Button(ExplorerButtonLabelWeb))
             {
-                if (!Directory.Exists(UtilEditor.Settings.SavePath))
+                if (!Directory.Exists(UtilEditor.AssetGlobalRuntimeSettings.SavePath))
                 {
-                    FileEditorUtil.CreateToDirectory(UtilEditor.Settings.SavePath);
+                    FileEditorUtil.CreateToDirectory(UtilEditor.AssetGlobalRuntimeSettings.SavePath);
                 }
                 
-                EditorUtility.RevealInFinder(UtilEditor.Settings.SavePath.Replace("save.sf", string.Empty));
+                EditorUtility.RevealInFinder(UtilEditor.AssetGlobalRuntimeSettings.SavePath.Replace("save.sf", string.Empty));
             }
             
             GUI.backgroundColor = Color.white;

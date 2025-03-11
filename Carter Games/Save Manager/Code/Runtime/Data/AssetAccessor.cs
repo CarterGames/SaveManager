@@ -46,7 +46,7 @@ namespace CarterGames.Assets.SaveManager
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
         /// <summary>
-        /// Gets all the assets from the build versions asset...
+        /// Gets the index storing all the assets for the project...
         /// </summary>
         private static AssetIndex Index
         {
