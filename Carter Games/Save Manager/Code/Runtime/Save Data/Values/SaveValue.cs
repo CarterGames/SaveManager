@@ -106,7 +106,6 @@ namespace CarterGames.Assets.SaveManager
         public SaveValue(string key, T value)
         {
             this.key = key;
-            this.value = value;
             defaultValue = value;
         }
 
