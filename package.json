@@ -1,6 +1,6 @@
 {
   "name": "games.carter.savemanager",
-  "version": "2.3.7",
+  "version": "2.3.8",
   "displayName": "Save Manager",
   "description": "A free, scriptable object based, local save system for Unity. Works on all platforms using standard JSON Utility.",
   "unity": "2020.3",
