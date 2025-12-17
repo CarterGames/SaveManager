@@ -224,7 +224,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 EditorUtility.SetDirty(saveObject);
             }
 
-            // Updates the data in the editor & in the actual save.
+            // Updates the data in the editor and in the actual save.
             EditorUtility.SetDirty(UtilEditor.AssetGlobalRuntimeSettings);
             AssetDatabase.SaveAssets();
             SaveManager.Save();

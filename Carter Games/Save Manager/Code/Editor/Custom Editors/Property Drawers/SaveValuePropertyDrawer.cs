@@ -127,8 +127,12 @@ namespace CarterGames.Assets.SaveManager.Editor
                 {
                     ResetToDefault(property);
                     
+                    EditorUtility.SetDirty(property.serializedObject.targetObject);
+                    
                     property.serializedObject.ApplyModifiedProperties();
                     property.serializedObject.Update();
+                    
+                    AssetDatabase.SaveAssets();
                     
                     SaveManager.Save();
                     return;

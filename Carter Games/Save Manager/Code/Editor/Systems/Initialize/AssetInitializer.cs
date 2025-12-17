@@ -102,6 +102,8 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         private static void OnAllClassesInitialized()
         {
+            UtilEditor.ForceUpdateSaveDataAsset();
+            
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             

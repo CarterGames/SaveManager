@@ -25,6 +25,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using Object = System.Object;
 
 namespace CarterGames.Assets.SaveManager
 {
@@ -99,7 +100,7 @@ namespace CarterGames.Assets.SaveManager
         
 
         /// <summary>
-        /// Creates a new save value with the key & default value entered.
+        /// Creates a new save value with the key and default value entered.
         /// </summary>
         /// <param name="key">The save key for the value.</param>
         /// <param name="value">The default value for the save value.</param>
@@ -141,12 +142,23 @@ namespace CarterGames.Assets.SaveManager
             try
             {
                 ValueObject = Activator.CreateInstance(typeof(T), useDefault ? defaultValue : default(T));
+                Debug.Log("Reset value 1");
             }
 #pragma warning disable 0168
             catch (Exception e)
             {
-                // Reflection reset if ^ doesn't work.
-                GetType().GetProperty("ValueObject", BindingFlags.Public | BindingFlags.Instance).SetValue(this, useDefault ? defaultValue : default(T));
+                try
+                {
+                    Debug.Log("Reset value 2");
+                    
+                    // Reflection reset if ^ doesn't work.
+                    GetType().GetProperty("ValueObject", BindingFlags.Public | BindingFlags.Instance)
+                        .SetValue(this, useDefault ? defaultValue : default(T));
+                }
+                catch (Exception e1)
+                {
+                    Debug.Log("Reset value failed");
+                }
             }
 #pragma warning restore
         }

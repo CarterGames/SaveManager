@@ -31,7 +31,7 @@ namespace CarterGames.Assets.SaveManager.Encryption
     public enum EncryptionOption
     {
         /// <summary>
-        /// Doesn't use encryption & the save data will be saved in plain JSON text.
+        /// Doesn't use encryption and the save data will be saved in plain JSON text.
         /// </summary>
         [InspectorName("Disabled (Plain Text)")] Disabled,
         
