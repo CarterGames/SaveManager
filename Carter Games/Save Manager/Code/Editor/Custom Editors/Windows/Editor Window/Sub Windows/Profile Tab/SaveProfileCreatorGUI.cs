@@ -107,7 +107,7 @@ namespace CarterGames.Assets.SaveManager.Editor
 
 
         /// <summary>
-        /// Draws the profile name & location fields.
+        /// Draws the profile name and location fields.
         /// </summary>
         private static void DrawProfileOptions()
         {

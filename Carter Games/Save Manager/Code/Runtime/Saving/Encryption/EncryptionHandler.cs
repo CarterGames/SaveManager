@@ -27,7 +27,7 @@ using System.Collections.Generic;
 namespace CarterGames.Assets.SaveManager.Encryption
 {
     /// <summary>
-    /// Handles the encryption & Decryption of the save data when in use. 
+    /// Handles the encryption and Decryption of the save data when in use. 
     /// </summary>
     public static class EncryptionHandler
     {
