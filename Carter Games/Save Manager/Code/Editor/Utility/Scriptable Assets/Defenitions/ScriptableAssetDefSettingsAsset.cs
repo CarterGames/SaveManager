@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2024 Carter Games
+ * Copyright (c) 2025 Carter Games
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
 
 using System;
 using System.Linq;
+using CarterGames.Shared.SaveManager.Editor;
 using UnityEditor;
 
 namespace CarterGames.Assets.SaveManager.Editor
@@ -30,53 +31,30 @@ namespace CarterGames.Assets.SaveManager.Editor
 	/// <summary>
 	/// Handles the creation and referencing of the settings asset file.
 	/// </summary>
-	public sealed class ScriptableAssetDefSettingsAsset : IScriptableAssetDef<AssetGlobalRuntimeSettings>, ILegacyAssetPort
+	public sealed class ScriptableAssetDefSettingsAsset : IScriptableAssetDef<DataAssetSettings>
 	{
 		// IScriptableAssetDef Implementation
 		/* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 		
-		private static AssetGlobalRuntimeSettings cache;
+		private static DataAssetSettings cache;
 		private static SerializedObject objCache;
 
-		public Type AssetType => typeof(AssetGlobalRuntimeSettings);
+		public Type AssetType => typeof(DataAssetSettings);
 		public string DataAssetFileName => "[Save Manager] Runtime Settings Asset.asset";
-		public string DataAssetFilter => $"t:{typeof(AssetGlobalRuntimeSettings).FullName}";
+		public string DataAssetFilter => $"t:{typeof(DataAssetSettings).FullName}";
 		public string DataAssetPath => $"{ScriptableRef.FullPathData}{DataAssetFileName}";
 
-		public AssetGlobalRuntimeSettings AssetRef => ScriptableRef.GetOrCreateAsset(this, ref cache);
+		public DataAssetSettings DataAssetRef => ScriptableRef.GetOrCreateAsset(this, ref cache);
 		public SerializedObject ObjectRef => ScriptableRef.GetOrCreateAssetObject(this, ref objCache);
+		
+		public void OnCreated()
+		{
+
+		}
 		
 		public void TryCreate()
 		{
 			ScriptableRef.GetOrCreateAsset(this, ref cache);
-		}
-		
-		// ILegacyAssetPort Implementation
-		/* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-		
-		public bool CanPort => AssetDatabaseHelper.TypeExistsElsewhere<AssetGlobalRuntimeSettings>(DataAssetPath);
-		
-		
-		public void PortAsset()
-		{
-			TryCreate();
-			
-			var assets = AssetDatabaseHelper.GetAssetPathNotAtPath<AssetGlobalRuntimeSettings>(DataAssetPath).ToArray();
-
-			if (assets.Length <= 0) return;
-
-			SerializedPropertyHelper.TransferProperties(
-				new SerializedObject(AssetDatabase.LoadAssetAtPath(assets[0], typeof(AssetGlobalRuntimeSettings))), ObjectRef);
-
-			ObjectRef.ApplyModifiedProperties();
-			ObjectRef.Update();
-
-			foreach (var entry in assets)
-			{
-				AssetDatabase.DeleteAsset(entry);
-			}
-			
-			AssetDatabase.SaveAssets();
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2024 Carter Games
+ * Copyright (c) 2025 Carter Games
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,7 @@
  */
 
 using System;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager
@@ -49,6 +50,8 @@ namespace CarterGames.Assets.SaveManager
         /// The value of the save value as an object.
         /// </summary>
         public abstract object ValueObject { get; set; }
+        public abstract Type ValueType { get; }
+        protected abstract object DefaultValueObject { get; set; }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
@@ -61,9 +64,9 @@ namespace CarterGames.Assets.SaveManager
         
         
         /// <summary>
-        /// Assign the save value from 
+        /// Assign the save value from json
         /// </summary>
-        /// <param name="value">The value to assign from.</param>
-        public abstract void AssignFromObject(SaveValueBase value);
+        /// <param name="value">The json value to assign from.</param>
+        public abstract void AssignFromJson(JToken value);
     }
 }

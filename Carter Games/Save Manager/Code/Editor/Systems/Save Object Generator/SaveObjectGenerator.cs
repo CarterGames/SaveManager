@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2024 Carter Games
+ * Copyright (c) 2025 Carter Games
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,10 +21,7 @@
  * THE SOFTWARE.
  */
 
-using System;
-using System.Linq;
 using UnityEditor;
-using UnityEditor.Callbacks;
 using UnityEngine;
 using File = System.IO.File;
 
@@ -76,49 +73,6 @@ namespace CarterGames.Assets.SaveManager.Editor
             }
             
             EditorGUI.EndDisabledGroup();
-        }
-        
-        
-        
-        private static void CreateSaveObjectInstance()
-        {
-            if (EditorUtility.DisplayDialog("Create Instance",
-                    "Do you want to create a new instance of the save object you just made?", "Yes", "Cancel"))
-            {
-                var parse = "Save." + PerUserSettings.LastSaveObjectFileName;
-
-
-                var types = AppDomain.CurrentDomain
-                    .GetAssemblies()
-                    .SelectMany(x => x.GetTypes())
-                    .FirstOrDefault(x => x.IsClass && x.FullName == parse && x.IsAssignableFrom(x));
-
-                
-                var instance = CreateInstance(types);
-                
-                var script =
-                    AssetDatabase.FindAssets($"t:Script {PerUserSettings.LastSaveObjectFileName}")[0];
-                var pathToTextFile = AssetDatabase.GUIDToAssetPath(script);
-
-                pathToTextFile = pathToTextFile.Replace(".cs", ".asset");
-
-                AssetDatabase.CreateAsset(instance, pathToTextFile);
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
-                
-                SaveManagerEditorCache.RefreshCache();
-            }
-        }
-
-
-        [DidReloadScripts]
-        private static void TryCreateInstanceIfMade()
-        {
-            if (!PerUserSettings.JustCreatedSaveObject) return;
-                
-            PerUserSettings.JustCreatedSaveObject = false;
-
-            CreateSaveObjectInstance();
         }
     }
 }

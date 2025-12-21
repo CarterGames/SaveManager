@@ -1,0 +1,17 @@
+{
+    "name": "CarterGames.SaveManager.Demo",
+    "rootNamespace": "",
+    "references": [
+        "GUID:5fed357a0eb29414bb1d1667107777c5",
+        "GUID:0e845a9d16de228f1bdbd304eb965b27"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

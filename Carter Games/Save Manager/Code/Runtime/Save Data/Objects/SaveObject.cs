@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2024 Carter Games
+ * Copyright (c) 2025 Carter Games
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,32 +25,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using CarterGames.Assets.SaveManager.Serializiation;
+using CarterGames.Shared.SaveManager;
+using CarterGames.Shared.SaveManager.Serializiation;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager
 {
+    /// <summary>
+    /// A Save Object that stores save values on it for the save system to use.
+    /// </summary>
     [Serializable]
-    public abstract class SaveObject : SaveManagerAsset
+    public abstract class SaveObject : SmDataAsset
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
-        [SerializeField, HideInInspector] private bool isExpanded;  // Only used in the editor.
-        [SerializeField, HideInInspector] private string saveKey;
+        [SerializeField] [HideInInspector] private bool editor_isExpanded;  // Only used in the editor.
+        [SerializeField] [HideInInspector] private bool editor_hasWarning;  // Only used in the editor.
+        [SerializeField] [HideInInspector] private string editor_warningMessage = string.Empty;  // Only used in the editor.
         
         private Dictionary<string, SaveValueBase> lookupCache;
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-
-        /// <summary>
-        /// Gets if the save object is initialized.
-        /// </summary>
-        public bool IsInitialized => !string.IsNullOrEmpty(saveKey);
-        
         
         /// <summary>
         /// A lookup of all the save values in the object.
@@ -65,15 +65,15 @@ namespace CarterGames.Assets.SaveManager
             }
         }
 
-
-        /// <summary>
-        /// The save key of the object, implemented in inheritors only. 
-        /// </summary>
-        public string SaveKey => saveKey;
-
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Unity Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+        private void OnEnable()
+        {
+            hideFlags = HideFlags.DontSave;     // Done so the asset doesn't persist in editor.
+        }
+        
         
         private void Reset()
         {
@@ -86,43 +86,11 @@ namespace CarterGames.Assets.SaveManager
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         /// <summary>
-        /// Initializes the object for use with the save.
-        /// </summary>
-        public void Initialize()
-        {
-            SaveManager.RegisterObject(this);
-        }
-
-
-        /// <summary>
-        /// Sets the save key for this object.
-        /// </summary>
-        /// <remarks>NOTE: Only do this is you need to make variants at runtime. Otherwise you'll just bloat the save data with a load of duplicates.</remarks>
-        /// <param name="value">The key to set to.</param>
-        public void SetSaveKey(string value)
-        {
-            saveKey = value;
-        }
-
-
-        /// <summary>
-        /// Saves the object to the save.
-        /// </summary>
-        public virtual void Save()
-        {
-            SaveManager.RegisterObject(this);
-            SaveManager.UpdateAndSaveObject(this);
-        }
-
-        
-        /// <summary>
         /// Loads the data to the object from the save.
         /// </summary>
-        public virtual void Load()
+        public virtual void Load(JArray saveData)
         {
-            if (!SaveManager.TryGetSaveValuesLookup(SaveKey, out var data)) return;
-
-            if (data == null) return;
+            if (saveData == null) return;
 
             var saveValues = GetType()
                 .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
@@ -132,9 +100,22 @@ namespace CarterGames.Assets.SaveManager
             {
                 if (t == null) continue;
                 if (!t.GetType().IsSubclassOf(typeof(SaveValueBase))) continue;
+                
                 var sv = (SaveValueBase)t;
-                if (!data.ContainsKey(sv.key)) continue;
-                JsonUtility.FromJsonOverwrite(data[sv.key], sv);
+                
+                // Checks for a null or empty key & skips it if it is not populated.
+                if (string.IsNullOrEmpty(sv.key))
+                {
+                    SmDebugLogger.LogWarning(SaveManagerErrorCode.NoSaveKeyAssigned.GetErrorMessageFormat(sv));
+                    continue;
+                }
+                
+                // Loads the data to each save value.
+                foreach (var entry in saveData)
+                {
+                    if (entry["$key"].Value<string>() != sv.key) continue;
+                    sv.AssignFromJson(entry);
+                }
             }
         }
 
@@ -172,6 +153,8 @@ namespace CarterGames.Assets.SaveManager
                 if (saveValues[i] == null) continue;
                 if (!saveValues[i].GetType().IsSubclassOf(typeof(SaveValueBase))) continue;
                 var sv = (SaveValueBase) saveValues[i];
+                
+                if (string.IsNullOrEmpty(sv.key)) continue;
                 dic.Add(sv.key, sv);
             }
             
@@ -224,17 +207,8 @@ namespace CarterGames.Assets.SaveManager
         /// Resets a value with the corresponding key. 
         /// </summary>
         /// <param name="key">The key to find.</param>
-        public void ResetElement(string key)
+        public void ResetElement(string key) 
         {
-            if (!SaveManager.TryResetElementFromSave(SaveKey, key)) return;
-
-            if (!Lookup.ContainsKey(key)) return;
-            Lookup[key].ResetValue();
-        }
-
-        private void OnDestroy()
-        {
-            Debug.Log("Destroyed!");
         }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -270,5 +244,12 @@ namespace CarterGames.Assets.SaveManager
                 OrderInCategory = order;
             }
         }
+        
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Obsolete API
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
+        [Obsolete("[Legacy API] Please use SaveManager.Save() instead.")]
+        public virtual void Save() { }
     }
 }

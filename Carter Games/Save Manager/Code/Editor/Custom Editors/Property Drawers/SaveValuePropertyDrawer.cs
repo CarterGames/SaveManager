@@ -1,33 +1,23 @@
 ﻿/*
- * Copyright (c) 2024 Carter Games
+ * Save Manager
+ * Copyright (c) 2025-2026 Carter Games
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. 
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
  *
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>. 
  */
 
-using System;
-using System.IO;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
+using CarterGames.Shared.SaveManager.Editor;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
@@ -41,12 +31,31 @@ namespace CarterGames.Assets.SaveManager.Editor
             if (property.serializedObject == null) return;
             
             EditorGUI.BeginProperty(position, label, property);
- 
-            var container = EditorGUILayout.BeginVertical(property.isExpanded ? "HelpBox" : "Box");
-    
+            
+            var container = EditorGUILayout.BeginVertical("Box");
+            GUIContent labelContent;
+            
+            var msg = string.Empty;
+            var hasIssue = HasIssue(property, out msg);
+            
+            if (hasIssue)
+            {
+                labelContent = new GUIContent($" {label.text}", EditorArtHandler.GetIcon(SaveManagerConstants.WarningIcon));
+            }
+            else
+            {
+                labelContent = label;
+            }
+            
             position.height = container.height;
             EditorGUILayout.BeginHorizontal();
-            property.isExpanded = EditorGUILayout.Foldout(property.isExpanded, label);
+            property.isExpanded = EditorGUILayout.Foldout(property.isExpanded, labelContent);
+            GUILayout.FlexibleSpace();
+            
+            if (hasIssue)
+            {
+                EditorGUILayout.HelpBox(msg, MessageType.None);
+            }
             
             DrawResetButton(property);
             
@@ -59,13 +68,6 @@ namespace CarterGames.Assets.SaveManager.Editor
                 EditorGUI.indentLevel++;
                 
                 EditorGUILayout.BeginVertical("Box");
-    
-                if (PerUserSettings.ShowSaveKeys)
-                {
-                    EditorGUI.BeginDisabledGroup(true);
-                    EditorGUILayout.PropertyField(property.Fpr("key"), new GUIContent("Key"));
-                    EditorGUI.EndDisabledGroup();
-                }
                 
                 EditorGUI.BeginChangeCheck();
                 EditorGUILayout.PropertyField(property.Fpr("value"), new GUIContent("Value"));
@@ -73,10 +75,10 @@ namespace CarterGames.Assets.SaveManager.Editor
                 {
                     property.serializedObject.ApplyModifiedProperties();
                     property.serializedObject.Update();
-                    SaveManager.Save();
+                    // OldSaveManager.Save();
                 }
                 
-                if (PerUserSettings.ShowDefaultValues)
+                if (property.Fpr("hasDefaultValue").boolValue)
                 {
                     EditorGUI.BeginDisabledGroup(true);
                     EditorGUILayout.PropertyField(property.Fpr("defaultValue"), new GUIContent("Default Value"));
@@ -127,19 +129,29 @@ namespace CarterGames.Assets.SaveManager.Editor
                 {
                     ResetToDefault(property);
                     
-                    EditorUtility.SetDirty(property.serializedObject.targetObject);
-                    
                     property.serializedObject.ApplyModifiedProperties();
                     property.serializedObject.Update();
                     
-                    AssetDatabase.SaveAssets();
-                    
-                    SaveManager.Save();
+                    // OldSaveManager.Save();
                     return;
                 }
             }
     
             GUI.backgroundColor = Color.white;
+        }
+
+
+        private bool HasIssue(SerializedProperty property, out string message)
+        {
+            message = string.Empty;
+            
+            if (string.IsNullOrEmpty(property.Fpr("key").stringValue))
+            {
+                message = "No save key assigned, this value cannot be saved.";
+                return true;
+            }
+            
+            return false;
         }
     }
 }

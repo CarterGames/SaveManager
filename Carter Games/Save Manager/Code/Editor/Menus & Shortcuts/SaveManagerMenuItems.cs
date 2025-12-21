@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2024 Carter Games
+ * Copyright (c) 2025 Carter Games
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,21 +30,21 @@ namespace CarterGames.Assets.SaveManager.Editor
         [MenuItem("Tools/Carter Games/Save Manager/Load Save Data", priority = 30)]
         public static void ManualLoadGame()
         {
-            SaveManager.Load(new StandardSaveHandler().LoadFromFile(UtilEditor.AssetGlobalRuntimeSettings.SavePath));
+            SaveManager.LoadGame();
         }
         
         
         [MenuItem("Tools/Carter Games/Save Manager/Save, Save Data", priority = 31)]
         public static void ManualSaveGame()
         {
-            SaveManager.Save();
+            SaveManager.SaveGame();
         }
 
 
-        [MenuItem("Tools/Carter Games/Save Manager/Reset All Save Data", priority = 33)]
-        public static void ManualResetData()
-        {
-            SaveManager.Clear();
-        }
+        // [MenuItem("Tools/Carter Games/Save Manager/Reset All Save Data", priority = 33)]
+        // public static void ManualResetData()
+        // {
+        //     OldSaveManager.Clear();
+        // }
     }
 }

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2024 Carter Games
+ * Copyright (c) 2025 Carter Games
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CarterGames.Shared.SaveManager;
+using CarterGames.Shared.SaveManager.Editor;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
@@ -37,6 +39,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         private const string SaveObjectAndCategoryName = "CarterGames.Assets.SaveManager.SaveObject+SaveCategoryAttribute";
+        private const string SaveCategoryIsExpandedFormat = "CarterGames.Assets.SaveManager.Category.{0}.IsExpanded";
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
@@ -46,32 +49,31 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// Handles getting all the save objects with categories and putting those without into their own category.
         /// </summary>
         /// <returns>The data ready for use.</returns>
-        private static IEnumerable<SaveCategoryAttributeData> GetObjectsWithCategory()
+        private static IEnumerable<SaveCategoryAttributeData> GetObjectsWithCategory(IEnumerable<SaveObject> saveObjects)
         {
-            var saveObjects = AssetAccessor.GetAsset<SaveData>().Data;
             var data = new List<SaveCategoryAttributeData>();
             
             foreach (var saveObj in saveObjects)
             {
                 var attributes = saveObj.GetType().GetCustomAttributes();
-
+            
                 if (!attributes.Any(t => t.ToString().Equals(SaveObjectAndCategoryName)))
                 {
                     data.Add(new SaveCategoryAttributeData(saveObj));
                     continue;
                 }
-
+            
                 var category = attributes.First(t => t.ToString().Equals(SaveObjectAndCategoryName));
-
+            
                 var categoryName = category.GetType()
                     .GetField("Category", BindingFlags.Public | BindingFlags.Instance)?.GetValue(category).ToString();
-
+            
                 var order = int.Parse(category.GetType()
                     .GetField("OrderInCategory", BindingFlags.Public | BindingFlags.Instance)?.GetValue(category).ToString() ?? string.Empty);
                 
                 data.Add(new SaveCategoryAttributeData(categoryName, order, saveObj));
             }
-
+            
             return data;
         }
 
@@ -81,9 +83,9 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         /// <param name="categoryName">The category to look for.</param>
         /// <returns>A list of save objects in that category ordered correctly.</returns>
-        public static List<SaveObject> GetObjectsInCategory(string categoryName)
+        public static List<SaveObject> GetObjectsInCategory(IEnumerable<SaveObject> saveObjects, string categoryName)
         {
-            return GetObjectsWithCategory()
+            return GetObjectsWithCategory(saveObjects)
                 .Where(t => t.CategoryName.Equals(categoryName))
                 .OrderByDescending(t => t.OrderInCategory)
                 .Select(t => t.SaveObject)
@@ -95,13 +97,27 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// Gets a list of all the defined save categories.
         /// </summary>
         /// <returns>The categories currently defined.</returns>
-        public static List<string> GetCategoryNames()
+        public static List<string> GetCategoryNames(IEnumerable<SaveObject> saveObjects)
         {
-            return GetObjectsWithCategory()
+            return GetObjectsWithCategory(saveObjects)
                 .OrderBy(t => t.CategoryName)
                 .Select(t => t.CategoryName)
                 .Distinct()
                 .ToList();
+        }
+
+
+        public static bool IsCategoryExpanded(string categoryName)
+        {
+            return (bool) PerUserSettingsEditor.GetOrCreateValue<bool>(
+                string.Format(SaveCategoryIsExpandedFormat, categoryName), PerUserSettingType.PlayerPref, false);
+        }
+
+
+        public static void SetIsCategoryExpanded(string categoryName, bool value)
+        {
+            PerUserSettingsEditor.SetValue<bool>(string.Format(SaveCategoryIsExpandedFormat, categoryName),
+                PerUserSettingType.PlayerPref, value);
         }
     }
 }

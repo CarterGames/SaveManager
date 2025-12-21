@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2024 Carter Games
+ * Copyright (c) 2025 Carter Games
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,10 +22,10 @@
  */
 
 using System;
-using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
-using Object = System.Object;
 
 namespace CarterGames.Assets.SaveManager
 {
@@ -34,6 +34,7 @@ namespace CarterGames.Assets.SaveManager
     /// </summary>
     /// <typeparam name="T">The type for the save value.</typeparam>
     [Serializable]
+    [JsonObject]
     public class SaveValue<T> : SaveValueBase
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -41,6 +42,7 @@ namespace CarterGames.Assets.SaveManager
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */ 
         
         [SerializeField] private T value;
+        [SerializeField] private bool hasDefaultValue;
         [SerializeField] private T defaultValue;
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -55,12 +57,22 @@ namespace CarterGames.Assets.SaveManager
             get => (T) ValueObject;
             set => ValueObject = value;
         }
+
+
+        public bool HasDefaultValue => hasDefaultValue;
+        
+        
+        public T DefaultValue
+        {
+            get => (T) DefaultValueObject;
+            set => DefaultValueObject = value;
+        }
         
         
         /// <summary>
         /// The value that the save value is currently set to.
         /// </summary>
-        public override object ValueObject
+        [JsonIgnore] public override object ValueObject
         {
             get => value;
             set
@@ -76,18 +88,30 @@ namespace CarterGames.Assets.SaveManager
             }
         }
 
+
+        [JsonIgnore]
+        public override Type ValueType => typeof(T);
+        
+
+        [JsonIgnore] protected override object DefaultValueObject
+        {
+            get => defaultValue;
+            set
+            {
+                if (this.defaultValue == null)
+                {
+                    this.defaultValue = (T) value;
+                }
+                else if (!this.defaultValue.Equals(value))
+                {
+                    this.defaultValue = (T) value;
+                }
+            }
+        }
+
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Constructors
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */ 
-        
-        /// <summary>
-        /// Creates a new save value.
-        /// </summary>
-        public SaveValue()
-        {
-            key = Guid.NewGuid().ToString();
-        }
-        
         
         /// <summary>
         /// Creates a new save value with the key entered.
@@ -96,6 +120,7 @@ namespace CarterGames.Assets.SaveManager
         public SaveValue(string key)
         {
             this.key = key;
+            hasDefaultValue = false;
         }
         
 
@@ -103,11 +128,12 @@ namespace CarterGames.Assets.SaveManager
         /// Creates a new save value with the key and default value entered.
         /// </summary>
         /// <param name="key">The save key for the value.</param>
-        /// <param name="value">The default value for the save value.</param>
-        public SaveValue(string key, T value)
+        /// <param name="defaultValue">The default value for the save value.</param>
+        public SaveValue(string key, T defaultValue)
         {
             this.key = key;
-            defaultValue = value;
+            hasDefaultValue = true;
+            this.defaultValue = defaultValue;
         }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -115,25 +141,34 @@ namespace CarterGames.Assets.SaveManager
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
         /// <summary>
-        /// Initializes the save value for use.
+        /// Assign the save value from json
         /// </summary>
-        public void Initialize()
+        /// <param name="jsonValue">The json value to assign from.</param>
+        public override void AssignFromJson(JToken jsonValue)
         {
-            ValueObject = defaultValue;
+            key = jsonValue["$key"].Value<string>();
+
+            if (jsonValue["$type"].Value<string>() != ValueType.ToString())
+            {
+                SmDebugLogger.LogWarning(SaveManagerErrorCode.SaveValueTypeMismatch.GetErrorMessageFormat(key, jsonValue["$type"].Value<string>(), ValueType.ToString()));
+                return;
+            }
+            
+            try
+            {
+                Value = jsonValue["$value"].ToObject<T>(JsonHelper.SaveManagerSerializer);
+
+                if (jsonValue["$default"] == null) return;
+                hasDefaultValue = true;
+                DefaultValue = jsonValue["$default"].ToObject<T>(JsonHelper.SaveManagerSerializer);
+            }
+            catch (Exception e)
+            {
+                SmDebugLogger.LogWarning(SaveManagerErrorCode.SaveValueLoadFailed.GetErrorMessageFormat(key, e.Message, e.StackTrace));
+            }
         }
-        
-        
-        /// <summary>
-        /// Assigns the save value from the entered data.
-        /// </summary>
-        /// <param name="data">The data to read.</param>
-        public override void AssignFromObject(SaveValueBase data)
-        {
-            key = data.key;
-            value = (T) data.ValueObject;
-        }
-        
-        
+
+
         /// <summary>
         /// Resets the save value to its default setup.
         /// </summary>
@@ -142,22 +177,18 @@ namespace CarterGames.Assets.SaveManager
             try
             {
                 ValueObject = Activator.CreateInstance(typeof(T), useDefault ? defaultValue : default(T));
-                Debug.Log("Reset value 1");
             }
 #pragma warning disable 0168
             catch (Exception e)
             {
                 try
                 {
-                    Debug.Log("Reset value 2");
-                    
                     // Reflection reset if ^ doesn't work.
-                    GetType().GetProperty("ValueObject", BindingFlags.Public | BindingFlags.Instance)
-                        .SetValue(this, useDefault ? defaultValue : default(T));
+                    GetType().GetProperty("ValueObject", BindingFlags.Public | BindingFlags.Instance).SetValue(this, useDefault ? defaultValue : default(T));
                 }
-                catch (Exception e1)
+                catch (Exception exception)
                 {
-                    Debug.Log("Reset value failed");
+                    SmDebugLogger.LogWarning(SaveManagerErrorCode.SaveValueResetFailed.GetErrorMessageFormat(key, exception.Message, exception.StackTrace));
                 }
             }
 #pragma warning restore
