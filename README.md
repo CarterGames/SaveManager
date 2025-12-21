@@ -31,13 +31,6 @@
 https://github.com/CarterGames/SaveManager.git
 ```
 
-<b>Pre-release:</b>
-<br>
-<i>Used to prepare future releases before releasing them, checking for bugs mainly. Will have the latest features but may not be stable just yet. Use at your own risk.</i>
-```
-https://github.com/CarterGames/SaveManager.git#prerelease
-```
-
 Either download and import the package from the releases section or the <a href="https://assetstore.unity.com/packages/tools/utilities/save-manager-cg-176437">Unity Asset Store</a> and use the package manager. Alternatively, download this repo and copy all files into your project.
 <br><br>
 ## Setup & Basic Usage
