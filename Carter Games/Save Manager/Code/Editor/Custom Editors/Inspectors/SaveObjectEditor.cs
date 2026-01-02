@@ -1,5 +1,5 @@
 ﻿/*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -57,7 +57,6 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             InitializeObject();
             
-            EditorGUILayout.Space(3.5f);
             DrawValuesSection();
             
             serializedObject.ApplyModifiedProperties();
@@ -117,12 +116,12 @@ namespace CarterGames.Assets.SaveManager.Editor
                         serializedObject.ApplyModifiedProperties();
                         serializedObject.Update();
                         
-                        SaveManager.SaveGame();
+                        EditorSaveManager.TrySetDirty();
                     }
                 }
             }
             
-            EditorGUILayout.Space(1f);
+            EditorGUILayout.Space(.5f);
             EditorGUILayout.EndVertical();
         }
     }

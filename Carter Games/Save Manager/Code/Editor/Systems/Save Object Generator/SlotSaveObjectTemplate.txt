@@ -1,0 +1,10 @@
+﻿using CarterGames.Assets.SaveManager.Slots;
+using UnityEngine;
+
+namespace Save
+{
+    public class %SaveObjectName% : SlotSaveObject
+    {
+        // Enter your save values here...
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -34,6 +34,9 @@ namespace CarterGames.Assets.SaveManager
         |   Events
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
+        /// <summary>
+        /// Raises when the save manager is initialized.
+        /// </summary>
         public static Evt InitializedEvt = new Evt();
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────

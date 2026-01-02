@@ -1,5 +1,5 @@
 /*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -18,6 +18,7 @@ using System;
 using System.Linq;
 using CarterGames.Shared.SaveManager;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager.Backups
 {
@@ -37,6 +38,18 @@ namespace CarterGames.Assets.SaveManager.Backups
         public static void BackupLastLoadedData(JToken data)
         {
             var handler = SmAssetAccessor.GetAsset<DataAssetSettings>().BackupLocation;
+            var firstBackup = handler.GetBackups().FirstOrDefault();
+            
+            // Avoids making a backup if the data is exactly the same as before.
+            if (firstBackup != null)
+            {
+                if (firstBackup["json"].ToString() == data.ToString())
+                {
+                    SmDebugLogger.LogDev("Save Backup Manager: Will not make a backup as the data matches the last loaded already.");
+                    return;
+                }
+            }
+
             handler.BackupData(data);
         }
 
@@ -72,6 +85,25 @@ namespace CarterGames.Assets.SaveManager.Backups
             }
             
             return false;
+        }
+
+        
+        /// <summary>
+        /// Loads a backup directly from its data.
+        /// </summary>
+        /// <param name="entry">The entry to load from.</param>
+        public static void LoadBackup(JToken entry)
+        {
+            try
+            {
+                SaveManager.TryLoadData(entry.ToString());
+            }
+#pragma warning disable 0168
+            catch (Exception e)
+#pragma warning restore 0168
+            {
+                SmDebugLogger.LogWarning(SaveManagerErrorCode.BackupRestoreFailed.GetErrorMessageFormat());
+            }
         }
     }
 }

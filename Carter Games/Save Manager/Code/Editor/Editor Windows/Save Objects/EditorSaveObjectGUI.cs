@@ -1,5 +1,5 @@
 /*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -84,14 +84,8 @@ namespace CarterGames.Assets.SaveManager.Editor
                 EditorGUILayout.HelpBox(editor.serializedObject.Fp("editor_warningMessage").stringValue, MessageType.None);
             }
             
-
-            EditorGUI.BeginDisabledGroup(Application.isPlaying);
-            // GUI.backgroundColor = Color.cyan;
             
-            // if (GUILayout.Button("Defaults", GUILayout.Width(75)))
-            // {
-            //     SaveDefaultsWindow.ShowDefaultsWindow(targetSaveObject, SaveManagerEditorCache.SoLookup[targetSaveObject]);
-            // }
+            EditorGUI.BeginDisabledGroup(Application.isPlaying);
             
             GUI.backgroundColor = UtilEditor.Red;
             
@@ -107,8 +101,7 @@ namespace CarterGames.Assets.SaveManager.Editor
 
                     editor.serializedObject.ApplyModifiedProperties();
                     editor.serializedObject.Update();
-
-                    // OldSaveManager.Save();
+                    
                     GUI.FocusControl(null);
 
                     return;
@@ -120,7 +113,6 @@ namespace CarterGames.Assets.SaveManager.Editor
             EditorGUILayout.EndHorizontal();
 
             GUILayout.Space(2.5f);
-//
 
             if (isExpanded)
             {
@@ -140,9 +132,6 @@ namespace CarterGames.Assets.SaveManager.Editor
             if (EditorGUI.EndChangeCheck())
             {
                 editor.serializedObject.ApplyModifiedProperties();
-
-                // SaveManager.SaveGame();
-                // OldSaveManager.Save();
             }
             
             editor.serializedObject.Update();

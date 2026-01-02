@@ -1,5 +1,5 @@
 /*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -24,7 +24,7 @@ namespace CarterGames.Assets.SaveManager
     /// <summary>
     /// Handles storing data in player prefs.
     /// </summary>
-    public class DataLocationPlayerPrefs : IDataLocation
+    public sealed class DataLocationPlayerPrefs : IDataLocation
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields
@@ -36,18 +36,34 @@ namespace CarterGames.Assets.SaveManager
         |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
-        private string GetPrefKey(string path, int index)
+        /// <summary>
+        /// Gets the pref key for the relevant chunk of the data.
+        /// </summary>
+        /// <param name="path">The path (pref key) to get from</param>
+        /// <param name="index">The chunk index to get</param>
+        /// <returns>The key for the requested chunk for use.</returns>
+        private static string GetPrefKey(string path, int index)
         {
             return string.Format(PlayerPrefKeyTemplate, path, index);
         }
         
         
+        /// <summary>
+        /// Gets if the location has data currently stored in it.
+        /// </summary>
+        /// <param name="path">The path to store the data at.</param>
+        /// <returns>If there is data in the location.</returns>
         public bool HasData(string path)
         {
             return PlayerPrefs.HasKey(GetPrefKey(path, 0));
         }
 
         
+        /// <summary>
+        /// Saves data to the location when called.
+        /// </summary>
+        /// <param name="path">The path to store the data at.</param>
+        /// <param name="data">The data to store.</param>
         public void SaveToLocation(string path, string data)
         {
             ClearAllChunks(path);
@@ -63,6 +79,11 @@ namespace CarterGames.Assets.SaveManager
         }
         
 
+        /// <summary>
+        /// Loads the data from the location when called.
+        /// </summary>
+        /// <param name="path">The path to load the data at.</param>
+        /// <returns>The data loaded from the location.</returns>
         public string LoadFromLocation(string path)
         {
             var data = new List<string>();
@@ -78,7 +99,11 @@ namespace CarterGames.Assets.SaveManager
         }
 
 
-        private void ClearAllChunks(string path)
+        /// <summary>
+        /// Clears all the chunks from the location, so its empty.
+        /// </summary>
+        /// <param name="path">The path (pref key) to clear</param>
+        private static void ClearAllChunks(string path)
         {
             var iteration = 0;
 

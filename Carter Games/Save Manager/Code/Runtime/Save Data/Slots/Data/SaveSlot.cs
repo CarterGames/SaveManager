@@ -1,48 +1,93 @@
+/*
+ * Save Manager (3.x)
+ * Copyright (c) 2025-2026 Carter Games
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. 
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
+ *
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>. 
+ */
+
 using System;
-using System.Globalization;
-using System.Linq;
 using CarterGames.Assets.SaveManager.Slots;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager
 {
+    /// <summary>
+    /// A save slot in the save system.
+    /// </summary>
     [Serializable]
     public class SaveSlot
     {
-        private int slotIndex;
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Fields
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+        private ISlotMetaData[] slotMetaData;
+        private int slotId;
         private DateTime saveDate;
         private TimeSpan playtime;
-        
         private JArray saveData;
 
-
-        public int SlotIndex => slotIndex;
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Properties
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
+        /// <summary>
+        /// Gets the slot id for use.
+        /// </summary>
+        public int SlotId => slotId;
+        
+        
+        /// <summary>
+        /// Gets the last time the slot was saved/changed at.
+        /// </summary>
         public DateTime LastSaveDate => saveDate;
+        
+        
+        /// <summary>
+        /// Gets the total playtime with this slot active.
+        /// </summary>
         public TimeSpan Playtime
         {
             get => playtime;
             private set => playtime = value;
         }
 
+        
+        /// <summary>
+        /// Gets the data stores in this slot for use.
+        /// </summary>
         public JArray GetDataArray => saveData;
         
-        private static float PlaytimeStartTime { get; set; }
-
-
-
-        public void ListenForSlotEvents()
-        {
-            SaveSlotManager.SlotLoadedEvt.Add(OnSlotLoaded);
-            SaveSlotManager.SlotUnloadedEvt.Add(OnSlotUnloaded);
-        }
-
         
-        public static SaveSlot NewSlot(int index)
+        /// <summary>
+        /// Gets the start time for the current play session.
+        /// </summary>
+        private static float PlaytimeStartTime { get; set; }
+        
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Constructors
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
+        /// <summary>
+        /// Makes a new save slot
+        /// </summary>
+        /// <param name="id">The id to set the slot as.</param>
+        /// <returns>The generated slot for instance use.</returns>
+        public static SaveSlot NewSlot(int id)
         {
             var valuesJson = new JArray();
 
-            foreach (var entry in SaveObjectController.GetSlotSaveFields(index))
+            foreach (var entry in SaveObjectController.GetSlotSaveFields(id))
             {
                 if (string.IsNullOrEmpty(entry.key))
                 {
@@ -73,13 +118,30 @@ namespace CarterGames.Assets.SaveManager
 
             return new SaveSlot()
             {
-                slotIndex = index,
+                slotId = id,
                 saveDate = DateTime.UtcNow,
                 saveData = valuesJson
             };
         }
 
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Methods
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+        /// <summary>
+        /// Sets up the slot to listen for save slot manager events.
+        /// </summary>
+        public void ListenForSlotEvents()
+        {
+            SaveSlotManager.SlotLoadedEvt.Add(OnSlotLoaded);
+            SaveSlotManager.SlotUnloadedEvt.Add(OnSlotUnloaded);
+        }
         
+        
+        /// <summary>
+        /// Converts the slot data into JSON for saving.
+        /// </summary>
+        /// <returns></returns>
         public JObject ToJsonObject()
         {
             return new JObject()
@@ -91,33 +153,48 @@ namespace CarterGames.Assets.SaveManager
         }
 
 
+        /// <summary>
+        /// Loads the slot data from a provided JSON blob.
+        /// </summary>
+        /// <param name="data">The json to load from.</param>
         public void FromJsonObject(JToken data)
         {
+            SmDebugLogger.LogDev($"Slot {slotId} loading from this data:\n{data["$slot_data"].Value<JArray>()}");
+            
             saveDate = data["$slot_save_date"].Value<DateTime>();
             playtime = TimeSpan.FromSeconds(data["$slot_playtime"].Value<double>());
-
-            SmDebugLogger.LogDev($"Slot {slotIndex} loading from this data:\n{data["$slot_data"].Value<JArray>()}");
-            
             saveData = data["$slot_data"].Value<JArray>();
         }
 
 
+        /// <summary>
+        /// Updates the data in the slot to the entered data.
+        /// </summary>
+        /// <param name="data">The data to set.</param>
         public void UpdateData(JArray data)
         {
             saveData = data;
         }
 
 
-        private void OnSlotLoaded(int index)
+        /// <summary>
+        /// Runs when the slot is loaded in the <see cref="SaveSlotManager"/>
+        /// </summary>
+        /// <param name="id">The slot id loaded.</param>
+        private void OnSlotLoaded(int id)
         {
-            if (SlotIndex != index) return;
+            if (SlotId != id) return;
             PlaytimeStartTime = Time.time;
         }
         
         
-        private void OnSlotUnloaded(int index)
+        /// <summary>
+        /// Runs when the slot is unloaded from the <see cref="SaveSlotManager"/>
+        /// </summary>
+        /// <param name="id">The slot id unloaded.</param>
+        private void OnSlotUnloaded(int id)
         {
-            if (SlotIndex != index) return;
+            if (SlotId != id) return;
             Playtime += TimeSpan.FromSeconds(Time.time - PlaytimeStartTime);
             saveDate = DateTime.UtcNow;
         }

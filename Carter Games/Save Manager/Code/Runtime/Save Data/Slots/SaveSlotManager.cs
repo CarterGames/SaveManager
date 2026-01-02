@@ -1,3 +1,19 @@
+/*
+ * Save Manager (3.x)
+ * Copyright (c) 2025-2026 Carter Games
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. 
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
+ *
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>. 
+ */
+
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -135,23 +151,32 @@ namespace CarterGames.Assets.SaveManager.Slots
             
             if (TotalSlotsInUse > 0)
             {
-                for (var i = 0; i < TotalSlotsInUse; i++)
+                var totalParsed = 0;
+                var i = 0;
+                
+                while (totalParsed < TotalSlotsInUse)
                 {
+                    i++;
+                    
+                    if (data["$content"]["$slots"].SelectToken($"$slot_{i}") == null) continue;
+                    
                     var slot = SaveSlot.NewSlot(i);
                     slot.FromJsonObject(data["$content"]["$slots"][$"$slot_{i}"]);
                     slot.ListenForSlotEvents();
                     saveSlotData.Add(i, slot);
+                    
+                    totalParsed++;
                 }
                 
                 SaveObjectController.InitializeSlotObjects(saveSlotData.Select(t => t.Value));
 
-                for (var i = 0; i < TotalSlotsInUse; i++)
+                foreach (var entry in saveSlotData)
                 {
-                    foreach (var entry in SaveObjectController.AllSlotSaveObjects)
+                    foreach (var SlotSaveObject in SaveObjectController.AllSlotSaveObjects)
                     {
-                        foreach (var saveObject in entry.Value.SlotSaveObjects)
+                        foreach (var saveObject in SlotSaveObject.Value.SlotSaveObjects)
                         {
-                            saveObject.Load(saveSlotData[i].GetDataArray);
+                            saveObject.Load(entry.Value.GetDataArray);
                         }
                     }
                 }
@@ -321,7 +346,7 @@ namespace CarterGames.Assets.SaveManager.Slots
             ActiveSlotIndex = -1;
             ActiveSlot = null;
             
-            SlotUnloadedEvt.Raise(LastActiveSlot.SlotIndex);
+            SlotUnloadedEvt.Raise(LastActiveSlot.SlotId);
         }
         
         
@@ -345,7 +370,7 @@ namespace CarterGames.Assets.SaveManager.Slots
             ActiveSlotIndex = slotIndex;
             ActiveSlot = saveSlotData[ActiveSlotIndex];
             
-            SlotLoadedEvt.Raise(ActiveSlot.SlotIndex);
+            SlotLoadedEvt.Raise(ActiveSlot.SlotId);
         }
 
 
@@ -359,7 +384,7 @@ namespace CarterGames.Assets.SaveManager.Slots
             if (!saveSlotData.ContainsKey(slotId)) return;
             
             saveSlotData.Remove(slotId);
-            SaveObjectController.RemoteSlotObjects(slotId);
+            SaveObjectController.RemoveSlotObjects(slotId);
             TotalSlotsInUse--;
             
             SaveManager.SaveGame();

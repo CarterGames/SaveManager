@@ -1,5 +1,5 @@
 /*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -29,6 +29,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         private SaveEditorGlobalTab globalTab;
         private SaveEditorSlotsTab slotTab;
         private SaveEditorCapturesTab capturesTab;
+        private SaveEditorBackupsTab backupsTab;
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
@@ -44,7 +45,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         |   Window Access Method
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
-        [MenuItem("Tools/Carter Games/Save Manager/Save Editor", priority = 15)]
+        [MenuItem("Tools/Carter Games/Save Manager/Save Editor", priority = 12)]
         private static void ShowWindow()
         {
             var window = GetWindow<EditorWindowSaveEditor>();
@@ -60,29 +61,45 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             EditorGUILayout.BeginHorizontal("HelpBox");
 
+
+            TryUpdateGuiColor(0);
             if (GUILayout.Button("Global Data", GUILayout.Height(25)))
             {
                 CurrentTab = 0;
             }
 
-            EditorGUI.BeginDisabledGroup(!ScriptableRef.GetAssetDef<DataAssetSettings>().DataAssetRef.UseSaveSlots);
+            TryUpdateGuiColor(1);
+            EditorGUI.BeginDisabledGroup(!ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef.UseSaveSlots);
             if (GUILayout.Button("Save Slots", GUILayout.Height(25)))
             {
                 CurrentTab = 1;
             }
             EditorGUI.EndDisabledGroup();
             
+            TryUpdateGuiColor(2);
             if (GUILayout.Button("Save Captures", GUILayout.Height(25)))
             {
                 CurrentTab = 2;
             }
             
+            
+            TryUpdateGuiColor(3);
+            if (GUILayout.Button("Save Backups", GUILayout.Height(25)))
+            {
+                CurrentTab = 3;
+            }
+            
+            GUI.backgroundColor = Color.white;
             EditorGUILayout.EndHorizontal();
 
-            if (CurrentTab == 1 && !ScriptableRef.GetAssetDef<DataAssetSettings>().DataAssetRef.UseSaveSlots)
+            if (CurrentTab == 1 && !ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef.UseSaveSlots)
             {
                 CurrentTab = 0;
             }
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Space(5f);
+            EditorGUILayout.BeginVertical();
             
             switch (CurrentTab)
             {
@@ -98,21 +115,39 @@ namespace CarterGames.Assets.SaveManager.Editor
                     capturesTab ??= new SaveEditorCapturesTab();
                     capturesTab.DrawGUI();
                     break;
+                case 3:
+                    backupsTab ??= new SaveEditorBackupsTab();
+                    backupsTab.DrawGUI();
+                    break;
             }
+            
+            EditorGUILayout.EndVertical();
+            GUILayout.Space(5f);
+            EditorGUILayout.EndHorizontal();
             
             
             GUILayout.FlexibleSpace();
             
-            if (GUILayout.Button("Reset Save", GUILayout.Height(25)))
+            if (CurrentTab == 0 || CurrentTab == 1)
             {
-                var result = EditorUtility.DisplayDialog("Reset Save",
-                    "Are you sure you want to reset your save data, this cannot be undone one applied", "Reset Save",
-                    "Cancel");
+                if (GUILayout.Button("Reset Save", GUILayout.Height(25)))
+                {
+                    var result = EditorUtility.DisplayDialog("Reset Save",
+                        "Are you sure you want to reset your save data, this cannot be undone one applied",
+                        "Reset Save",
+                        "Cancel");
 
-                if (!result) return;
+                    if (!result) return;
 
-                EditorSaveObjectController.ResetAllObjects();
+                    EditorSaveObjectController.ResetAllObjects();
+                }
             }
+        }
+
+
+        private void TryUpdateGuiColor(int target)
+        {
+            GUI.backgroundColor = CurrentTab == target ? Color.white : Color.gray;
         }
     }
 }

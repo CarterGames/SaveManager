@@ -1,5 +1,5 @@
 /*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -28,21 +28,39 @@ namespace CarterGames.Assets.SaveManager
     /// </remarks>
     public static class SaveLocationChangeHandlerRuntime
     {
-        private static string RuntimeLocationKey = "rt_last_save_location";
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Fields
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
+        private static string RuntimeLocationPrefKey = "rt_last_save_location";
 
-
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Properties
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
+        /// <summary>
+        /// Gets the last used save location
+        /// </summary>
         private static string LastSaveLocation
         {
-            get => SaveManagerPrefs.GetStringKey(RuntimeLocationKey);
-            set => SaveManagerPrefs.SetKey(RuntimeLocationKey, value);
+            get => SaveManagerPrefs.GetStringKey(RuntimeLocationPrefKey);
+            set => SaveManagerPrefs.SetKey(RuntimeLocationPrefKey, value);
         }
 
 
+        /// <summary>
+        /// Gets the current save location.
+        /// </summary>
         private static ISaveDataLocation CurrentSaveLocation =>
             SmAssetAccessor.GetAsset<DataAssetSettings>().Location;
         
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Methods
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
-        
+        /// <summary>
+        /// Initializes the runtime change handler.
+        /// </summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
         {
@@ -68,6 +86,12 @@ namespace CarterGames.Assets.SaveManager
         }
         
         
+        /// <summary>
+        /// Tries to parse the location type to a ISaveDataLocation implementation.
+        /// </summary>
+        /// <param name="value">The value to try parse.</param>
+        /// <param name="saveLocation">The location detected.</param>
+        /// <returns>Bool</returns>
         private static bool TryParseLocationType(string value, out ISaveDataLocation saveLocation)
         {
             try

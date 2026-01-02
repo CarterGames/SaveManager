@@ -14,6 +14,9 @@ namespace CarterGames.Assets.SaveManager.Editor
         private static readonly GUIContent EditorSaveFile = new GUIContent("Editor Save File","The path to the editor save file.");
 
         
+        public static readonly Evt<ISaveDataLocation, ISaveDataLocation> SaveLocationChangedEvt = new Evt<ISaveDataLocation, ISaveDataLocation>();
+
+        
         private static void DrawSaveSettings()
         {
             EditorGUILayout.BeginVertical();
@@ -48,16 +51,16 @@ namespace CarterGames.Assets.SaveManager.Editor
             // Editor Save.
             EditorGUILayout.BeginHorizontal();
             
-            EditorGUILayout.TextField(EditorSaveFile, ScriptableRef.GetAssetDef<DataAssetSettings>().DataAssetRef.SavePath);
+            EditorGUILayout.TextField(EditorSaveFile, ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef.SavePath);
             
             if (GUILayout.Button("Open Path",GUILayout.Width(100)))
             {
-                Application.OpenURL(ScriptableRef.GetAssetDef<DataAssetSettings>().DataAssetRef.SavePath.Replace("save.sf2", string.Empty));
+                Application.OpenURL(ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef.SavePath.Replace("save.sf2", string.Empty));
             }
             
             if (GUILayout.Button("Open File",GUILayout.Width(100)))
             {
-                Application.OpenURL(ScriptableRef.GetAssetDef<DataAssetSettings>().DataAssetRef.SavePath);
+                Application.OpenURL(ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef.SavePath);
             }
             
             EditorGUILayout.EndHorizontal();

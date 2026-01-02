@@ -1,5 +1,5 @@
 /*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -65,6 +65,12 @@ namespace CarterGames.Assets.SaveManager
         /// Gets if the save system is currently loading the game.
         /// </summary>
         public static bool IsLoading { get; private set; }
+        
+        
+        /// <summary>
+        /// Gets if the save manager is currently doing a save or load operation.
+        /// </summary>
+        public static bool IsBusy => IsSaving || IsLoading;
 
 
         /// <summary>
@@ -143,7 +149,7 @@ namespace CarterGames.Assets.SaveManager
         {
             Initialize();
             
-            if (IsSaving || IsLoading) return;
+            if (IsBusy) return;
 
             lock (SaveLock)
             {
@@ -187,7 +193,7 @@ namespace CarterGames.Assets.SaveManager
         {
             Initialize();
             
-            if (IsSaving || IsLoading) return;
+            if (IsBusy) return;
 
             lock (SaveLock)
             {
@@ -204,10 +210,11 @@ namespace CarterGames.Assets.SaveManager
                     {
                         IsLoading = false;
                         GameLoadFailedCompletelyEvt.Raise();
+                        SmDebugLogger.LogError(SaveManagerErrorCode.GameLoadFailed.GetErrorMessageFormat());
                     }
                     
                     IsLoading = false;
-                    GameLoadedEvt.Raise();
+                    GameLoadFailedEvt.Raise(new LoadFailInfo(loadedSaveData));
                     return;
                 }
                 

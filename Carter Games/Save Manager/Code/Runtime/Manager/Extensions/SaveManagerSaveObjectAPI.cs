@@ -1,5 +1,5 @@
 /*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -96,7 +96,7 @@ namespace CarterGames.Assets.SaveManager
         /// <returns>SlotSaveObject</returns>
         public static T GetSlotSaveObject<T>(int slotId) where T : SlotSaveObject
         {
-            var slot = SaveObjectController.AllSlotSaveObjects.FirstOrDefault(t => t.Key.SlotIndex != slotId).Key;
+            var slot = SaveObjectController.AllSlotSaveObjects.FirstOrDefault(t => t.Key.SlotId != slotId).Key;
             
             if (slot == null)
             {

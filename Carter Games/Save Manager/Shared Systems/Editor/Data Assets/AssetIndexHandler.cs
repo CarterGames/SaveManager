@@ -108,7 +108,7 @@ namespace CarterGames.Shared.SaveManager.Editor
         /// <summary>
         /// Updates the index with all the save manager asset scriptable objects in the project.
         /// </summary>
-        [MenuItem("Tools/Carter Games/Save Manager/Update Asset Index", priority = 17)]
+        [MenuItem("Tools/Carter Games/Save Manager/Update Asset Index", priority = 71)]
         public static void UpdateIndex()
         {
             var foundAssets = new List<SmDataAsset>();

@@ -1,24 +1,17 @@
 ﻿/*
- * Copyright (c) 2025 Carter Games
+ * Save Manager (3.x)
+ * Copyright (c) 2025-2026 Carter Games
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. 
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
  *
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>. 
  */
 
 using CarterGames.Assets.SaveManager.Slots;
@@ -29,26 +22,56 @@ namespace CarterGames.Assets.SaveManager.Demo
 {
     public class ExampleSlotDisplay : MonoBehaviour
     {
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Fields
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
         [SerializeField] private GameObject newSlotContainer;
         [SerializeField] private GameObject activeSlotContainer;
 
         [SerializeField] private Text slotTitleLabel;
         [SerializeField] private Text slotPlaytimeLabel;
 
-
-        private int SlotIndex => transform.GetSiblingIndex();
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Properties
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
+        private int SlotIndex { get; set; }
         private bool HasSlotData => DisplayedSlot != null;
         private SaveSlot DisplayedSlot { get; set; }
 
-
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Methods
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
+        /// <summary>
+        /// Sets the slot id.
+        /// </summary>
+        /// <param name="id">The id to set to show.</param>
+        public void SetSlotId(int id)
+        {
+            SlotIndex = id;
+        }
+        
+        
+        /// <summary>
+        /// Assigns the save slot to this display.
+        /// </summary>
+        /// <param name="slot"></param>
         public void AssignSlot(SaveSlot slot)
         {
+            SlotIndex = slot.SlotId;
             DisplayedSlot = slot;
             UpdateDisplay();
         }
         
         
-        // Called from button on slot display to create a new slot
+        /// <summary>
+        /// Creates a new slot at the slot index when called.
+        /// </summary>
+        /// <remarks>
+        /// Called from button on slot display to create a new slot
+        /// </remarks>
         public void CreateNewSlot()
         {
             if (SaveSlotManager.TryCreateSlotAtIndex(SlotIndex, out var slot))
@@ -58,6 +81,9 @@ namespace CarterGames.Assets.SaveManager.Demo
         }
 
 
+        /// <summary>
+        /// Updates the slot display to the current state of the slot index.
+        /// </summary>
         public void UpdateDisplay()
         {
             if (!HasSlotData)
@@ -70,23 +96,38 @@ namespace CarterGames.Assets.SaveManager.Demo
                 newSlotContainer.SetActive(false);
                 activeSlotContainer.SetActive(true);
                 
-                slotTitleLabel.text = string.Format(slotTitleLabel.text, DisplayedSlot.SlotIndex);
+                slotTitleLabel.text = string.Format(slotTitleLabel.text, DisplayedSlot.SlotId);
                 slotPlaytimeLabel.text = DisplayedSlot.Playtime.ToString();
             }
         }
 
 
+        /// <summary>
+        /// "Loads" the slot when called
+        /// </summary>
+        /// <remarks>
+        /// Is called via GUI button, would then go to load the game scenes etc after being called etc.
+        /// </remarks>
         public void LoadSlot()
         {
             if (!HasSlotData) return;
-            SaveSlotManager.LoadSlot(DisplayedSlot.SlotIndex);
+            SaveSlotManager.LoadSlot(DisplayedSlot.SlotId);
+            UpdateDisplay();
         }
 
 
+        /// <summary>
+        /// Deletes the slot when called.
+        /// </summary>
+        /// <remarks>
+        /// Is called from a GUI button on the slot display.
+        /// </remarks>
         public void DeleteSlot()
         {
             if (!HasSlotData) return;
-            SaveSlotManager.DeleteSlot(DisplayedSlot.SlotIndex);
+            SaveSlotManager.DeleteSlot(DisplayedSlot.SlotId);
+            DisplayedSlot = null;
+            UpdateDisplay();
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿/*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -60,8 +60,6 @@ namespace CarterGames.Assets.SaveManager.Editor
             DrawResetButton(property);
             
             EditorGUILayout.EndHorizontal();
-            
-            GUILayout.Space(2.5f);
     
             if (property.isExpanded)
             {
@@ -73,9 +71,12 @@ namespace CarterGames.Assets.SaveManager.Editor
                 EditorGUILayout.PropertyField(property.Fpr("value"), new GUIContent("Value"));
                 if (EditorGUI.EndChangeCheck())
                 {
+                    Undo.RecordObject(property.serializedObject.targetObject, "Save Value changed");
+                    
                     property.serializedObject.ApplyModifiedProperties();
                     property.serializedObject.Update();
-                    // OldSaveManager.Save();
+                    
+                    EditorSaveManager.TrySetDirty();
                 }
                 
                 if (property.Fpr("hasDefaultValue").boolValue)
@@ -90,7 +91,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 EditorGUI.indentLevel--;
             }
             
-            GUILayout.Space(2f);
+            GUILayout.Space(1f);
             
             EditorGUILayout.EndVertical();
             EditorGUI.EndProperty();
@@ -132,7 +133,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                     property.serializedObject.ApplyModifiedProperties();
                     property.serializedObject.Update();
                     
-                    // OldSaveManager.Save();
+                    EditorSaveManager.TrySetDirty();
                     return;
                 }
             }

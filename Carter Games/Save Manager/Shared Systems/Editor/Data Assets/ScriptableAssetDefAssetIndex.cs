@@ -42,7 +42,7 @@ namespace CarterGames.Shared.SaveManager.Editor
 		public string DataAssetFilter => $"t:{typeof(SmDataAssetIndex).FullName} name={DataAssetFileName}";
 		public string DataAssetPath => $"{ScriptableRef.FullPathResources}{DataAssetFileName}";
 
-		public SmDataAssetIndex DataAssetRef => ScriptableRef.GetOrCreateAsset(this, ref cache);
+		public SmDataAssetIndex AssetRef => ScriptableRef.GetOrCreateAsset(this, ref cache);
 		public SerializedObject ObjectRef => ScriptableRef.GetOrCreateAssetObject(this, ref objCache);
 		
 		public void TryCreate()

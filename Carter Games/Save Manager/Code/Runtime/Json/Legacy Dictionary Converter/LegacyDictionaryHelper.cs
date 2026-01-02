@@ -1,22 +1,53 @@
-﻿using System;
+﻿/*
+ * Save Manager (3.x)
+ * Copyright (c) 2025-2026 Carter Games
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. 
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
+ *
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>. 
+ */
+
+using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace CarterGames.Assets.SaveManager
 {
     /// <summary>
-    /// A helper class to handle converting older SM2.x saves where the Serializable Dictionary type was used to port over correctly to the 3.X format.
+    /// A helper class to handle converting older SM 2.x saves where the Serializable Dictionary type was used to port over correctly to the 3.X format.
     /// </summary>
     public static class LegacyDictionaryHelper 
     {
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Methods
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
+        /// <summary>
+        /// Converts a old dictionary json setup to the new 3.x setup.
+        /// </summary>
+        /// <param name="tokenValue">The value to read.</param>
+        /// <returns>The converted value.</returns>
         public static JToken ConvertAnyLegacyDictionaries(JToken tokenValue)
         {
-            if (!TryGetAllToConvert(tokenValue, out var entries)) return tokenValue;
+            if (!TryConvertAllDictionaries(tokenValue, out var entries)) return tokenValue;
             return entries;
         }
 
 
-        private static bool TryGetAllToConvert(JToken token, out JObject updated)
+        /// <summary>
+        /// Tries to convert all dictionary setups in the entered token and its children.
+        /// </summary>
+        /// <param name="token">The token to read.</param>
+        /// <param name="updated">The updated token to return.</param>
+        /// <returns>If it was successful.</returns>
+        private static bool TryConvertAllDictionaries(JToken token, out JObject updated)
         {
             var jo = token.DeepClone().Value<JObject>();
             
@@ -39,13 +70,18 @@ namespace CarterGames.Assets.SaveManager
                 {
                     foreach (var entry in tokenValue.SelectTokens("$..list"))
                     {
-                        jo.ReplacePath(entry.Parent.Parent.Path, ConvertLegacyDictionaries(entry.Value<JArray>()));
+                        jo.ReplaceDataAtPath(entry.Parent.Parent.Path, ConvertLegacyDictionaries(entry.Value<JArray>()));
                     }
                 }
             }
         }
 
 
+        /// <summary>
+        /// Converts a legacy dictionary
+        /// </summary>
+        /// <param name="data">The data to convert.</param>
+        /// <returns>The converted data.</returns>
         private static JObject ConvertLegacyDictionaries(JArray data)
         {
             var toRead = data;
@@ -60,7 +96,15 @@ namespace CarterGames.Assets.SaveManager
         }
 
 
-        private static JObject ReplacePath<T>(this JToken root, string path, T newValue)
+        /// <summary>
+        /// Updates a data at a path.
+        /// </summary>
+        /// <param name="root">The root token</param>
+        /// <param name="path">The path for the token.</param>
+        /// <param name="newValue">The new value to set.</param>
+        /// <typeparam name="T">The type to apply.</typeparam>
+        /// <returns>The updated object.</returns>
+        private static JObject ReplaceDataAtPath<T>(this JToken root, string path, T newValue)
         {
             if (root == null || path == null)
             {

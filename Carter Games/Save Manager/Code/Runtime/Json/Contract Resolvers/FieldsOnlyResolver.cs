@@ -1,5 +1,5 @@
 ﻿/*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -28,6 +28,10 @@ namespace CarterGames.Assets.SaveManager
     /// </summary>
     public class FieldsOnlyResolver : DefaultContractResolver
     {
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Methods
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
         /// <summary>
         /// Overrides the creation of properties for a JObject to avoid ones the asset shouldn't do anything with.
         /// </summary>

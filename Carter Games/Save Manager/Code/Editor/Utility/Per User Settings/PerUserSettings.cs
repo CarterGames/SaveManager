@@ -1,24 +1,17 @@
 ﻿/*
- * Copyright (c) 2025 Carter Games
+ * Save Manager (3.x)
+ * Copyright (c) 2025-2026 Carter Games
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. 
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
  *
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>. 
  */
 
 using System;
@@ -51,6 +44,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         private static readonly string ShowDefaultValuesId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_ShowDefaultValues";
         
         private static readonly string LastSaveObjectNameId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_LastSaveObjectName";
+        private static readonly string LastSaveObjectTypeNameId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_LastSaveObjectGenType";
         private static readonly string LastSaveObjectFileNameId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_LastSaveObjectFileName";
         private static readonly string JustCreatedSaveObjectId = $"{UniqueId}_CarterGames_SaveManager_EditorSettings_JustCreatedSaveObject";
         
@@ -165,11 +159,19 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// The name of last save object made by the user.
         /// </summary>
-        public static string LastSaveObjectName
+        public static string SaveObjectGenClassName
         {
             get => (string)GetOrCreateValue<string>(LastSaveObjectNameId, SettingType.EditorPref);
             set => SetValue<string>(LastSaveObjectNameId, SettingType.EditorPref, value);
         }
+        
+        
+        public static int SaveObjectGenType
+        {
+            get => (int)GetOrCreateValue<int>(LastSaveObjectTypeNameId, SettingType.EditorPref);
+            set => SetValue<int>(LastSaveObjectTypeNameId, SettingType.EditorPref, value);
+        }
+
         
         
         /// <summary>
@@ -211,7 +213,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             get => (bool)GetOrCreateValue<bool>(SaveEditorOrganiseByCategoryId, SettingType.EditorPref, true);
             set => SetValue<bool>(SaveEditorOrganiseByCategoryId, SettingType.EditorPref, value);
         }
-        
+
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -415,7 +417,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <summary>
         /// Resets all user editor settings for this asset when called.
         /// </summary>
-        [MenuItem("Tools/Carter Games/Save Manager/Reset User Editor Settings")]
+        [MenuItem("Tools/Carter Games/Save Manager/Reset User Editor Settings", priority = 70)]
         public static void ResetPrefs()
         {
             SaveEditorTabPos = 0;
@@ -423,7 +425,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             SaveEditorProfileViewer = false;
             LastProfileName = string.Empty;
             ShowSaveKeys = false;
-            LastSaveObjectName = string.Empty;
+            SaveObjectGenClassName = string.Empty;
             LastSaveObjectFileName = string.Empty;
             JustCreatedSaveObject = false;
             SaveEditorOrganiseByCategory = true;

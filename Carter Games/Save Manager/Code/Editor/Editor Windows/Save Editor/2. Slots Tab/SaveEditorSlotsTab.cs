@@ -1,3 +1,19 @@
+/*
+ * Save Manager (3.x)
+ * Copyright (c) 2025-2026 Carter Games
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. 
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
+ *
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>. 
+ */
+
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -5,12 +21,22 @@ using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
-    public class SaveEditorSlotsTab
+    /// <summary>
+    /// Handles the GUI for the slots tab in the save editor window.
+    /// </summary>
+    public sealed class SaveEditorSlotsTab
     {
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Fields
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
         private const string SlotExpandedKey = "cg_sm_slot_{0}_expanded";
         private const string SlotSaveDataExpandedKey = "cg_sm_slot_{0}_expanded_save_data";
         private Dictionary<string, IEnumerable<SaveObject>> categoriesLookup;
         
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Properties
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         private Vector2 ScrollPos
         {
@@ -18,6 +44,9 @@ namespace CarterGames.Assets.SaveManager.Editor
             set => EditorUserSettings.SetVec2("cg_sm_slots_scroll_pos", value);
         }
         
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Methods
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         public void DrawGUI()
         {

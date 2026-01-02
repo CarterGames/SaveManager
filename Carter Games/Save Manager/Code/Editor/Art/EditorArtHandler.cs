@@ -1,5 +1,5 @@
 /*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -46,6 +46,11 @@ namespace CarterGames.Assets.SaveManager.Editor
         |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
+        /// <summary>
+        /// Gets the asset path for any art asset for the asset from this script.
+        /// </summary>
+        /// <param name="pathEnd"></param>
+        /// <returns></returns>
         private static string GetPathToAsset(string pathEnd)
         {
             var basePath = Path.GetFullPath(Path.Combine(GetCurrentFileName(), $"../../../../{pathEnd}")).Replace(@"\", "/");
@@ -53,12 +58,22 @@ namespace CarterGames.Assets.SaveManager.Editor
         }
         
         
+        /// <summary>
+        /// Gets the file name for the location of this class.
+        /// </summary>
+        /// <param name="fileName">The path for this file.</param>
+        /// <returns>String</returns>
         private static string GetCurrentFileName([System.Runtime.CompilerServices.CallerFilePath] string fileName = null)
         {
             return fileName;
         }
 
 
+        /// <summary>
+        /// Gets an art icon from its constant id.
+        /// </summary>
+        /// <param name="id">The id to get</param>
+        /// <returns>Texture2D</returns>
         public static Texture2D GetIcon(string id)
         {
             if (CacheLookup.ContainsKey(id))

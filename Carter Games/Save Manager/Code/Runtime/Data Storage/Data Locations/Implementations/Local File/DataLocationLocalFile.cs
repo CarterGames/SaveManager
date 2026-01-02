@@ -1,5 +1,5 @@
 /*
- * Save Manager
+ * Save Manager (3.x)
  * Copyright (c) 2025-2026 Carter Games
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -21,7 +21,7 @@ namespace CarterGames.Assets.SaveManager
     /// <summary>
     /// Handles storing data in a local file.
     /// </summary>
-    public class DataLocationLocalFile : IDataLocation
+    public sealed class DataLocationLocalFile : IDataLocation
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods

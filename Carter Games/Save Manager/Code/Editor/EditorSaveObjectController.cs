@@ -1,31 +1,112 @@
+/*
+ * Save Manager (3.x)
+ * Copyright (c) 2025-2026 Carter Games
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. 
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
+ *
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>. 
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using CarterGames.Assets.SaveManager.Slots;
 using CarterGames.Shared.SaveManager;
 using UnityEditor;
-using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
+    /// <summary>
+    /// Handles save objects in editor space specifically.
+    /// </summary>
     public static class EditorSaveObjectController
     {
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Fields
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
         private static Dictionary<SaveObject, SaveObjectEditor> globalEditorsLookup;
         private static Dictionary<int, Dictionary<SaveObject, SaveObjectEditor>> slotEditorsLookup;
         private static Dictionary<SaveObject, List<string>> saveValueKeys;
 
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Properties
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
+        /// <summary>
+        /// Gets if the editor setup has already initialized.
+        /// </summary>
         private static bool IsEditorInitialized { get; set; }
         
+                
+        /// <summary>
+        /// Gets if the save object controller & the editor setup has initialized.
+        /// </summary>
+        public static bool IsInitialized => SaveObjectController.IsInitialized && IsEditorInitialized;
+
         
+        /// <summary>
+        /// Gets if global save objects exist.
+        /// </summary>
+        public static bool HasGlobalSaveObjects => SaveObjectController.HasGlobalSaveObjects;
+        
+        
+        /// <summary>
+        /// Gets if slot save objects exist.
+        /// </summary>
+        public static bool HasSlotSaveObjects => SaveObjectController.HasSlotSaveObjects;
+        
+        
+        /// <summary>
+        /// Gets the global save object.
+        /// </summary>
+        public static IEnumerable<SaveObject> GlobalSaveObjects => SaveObjectController.GlobalSaveObjects;
+        
+        
+        /// <summary>
+        /// Gets the slot save objects (for all slots)
+        /// </summary>
+        public static IEnumerable<SaveObject> SlotSaveObjects => SaveObjectController.AllSlotSaveObjects
+            .SelectMany(t => t.Value.SlotSaveObjects);
+        
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Events
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
+        /// <summary>
+        /// Raised when the editor setup for save objects is initialized.
+        /// </summary>
+        public static readonly Evt InitializedEditorEvt = new Evt();
+        
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Methods
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        
+        /// <summary>
+        /// Runs the initialization on editor load.
+        /// </summary>
         [InitializeOnLoadMethod]
         public static void Initialize()
         {
             if (SaveManagerInitializer.IsInitialized) return;
             
             SaveManagerInitializer.InitializedEvt.Add(OnRuntimeElementsInitialized);
-            
-            SaveManagerInitializer.InitializeSaveManagerRuntimeSetup();
+
+            try
+            {
+                SaveManagerInitializer.InitializeSaveManagerRuntimeSetup();
+            }
+            catch (Exception e)
+            {
+                SmDebugLogger.LogDev($"An issue occurred on save object init.\nMsg: {e.Message}\nTrace: {e.StackTrace}");
+            }
             
             return;
 
@@ -38,28 +119,17 @@ namespace CarterGames.Assets.SaveManager.Editor
                 InitializedEditorEvt.Raise();
             }
         }
-
-        
-        public static bool IsInitialized => SaveObjectController.IsInitialized && IsEditorInitialized;
-
-        public static bool HasGlobalSaveObjects => SaveObjectController.HasGlobalSaveObjects;
-        public static bool HasSlotSaveObjects => SaveObjectController.HasSlotSaveObjects;
-        public static IEnumerable<SaveObject> GlobalSaveObjects => SaveObjectController.GlobalSaveObjects;
-        public static IEnumerable<SaveObject> SlotSaveObjects => SaveObjectController.AllSlotSaveObjects.SelectMany(t => t.Value.SlotSaveObjects);
-        public static IEnumerable<SaveObject> GetSlotSaveObjects(int index) => SaveObjectController.SlotSaveObjects(index);
-        
-
-        
-        public static Evt InitializedEditorEvt = new Evt();
-
         
         
+        /// <summary>
+        /// Runs the editor side initialization.
+        /// </summary>
         private static void InitializeEditor()
         {
             globalEditorsLookup = new Dictionary<SaveObject, SaveObjectEditor>();
             slotEditorsLookup = new Dictionary<int, Dictionary<SaveObject, SaveObjectEditor>>();
 
-            foreach (var entry in SaveObjectController.AllGlobalSaveObjects)
+            foreach (var entry in SaveObjectController.GlobalSaveObjects)
             {
                 globalEditorsLookup.Add(entry, (SaveObjectEditor)UnityEditor.Editor.CreateEditor(entry));
             }
@@ -70,12 +140,12 @@ namespace CarterGames.Assets.SaveManager.Editor
                 {
                     foreach (var saveObject in entry.Value.SlotSaveObjects)
                     {
-                        if (!slotEditorsLookup.ContainsKey(entry.Key.SlotIndex))
+                        if (!slotEditorsLookup.ContainsKey(entry.Key.SlotId))
                         {
-                            slotEditorsLookup.Add(entry.Key.SlotIndex, new Dictionary<SaveObject, SaveObjectEditor>());
+                            slotEditorsLookup.Add(entry.Key.SlotId, new Dictionary<SaveObject, SaveObjectEditor>());
                         }
 
-                        slotEditorsLookup[entry.Key.SlotIndex].Add(saveObject,
+                        slotEditorsLookup[entry.Key.SlotId].Add(saveObject,
                             (SaveObjectEditor)UnityEditor.Editor.CreateEditor(saveObject));
                     }
                 }
@@ -83,8 +153,25 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             GetAllSaveValueKeys();
         }
+        
+
+        /// <summary>
+        /// Gets the save objects for a particular slot.
+        /// </summary>
+        /// <param name="id">The slot id to get.</param>
+        /// <returns>IEnumerable of SaveObject</returns>
+        public static IEnumerable<SaveObject> GetSlotSaveObjects(int id)
+        {
+            return SaveObjectController.SlotSaveObjects(id);
+        }
 
 
+        /// <summary>
+        /// Tries to get the editor class for a save object.
+        /// </summary>
+        /// <param name="saveObject">The save object to get for.</param>
+        /// <param name="editor">The editor class for that save object.</param>
+        /// <returns>Bool</returns>
         public static bool TryGetEditorForObject(SaveObject saveObject, out SaveObjectEditor editor)
         {
             editor = null;
@@ -101,15 +188,22 @@ namespace CarterGames.Assets.SaveManager.Editor
         }
         
         
-        public static bool TryGetEditorForSlotObjectType(int slotIndex, Type saveObjectType, out SaveObjectEditor editor)
+        /// <summary>
+        /// Tries to get the editor class for a save object of a slot.
+        /// </summary>
+        /// <param name="slotId">The slot id to get.</param>
+        /// <param name="saveObjectType">The save object type to get.</param>
+        /// <param name="editor">The editor class for that save object.</param>
+        /// <returns>Bool</returns>
+        public static bool TryGetEditorForSlotObjectType(int slotId, Type saveObjectType, out SaveObjectEditor editor)
         {
             editor = null;
 
             if (!IsInitialized) return false;
 
-            if (slotEditorsLookup.ContainsKey(slotIndex))
+            if (slotEditorsLookup.ContainsKey(slotId))
             {
-                editor = slotEditorsLookup[slotIndex].FirstOrDefault(t => t.Key.GetType() == saveObjectType).Value;
+                editor = slotEditorsLookup[slotId].FirstOrDefault(t => t.Key.GetType() == saveObjectType).Value;
                 return editor != null;
             }
 
@@ -117,15 +211,22 @@ namespace CarterGames.Assets.SaveManager.Editor
         }
         
         
-        public static bool TryGetEditorForSlotObject(int slotIndex, SaveObject saveObject, out SaveObjectEditor editor)
+        /// <summary>
+        /// Tries to get the editor class for a save object of a slot.
+        /// </summary>
+        /// <param name="slotId">The slot id to get.</param>
+        /// <param name="saveObject">The save object to get for.</param>
+        /// <param name="editor">The editor class for that save object.</param>
+        /// <returns>Bool</returns>
+        public static bool TryGetEditorForSlotObject(int slotId, SaveObject saveObject, out SaveObjectEditor editor)
         {
             editor = null;
 
             if (!IsInitialized) return false;
 
-            if (slotEditorsLookup.ContainsKey(slotIndex))
+            if (slotEditorsLookup.ContainsKey(slotId))
             {
-                editor = slotEditorsLookup[slotIndex][saveObject];
+                editor = slotEditorsLookup[slotId][saveObject];
                 return true;
             }
 
@@ -133,6 +234,11 @@ namespace CarterGames.Assets.SaveManager.Editor
         }
 
         
+        /// <summary>
+        /// Gets if there are any duplicate keys for any save values to flag to the user.
+        /// </summary>
+        /// <param name="saveObject">The save object to check for duplicates.</param>
+        /// <returns>Bool</returns>
         public static bool HasDuplicateSaveValueKeys(SaveObject saveObject)
         {
             if (!IsEditorInitialized) return false;
@@ -141,7 +247,11 @@ namespace CarterGames.Assets.SaveManager.Editor
         }
 
 
-        private static void GetAllSaveValueKeys()
+        /// <summary>
+        /// Gets all the save value keys for duplicate checks mainly.
+        /// </summary>
+        /// <returns>Dictionary of SaveObject key List of strings value.</returns>
+        private static Dictionary<SaveObject, List<string>> GetAllSaveValueKeys()
         {
             saveValueKeys = new Dictionary<SaveObject, List<string>>();
 
@@ -190,9 +300,15 @@ namespace CarterGames.Assets.SaveManager.Editor
                     }
                 }
             }
+
+            return saveValueKeys;
         }
 
         
+        /// <summary>
+        /// Adds the editors for a newly created save slot.
+        /// </summary>
+        /// <param name="slot">The slot to create editors for.</param>
         public static void AddEditorsForSaveSlot(SaveSlot slot)
         {
             var dic = new Dictionary<SaveObject, SaveObjectEditor>();
@@ -204,12 +320,12 @@ namespace CarterGames.Assets.SaveManager.Editor
                 
                 foreach (var saveObject in entry.Value.SlotSaveObjects)
                 {
-                    if (!slotEditorsLookup.ContainsKey(entry.Key.SlotIndex))
+                    if (!slotEditorsLookup.ContainsKey(entry.Key.SlotId))
                     {
-                        slotEditorsLookup.Add(entry.Key.SlotIndex, new Dictionary<SaveObject, SaveObjectEditor>());
+                        slotEditorsLookup.Add(entry.Key.SlotId, new Dictionary<SaveObject, SaveObjectEditor>());
                     }
 
-                    slotEditorsLookup[entry.Key.SlotIndex].Add(saveObject,
+                    slotEditorsLookup[entry.Key.SlotId].Add(saveObject,
                         (SaveObjectEditor)UnityEditor.Editor.CreateEditor(saveObject));
                 }
 
@@ -218,6 +334,9 @@ namespace CarterGames.Assets.SaveManager.Editor
         }
         
 
+        /// <summary>
+        /// Resets all save objects when called.
+        /// </summary>
         public static void ResetAllObjects()
         {
             foreach (var entry in SaveObjectController.GlobalSaveObjects)

@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using CarterGames.Assets.SaveManager.Backups;
 using CarterGames.Shared.SaveManager;
 using CarterGames.Shared.SaveManager.Editor;
+using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,7 +31,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             if (!Directory.Exists(CapturesPath)) return Array.Empty<SaveCaptureDefine>();
             
-            var assets = Directory.GetFiles(CapturesPath);
+            var assets = Directory.GetFiles(CapturesPath).Where(t => !t.Contains(".meta"));
             var files = new List<SaveCaptureDefine>();
             
             foreach (var entry in assets)
@@ -41,7 +44,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 catch (Exception e)
 #pragma warning restore 0168
                 {
-                    SmDebugLogger.LogWarning(SaveManagerErrorCode.SaveCaptureSaveFailed.GetErrorMessageFormat());
+                    SmDebugLogger.LogWarning(SaveManagerErrorCode.SaveCaptureSaveFailed.GetErrorMessageFormat(entry, e.Message, e.StackTrace));
                     continue;
                 }
             }
@@ -56,6 +59,21 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             var profileSavePath = $"{CapturesPath}/{captureName}.json";
             var json = SmAssetAccessor.GetAsset<DataAssetSettings>().Location.LoadDataFromLocation();
+            
+            FileEditorUtil.CreateToDirectory(profileSavePath);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            
+            File.WriteAllText(profileSavePath, json);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+        
+        
+        public static void CaptureFromBackup(JToken backup)
+        {
+            var profileSavePath = $"{CapturesPath}/backup_capture_{DateTime.Now.ToOADate().ToString(CultureInfo.InvariantCulture)}.json";
+            var json = backup.ToString();
             
             FileEditorUtil.CreateToDirectory(profileSavePath);
             AssetDatabase.SaveAssets();
