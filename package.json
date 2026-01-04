@@ -14,12 +14,12 @@
     {
       "displayName": "Global Save Example",
       "description": "An example of a setup using the global save data.",
-      "path": "Samples~/Standard Global Save Example"
+      "path": "Samples~/StandardGlobalSaveExample"
     },
     {
       "displayName": "Save Slots Menu Example",
       "description": "An example of a UI for save slots, to create and edit them at runtime using the Save Slot API.",
-      "path": "Samples~/Save Slot Menu Example"
+      "path": "Samples~/SaveSlotMenuExample"
     }
   ],
   "author": {
