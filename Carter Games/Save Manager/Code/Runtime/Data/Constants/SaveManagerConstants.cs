@@ -37,5 +37,8 @@ namespace CarterGames.Assets.SaveManager
         public const string CogIcon = "editor_cog";
         public const string DataIcon = "editor_data";
         public const string WindowIcon = "editor_window_icon";
+
+        public const string NoCategoryTag = "Uncategorized";
+        public const string SettingsWindowPath = "Carter Games/Save Manager";
     }
 }

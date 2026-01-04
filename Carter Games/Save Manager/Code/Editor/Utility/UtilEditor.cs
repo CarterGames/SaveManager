@@ -26,39 +26,6 @@ namespace CarterGames.Assets.SaveManager.Editor
     public static class UtilEditor
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Fields
-        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-
-        // Paths
-        /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        public const string SettingsWindowPath = "Carter Games/Assets/Save Manager";
-
-
-        // Colours
-        /* ────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-
-        /// <summary>
-        /// Green Apple (Green) Color
-        /// </summary>
-        /// <see cref="https://www.computerhope.com/cgi-bin/htmlcolor.pl?c=4CC417"/>
-        public static readonly Color Green = new Color32(76, 196, 23, 255);
-
-        
-        /// <summary>
-        /// Rubber Ducky Yellow (Yellow) Color
-        /// </summary>
-        /// <see cref="https://www.computerhope.com/cgi-bin/htmlcolor.pl?c=FFD801"/>
-        public static readonly Color Yellow = new Color32(255, 216, 1, 255);
-        
-
-        /// <summary>
-        /// Scarlet Red (Red) Color
-        /// </summary>
-        /// <see cref="https://www.computerhope.com/cgi-bin/htmlcolor.pl?c=FF2400"/>
-        public static readonly Color Red = new Color32(255, 36, 23, 255);
-        
-        
-        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Draw Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
 

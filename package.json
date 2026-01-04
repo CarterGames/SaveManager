@@ -7,12 +7,35 @@
   "unityRelease": "0f1",
   "documentationUrl": "https://carter.games/savemanager",
   "licensesUrl": "https://github.com/CarterGames/SaveManager/blob/main/LICENSE",
-    "dependencies": {
-      "com.unity.nuget.newtonsoft-json": "2.0.0"
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "2.0.0"
   },
+  "samples": [
+    {
+      "displayName": "Global Save Example",
+      "description": "An example of a setup using the global save data.",
+      "path": "Carter Games/Save Manager/Samples~/Standard Global Save Example"
+    },
+    {
+      "displayName": "Save Slots Menu Example",
+      "description": "An example of a UI for save slots, to create and edit them at runtime using the Save Slot API.",
+      "path": "Carter Games/Save Manager/Samples~/Save Slot Menu Example"
+    }
+  ],
   "author": {
     "name": "Carter Games",
     "email": "hello@carter.games",
     "url": "https://carter.games/savemanager"
-  }
+  },
+  "keywords": [
+    "Serialization",
+    "Load",
+    "Save",
+    "Json",
+    "Save",
+    "Encryption",
+    "Simple",
+    "Modular",
+    "Scripable Objects"
+  ]
 }

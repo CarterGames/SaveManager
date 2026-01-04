@@ -53,7 +53,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         [MenuItem("Tools/Carter Games/Save Manager/Edit Settings", priority = 0)]
         public static void OpenSettings()
         {
-            SettingsService.OpenProjectSettings("Carter Games/Assets/Save Manager");
+            SettingsService.OpenProjectSettings(SaveManagerConstants.SettingsWindowPath);
         }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -66,7 +66,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         [SettingsProvider]
         public static SettingsProvider DrawSettingsProvider()
         {
-            var provider = new SettingsProvider(UtilEditor.SettingsWindowPath, SettingsScope.Project)
+            var provider = new SettingsProvider(SaveManagerConstants.SettingsWindowPath, SettingsScope.Project)
             {
                 guiHandler = (searchContext) =>
                 {

@@ -31,6 +31,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         private Dictionary<string, IEnumerable<SaveObject>> categoriesLookup;
+        private bool hasCategoriesToShow;
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
@@ -67,6 +68,11 @@ namespace CarterGames.Assets.SaveManager.Editor
 
                 foreach (var category in SaveCategoryAttributeHelper.GetCategoryNames(data))
                 {
+                    if (category != SaveManagerConstants.NoCategoryTag && !hasCategoriesToShow)
+                    {
+                        hasCategoriesToShow = true;
+                    }
+                    
                     categoriesLookup.Add(category, SaveCategoryAttributeHelper.GetObjectsInCategory(data, category));
                 }
                 
@@ -75,15 +81,22 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             ScrollPos = EditorGUILayout.BeginScrollView(ScrollPos);
 
-            if (categoriesLookup.ContainsKey("Uncategorized"))
+            if (categoriesLookup.ContainsKey(SaveManagerConstants.NoCategoryTag))
             {
-                foreach (var saveObject in categoriesLookup["Uncategorized"])
+                foreach (var saveObject in categoriesLookup[SaveManagerConstants.NoCategoryTag])
                 {
                     if (!EditorSaveObjectController.TryGetEditorForObject(saveObject, out var editor)) continue;
                     EditorSaveObjectGUI.DrawSaveObjectEditor(saveObject, editor);
                 }
             }
 
+            // Skips showing the categories section if there are no categories to show.
+            if (!hasCategoriesToShow)
+            {
+                EditorGUILayout.EndScrollView();
+                return;
+            }
+            
             EditorGUILayout.BeginVertical("Box");
             EditorGUILayout.LabelField("Categories", EditorStyles.boldLabel);
             UtilEditor.DrawHorizontalGUILine();
@@ -91,7 +104,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             foreach (var entry in categoriesLookup)
             {
                 if (entry.Key == string.Empty) continue;
-                if (entry.Key == "Uncategorized") continue;
+                if (entry.Key == SaveManagerConstants.NoCategoryTag) continue;
 
                 EditorGUI.BeginChangeCheck();
                 

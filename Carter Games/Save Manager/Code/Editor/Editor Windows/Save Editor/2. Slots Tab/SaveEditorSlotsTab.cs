@@ -33,6 +33,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         private const string SlotExpandedKey = "cg_sm_slot_{0}_expanded";
         private const string SlotSaveDataExpandedKey = "cg_sm_slot_{0}_expanded_save_data";
         private Dictionary<string, IEnumerable<SaveObject>> categoriesLookup;
+        private bool hasCategoriesToShow;
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
@@ -102,7 +103,6 @@ namespace CarterGames.Assets.SaveManager.Editor
                             "Are you sure you want to remove this save slot?, this cannot be undone once executed.",
                             "Delete Slot", "Cancel"))
                     {
-                        // TODO - delete the slot after an editor dialog confirm...
                         EditorSlotManager.DeleteSlot(entry.Value);
                         return;
                     }
@@ -193,21 +193,33 @@ namespace CarterGames.Assets.SaveManager.Editor
 
                 foreach (var category in SaveCategoryAttributeHelper.GetCategoryNames(actualData))
                 {
+                    if (category != SaveManagerConstants.NoCategoryTag && !hasCategoriesToShow)
+                    {
+                        hasCategoriesToShow = true;
+                    }
+                    
                     categoriesLookup.Add(category, SaveCategoryAttributeHelper.GetObjectsInCategory(actualData, category));
                 }
                 
                 categoriesLookup.Add(string.Empty, actualData.Where(t => categoriesLookup.Values.All(x => !x.Contains(t))));
             }
             
-            if (categoriesLookup.ContainsKey("Uncategorized"))
+            if (categoriesLookup.ContainsKey(SaveManagerConstants.NoCategoryTag))
             {
-                foreach (var saveObject in categoriesLookup["Uncategorized"])
+                foreach (var saveObject in categoriesLookup[SaveManagerConstants.NoCategoryTag])
                 {
                     if (!EditorSaveObjectController.TryGetEditorForSlotObjectType(slotKey, saveObject.GetType(), out var editor)) continue;
                     EditorSaveObjectGUI.DrawSaveObjectEditor(saveObject, editor);
                 }
             }
             
+            // Skips showing the categories section if there are no categories to show.
+            if (!hasCategoriesToShow)
+            {
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndScrollView();
+                return;
+            }
             
             EditorGUILayout.BeginVertical("Box");
             EditorGUILayout.LabelField("Categories", EditorStyles.boldLabel);
@@ -216,7 +228,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             foreach (var entry in categoriesLookup)
             {
                 if (entry.Key == string.Empty) continue;
-                if (entry.Key == "Uncategorized") continue;
+                if (entry.Key == SaveManagerConstants.NoCategoryTag) continue;
 
                 EditorGUI.BeginChangeCheck();
                 var foldout = EditorGUILayout.Foldout(SaveCategoryAttributeHelper.IsCategoryExpanded(entry.Key),
