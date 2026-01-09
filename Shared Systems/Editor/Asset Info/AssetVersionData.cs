@@ -39,6 +39,6 @@ namespace CarterGames.Shared.SaveManager.Editor
         /// <remarks>
         /// Asset owner is in the UK, so its Y/M/D format.
         /// </remarks>
-        public static string ReleaseDate => "2026/??/??";
+        public static string ReleaseDate => "2026/01/10";
     }
 }

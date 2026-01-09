@@ -47,7 +47,7 @@ namespace CarterGames.Assets.SaveManager.Slots
         /// <summary>
         /// Gets if the system has loaded a slot.
         /// </summary>
-        public static bool HasLoadedSlot => ActiveSlotIndex >= 0;
+        public static bool HasLoadedSlot => ActiveSlotId >= 0;
         
         
         /// <summary>
@@ -57,9 +57,9 @@ namespace CarterGames.Assets.SaveManager.Slots
         
         
         /// <summary>
-        /// Gets the active slot index if one is loaded.
+        /// Gets the active slot id if one is loaded.
         /// </summary>
-        public static int ActiveSlotIndex { get; private set; } = -1;
+        public static int ActiveSlotId { get; private set; } = -1;
         
         
         /// <summary>
@@ -99,6 +99,9 @@ namespace CarterGames.Assets.SaveManager.Slots
             ? SmAssetAccessor.GetAsset<DataAssetSettings>().MaxUserSaveSlots 
             : -1;
 
+        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        |   Events
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         /// <summary>
         /// Raised when a slot is created by the user.
@@ -144,7 +147,7 @@ namespace CarterGames.Assets.SaveManager.Slots
         public static void INTERNAL_LoadSlotDataFromSave(JToken data)
         {
             TotalSlotsInUse = (int) data["$content"]["$slots"]["$settings"]["$slots_defined"];
-            ActiveSlotIndex = (int) data["$content"]["$slots"]["$settings"]["$slots_last_active"];
+            ActiveSlotId = (int) data["$content"]["$slots"]["$settings"]["$slots_last_active"];
 
             saveSlotData = new Dictionary<int, SaveSlot>();
             
@@ -208,7 +211,7 @@ namespace CarterGames.Assets.SaveManager.Slots
                 {
                     ["$slots_available"] = SlotsEnabled,
                     ["$slots_defined"] = TotalSlotsInUse,
-                    ["$slots_last_active"] = ActiveSlotIndex,
+                    ["$slots_last_active"] = ActiveSlotId,
                 }
             };
 
@@ -268,7 +271,7 @@ namespace CarterGames.Assets.SaveManager.Slots
         /// <param name="slotId">The slot index to create for.</param>
         /// <param name="newSlot">The new slot made if successful.</param>
         /// <returns>If it was successful (bool).</returns>
-        public static bool TryCreateSlotAtIndex(int slotId, out SaveSlot newSlot)
+        public static bool TryCreateSlotAtId(int slotId, out SaveSlot newSlot)
         {
             saveSlotData ??= new Dictionary<int, SaveSlot>();
 
@@ -342,9 +345,9 @@ namespace CarterGames.Assets.SaveManager.Slots
         {
             if (!HasLoadedSlot) return;
 
-            LastActiveSlot = saveSlotData[ActiveSlotIndex];
+            LastActiveSlot = saveSlotData[ActiveSlotId];
             
-            ActiveSlotIndex = -1;
+            ActiveSlotId = -1;
             ActiveSlot = null;
             
             SlotUnloadedEvt.Raise(LastActiveSlot.SlotId);
@@ -354,22 +357,22 @@ namespace CarterGames.Assets.SaveManager.Slots
         /// <summary>
         /// Loads the slot requested when called if it isn't already.
         /// </summary>
-        /// <param name="slotIndex">The slot to load.</param>
-        public static void LoadSlot(int slotIndex)
+        /// <param name="slotId">The slot to load.</param>
+        public static void LoadSlot(int slotId)
         {
             if (HasLoadedSlot)
             {
                 UnloadCurrentSlot();
             }
 
-            if (!saveSlotData.ContainsKey(slotIndex))
+            if (!saveSlotData.ContainsKey(slotId))
             {
-                SlotLoadFailedEvt.Raise(slotIndex);
+                SlotLoadFailedEvt.Raise(slotId);
                 return;
             }
             
-            ActiveSlotIndex = slotIndex;
-            ActiveSlot = saveSlotData[ActiveSlotIndex];
+            ActiveSlotId = slotId;
+            ActiveSlot = saveSlotData[ActiveSlotId];
             
             SlotLoadedEvt.Raise(ActiveSlot.SlotId);
         }
