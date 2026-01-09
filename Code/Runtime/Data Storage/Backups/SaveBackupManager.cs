@@ -37,16 +37,26 @@ namespace CarterGames.Assets.SaveManager.Backups
         /// <param name="data">The data loaded.</param>
         public static void BackupLastLoadedData(JToken data)
         {
+            if (data == null)
+            {
+                SmDebugLogger.LogDev("Save Backup Manager: Cannot backup as data is null.");
+                return;
+            }
+            
             var handler = SmAssetAccessor.GetAsset<DataAssetSettings>().BackupLocation;
             var firstBackup = handler.GetBackups().FirstOrDefault();
             
             // Avoids making a backup if the data is exactly the same as before.
             if (firstBackup != null)
             {
-                if (firstBackup["json"].ToString() == data.ToString())
+                if (firstBackup.SelectToken("json") != null)
                 {
-                    SmDebugLogger.LogDev("Save Backup Manager: Will not make a backup as the data matches the last loaded already.");
-                    return;
+                    if (firstBackup["json"].ToString() == data.ToString())
+                    {
+                        SmDebugLogger.LogDev(
+                            "Save Backup Manager: Will not make a backup as the data matches the last loaded already.");
+                        return;
+                    }
                 }
             }
 
