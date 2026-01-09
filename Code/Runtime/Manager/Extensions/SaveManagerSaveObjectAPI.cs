@@ -64,7 +64,7 @@ namespace CarterGames.Assets.SaveManager
         /// <returns>Slot Save Object</returns>
         public static T GetActiveSlotSaveObject<T>() where T : SlotSaveObject
         {
-            return GetSlotSaveObject<T>(SaveSlotManager.ActiveSlotIndex);
+            return GetSlotSaveObject<T>(SaveSlotManager.ActiveSlotId);
         }
 
 

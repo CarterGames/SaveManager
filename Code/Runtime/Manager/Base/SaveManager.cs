@@ -243,9 +243,29 @@ namespace CarterGames.Assets.SaveManager
         /// <returns>If the load was successful.</returns>
         public static bool TryLoadData(string data)
         {
+            // Make empty data if there is no data loaded from the location to work with.
+            // Should only first off on the first run of the asset in the new game save with this version.
+            if (data == null)
+            {
+                data = SaveStructure.GenerateSaveData().ToString();
+                SmDebugLogger.LogDev(
+                    "Save Manager: Setting data to a new save structure as the loaded data from the save location was null.");
+            }
+            else
+            {
+                if (data.Length <= 0)
+                {
+                    data = SaveStructure.GenerateSaveData().ToString();
+                    SmDebugLogger.LogDev(
+                        "Save Manager: Setting data to a new save structure as the loaded data from the save location had a string length of 0.");
+                }
+            }
+            
             // Pre-deserialize edits.
             if (PreLoadLogicHandler.TryProcessAllHandlers(data, out var processedData))
             {
+                // Update the data, but only if it works...
+                // Might need to be per handler in the future...
                 data = processedData;
             }
             
