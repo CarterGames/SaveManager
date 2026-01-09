@@ -14,7 +14,6 @@
  * If not, see <https://www.gnu.org/licenses/>. 
  */
 
-using CarterGames.Shared.SaveManager.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -46,59 +45,28 @@ namespace CarterGames.Assets.SaveManager.Editor
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
-        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */ 
-        
+        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
         /// <summary>
         /// Draws the cog logo when called.
         /// </summary>
         private static void DrawCogIcon()
         {
             GUILayout.Space(5f);
-            
+
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button(EditorArtHandler.GetIcon(SaveManagerConstants.CogIcon), GUIStyle.none, GUILayout.MaxHeight(75)))
+            if (GUILayout.Button(EditorArtHandler.GetIcon(SaveManagerConstants.CogIcon), GUIStyle.none,
+                    GUILayout.MaxHeight(75)))
             {
                 GUI.FocusControl(null);
             }
 
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
-            
+
             GUILayout.Space(5f);
-        }
-
-
-        /// <summary>
-        /// Draws the data settings section when called.
-        /// </summary>
-        private void DrawDataSettings()
-        {
-            UtilEditor.DrawSoScriptSection(target as DataAssetSettings);
-
-            GUILayout.Space(12.5f);
-
-            EditorGUI.BeginDisabledGroup(true);
-
-            EditorGUILayout.PropertyField(serializedObject.Fp("defaultSavePath"));
-            EditorGUILayout.PropertyField(serializedObject.Fp("defaultSavePathWeb"));
-            EditorGUILayout.PropertyField(serializedObject.Fp("saveDataAsset"));
-            
-            EditorGUI.EndDisabledGroup();
-        }
-
-
-        /// <summary>
-        /// Draws the options settings when called.
-        /// </summary>
-        private void DrawOptionsSettings()
-        {
-            EditorGUI.BeginDisabledGroup(true);
-            // EditorGUILayout.PropertyField(serializedObject.Fp("encryptionOption"), new GUIContent("Encryption Option"));
-            EditorGUILayout.PropertyField(serializedObject.Fp("prettify"));
-            EditorGUILayout.PropertyField(serializedObject.Fp("autoSaveOnExit"));
-            EditorGUI.EndDisabledGroup();
         }
 
 

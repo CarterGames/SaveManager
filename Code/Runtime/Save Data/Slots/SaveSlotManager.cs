@@ -19,7 +19,6 @@ using System.ComponentModel;
 using System.Linq;
 using CarterGames.Shared.SaveManager;
 using Newtonsoft.Json.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager.Slots
@@ -181,8 +180,10 @@ namespace CarterGames.Assets.SaveManager.Slots
                     }
                 }
             
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
+#if UNITY_EDITOR
+                UnityEditor.AssetDatabase.SaveAssets();
+                UnityEditor.AssetDatabase.Refresh();
+#endif
             }
             else
             {
