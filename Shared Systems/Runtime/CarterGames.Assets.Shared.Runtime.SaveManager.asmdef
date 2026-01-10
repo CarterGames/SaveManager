@@ -1,0 +1,14 @@
+{
+    "name": "CarterGames.Shared.SaveManager",
+    "rootNamespace": "CarterGames.Shared.SaveManager",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

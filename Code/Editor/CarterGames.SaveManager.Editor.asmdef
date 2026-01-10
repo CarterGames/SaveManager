@@ -1,0 +1,21 @@
+{
+    "name": "CarterGames.SaveManager.Editor",
+    "rootNamespace": "CarterGames.Assets.SaveManager.Editor",
+    "references": [
+        "GUID:5fed357a0eb29414bb1d1667107777c5",
+        "GUID:781de0e236e5d6743a1e1820ce72d73a",
+        "GUID:0e845a9d16de228f1bdbd304eb965b27",
+        "GUID:8c3b4835e77894189b9185144df7e6e6"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
