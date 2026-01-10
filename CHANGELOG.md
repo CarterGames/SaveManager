@@ -1,19 +1,11 @@
-# 2.3.0
-## Asset changes
-
-- New editor only save so the build save is in the normal location.
-- New save defaults setup that lets users assign defaults outside of constructors when creating save values.
-- Save defaults now apply when making a build to all save objects so builds don't have persistent data from editor saves.
-- New setting to see save defaults in the editor tab like save keys
-- New editor GUI on save objects to see default values.
-- Removed some older 2.0.x legacy issue fixers.
-- Removed some now redundant API bits. 
-
-
-# 2.2.0
-## Asset changes
-
-- Added support for git URL importing of the asset over .unityPackage. This is considered the recommended install method going forward for ease of updates etc.
-- Added porting tool to transfer user asset settings to the new location required for the git URL update.
-- Updated scriptable asset flow with the latest from the cart library which is more modular and easy to use on the backend.
-- Some additional helper classes for more performant editor operations from within the asset.
+----- 3.0.0 (?? January 2026) -----
+Feature: Save slots now fully supported within the asset.
+Feature: Automatic save backups now supported by the asset.
+Feature: Modular save locations now supported.
+Feature: Modular save encryption options now supported.
+New: Porting feature for 2.x save data into the 3.x global data setup. 
+New: Dependency on newtonsoft json to function for better json support.
+New: Metadata section added to the game save to support read-only save information. 
+Updated: Save Objects updated to not need an instance made in the project to function.
+Updated: Improved the save editor GUI to be more optimized and performant.
+Fixed: Fixed the save json structure so it is actually proper json.
