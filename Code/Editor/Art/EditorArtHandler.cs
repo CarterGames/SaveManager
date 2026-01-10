@@ -53,8 +53,17 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <returns></returns>
         private static string GetPathToAsset(string pathEnd)
         {
-            var basePath = Path.GetFullPath(Path.Combine(GetCurrentFileName(), $"../../../../{pathEnd}")).Replace(@"\", "/");
-            return "Assets/" + basePath.Split(new string[1] { "/Assets/" }, StringSplitOptions.None)[1];
+            string basePath = Path.GetFullPath(Path.Combine(GetCurrentFileName(), $"../../../../{pathEnd}")).Replace(@"\", "/");;
+            
+            // Needed as otherwise the art gets a null ref in the package manager version.
+            if (Directory.Exists("Assets/Carter Games/Save Manager"))
+            {
+                return "Assets/" + basePath.Split(new string[1] { "/Assets/" }, StringSplitOptions.None)[1];
+            }
+            else
+            {
+                return "Art/" + basePath.Split(new string[1] { "/Art/" }, StringSplitOptions.None)[1];
+            }
         }
         
         
