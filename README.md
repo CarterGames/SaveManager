@@ -26,6 +26,9 @@ A free, modular, scriptable object based local save system for Unity.
 ## Unity Supported Versions
 The asset is developed and maintained in 2020.3.x and make use of available .Net updates in the version. Older versions of Unity are not supported for this asset. The asset has been tested pre-release in its development version: 2020.3.0f1.
 <br><br>
+## 2.x version
+Any 2.x changes will be based around the 2.x branch in this repo. 
+<br><br>
 
 ## How To Install
 
