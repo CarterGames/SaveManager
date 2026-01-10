@@ -23,6 +23,10 @@ A free, modular, scriptable object based local save system for Unity.
 ✔️ Easily extendable with custom save storage locations & encryption options<br>
 ✔️ Custom savable dictionary type included.<br>
 <br><br>
+## Unity Supported Versions
+The asset is developed and maintained in 2020.3.x and make use of available .Net updates in the version. Older versions of Unity are not supported for this asset. The asset has been tested pre-release in its development version: 2020.3.0f1.
+<br><br>
+
 ## How To Install
 
 ### Unity Package Manager (Git URL) [Recommended]
@@ -221,9 +225,7 @@ Deletes the slot of the entered id from the save system.
 ## Documentation
 You can access a online of the documentation here: <a href="https://carter.games/savemanager">Online Documentation</a>. An offline copy is provided with the package and asset if needed. 
 <br><br>
-## Unity Supported Versions
-The asset is developed and maintained in 2020.3.x and make use of available .Net updates in the version. Older versions of Unity are not supported for this asset. The asset has been tested pre-release in its development version: 2020.3.0f1.
-<br><br>
+
 ## Authors
 - <a href="https://github.com/JonathanMCarter">Jonathan Carter</a>
 <br><br>
