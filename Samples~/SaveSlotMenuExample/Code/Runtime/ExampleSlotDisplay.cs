@@ -74,7 +74,7 @@ namespace CarterGames.Assets.SaveManager.Demo
         /// </remarks>
         public void CreateNewSlot()
         {
-            if (SaveSlotManager.TryCreateSlotAtIndex(SlotIndex, out var slot))
+            if (SaveSlotManager.TryCreateSlotAtId(SlotIndex, out var slot))
             {
                 AssignSlot(slot);
             }
