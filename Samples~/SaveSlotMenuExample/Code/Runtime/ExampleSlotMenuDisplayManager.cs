@@ -42,9 +42,16 @@ namespace CarterGames.Assets.SaveManager.Demo
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         
         // Gets the highest slot id made.
-        private int HighestId => spawnedIds.Max();
+        private int HighestId
+        {
+            get
+            {
+                if (!spawnedIds.Any()) return 0;
+                return spawnedIds.Max();
+            }
+        }
 
-        
+
         // Gets any missed ids that are not created between the 1 > highest slot id.
         private IEnumerable<int> MissedIds
         {
