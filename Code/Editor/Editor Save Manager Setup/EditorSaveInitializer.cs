@@ -28,6 +28,8 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             void OnSaveObjectInit()
             {
+                
+                
                 SaveManager.SaveGame();
                 Debug.LogError("Save init from import...");
                 onComplete?.Invoke();

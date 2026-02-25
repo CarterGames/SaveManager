@@ -50,7 +50,11 @@ namespace CarterGames.Assets.SaveManager.Editor
         public void DrawGUI()
         {
             // Don't load if not initialized.
-            if (!EditorSaveObjectController.IsInitialized) return;
+            if (!EditorSaveObjectController.IsInitialized)
+            {
+                EditorGUILayout.HelpBox("Save object setup not initialized.", MessageType.Info);
+                return;
+            }
             
             // If no slots, show there is no data
             if (!EditorSaveObjectController.HasGlobalSaveObjects)
