@@ -1,3 +1,4 @@
+using System;
 using CarterGames.Shared.SaveManager.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -7,35 +8,29 @@ namespace CarterGames.Assets.SaveManager.Editor
     public static class EditorSaveInitializer
     {
         private static bool IsInitializing { get; set; }
-        
-        
-        static EditorSaveInitializer()
-        {
-            EditorApplication.update -= OnEditorUpdate;
-            EditorApplication.update += OnEditorUpdate;
-        }
 
 
-        private static void OnEditorUpdate()
+        public static void OnEditorUpdate(Action onComplete)
         {
             if (IsInitializing) return;
             IsInitializing = true;
 
             if (EditorSaveObjectController.IsInitialized)
             {
-                EditorApplication.update -= OnEditorUpdate;
+                onComplete?.Invoke();
                 return;
             }
             
             EditorSaveObjectController.InitializedEditorEvt.Add(OnSaveObjectInit);
             EditorSaveObjectController.Initialize();
+            Debug.LogError("Save init from import...1");
             return;
 
             void OnSaveObjectInit()
             {
                 SaveManager.SaveGame();
-                EditorApplication.update -= OnEditorUpdate;
                 Debug.LogError("Save init from import...");
+                onComplete?.Invoke();
             }
         }
     }
