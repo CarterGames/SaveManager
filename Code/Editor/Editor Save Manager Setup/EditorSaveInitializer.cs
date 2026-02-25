@@ -1,5 +1,6 @@
 using CarterGames.Shared.SaveManager.Editor;
 using UnityEditor;
+using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
@@ -19,6 +20,12 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             if (IsInitializing) return;
             IsInitializing = true;
+
+            if (EditorSaveObjectController.IsInitialized)
+            {
+                EditorApplication.update -= OnEditorUpdate;
+                return;
+            }
             
             EditorSaveObjectController.InitializedEditorEvt.Add(OnSaveObjectInit);
             EditorSaveObjectController.Initialize();
@@ -26,9 +33,9 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             void OnSaveObjectInit()
             {
-                if (ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef.Location.HasSaveData) return;
                 SaveManager.SaveGame();
                 EditorApplication.update -= OnEditorUpdate;
+                Debug.LogError("Save init from import...");
             }
         }
     }
