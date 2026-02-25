@@ -48,8 +48,6 @@ namespace CarterGames.Assets.SaveManager.Editor
         [MenuItem("Tools/Carter Games/Save Manager/Save Editor", priority = 12)]
         private static void ShowWindow()
         {
-            EditorSaveManager.TryMakeSaveFile();
-            
             var window = GetWindow<EditorWindowSaveEditor>();
             window.titleContent = new GUIContent("Save Editor", EditorArtHandler.GetIcon(SaveManagerConstants.WindowIcon));
             window.Show();
