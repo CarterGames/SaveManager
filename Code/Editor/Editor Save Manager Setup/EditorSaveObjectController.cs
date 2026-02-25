@@ -97,18 +97,9 @@ namespace CarterGames.Assets.SaveManager.Editor
         public static void Initialize()
         {
             if (SaveManagerInitializer.IsInitialized) return;
-         
-            if (ScriptableRef.GetAssetDef<SmDataAssetIndex>().AssetRef == null)
-            {
-                ScriptableRef.GetAssetDef<SmDataAssetIndex>().TryCreate();
-            }
-                
-            if (ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef == null)
-            {
-                ScriptableRef.GetAssetDef<DataAssetSettings>().TryCreate();
-            }
+
+            InitializeAssets();
             
-            AssetIndexHandler.UpdateIndex();
             SaveManagerInitializer.InitializedEvt.Add(OnRuntimeElementsInitialized);
 
             try
@@ -130,6 +121,25 @@ namespace CarterGames.Assets.SaveManager.Editor
                 IsEditorInitialized = true;
                 InitializedEditorEvt.Raise();
             }
+        }
+
+
+
+        private static void InitializeAssets()
+        {
+            if (ScriptableRef.GetAssetDef<SmDataAssetIndex>().AssetRef == null)
+            {
+                ScriptableRef.GetAssetDef<SmDataAssetIndex>().TryCreate();
+            }
+                
+            if (ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef == null)
+            {
+                ScriptableRef.GetAssetDef<DataAssetSettings>().TryCreate();
+            }
+            
+            AssetIndexHandler.UpdateIndex();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
         
         
