@@ -28,8 +28,12 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             void OnSaveObjectInit()
             {
+                if (ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef == null)
+                {
+                    ScriptableRef.GetAssetDef<DataAssetSettings>().TryCreate();
+                }
                 
-                
+                AssetIndexHandler.UpdateIndex();
                 SaveManager.SaveGame();
                 Debug.LogError("Save init from import...");
                 onComplete?.Invoke();
