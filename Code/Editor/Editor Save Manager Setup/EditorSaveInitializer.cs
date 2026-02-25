@@ -1,4 +1,5 @@
 using System;
+using CarterGames.Shared.SaveManager;
 using CarterGames.Shared.SaveManager.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -28,6 +29,11 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             void OnSaveObjectInit()
             {
+                if (ScriptableRef.GetAssetDef<SmDataAssetIndex>().AssetRef == null)
+                {
+                    ScriptableRef.GetAssetDef<SmDataAssetIndex>().TryCreate();
+                }
+                
                 if (ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef == null)
                 {
                     ScriptableRef.GetAssetDef<DataAssetSettings>().TryCreate();
