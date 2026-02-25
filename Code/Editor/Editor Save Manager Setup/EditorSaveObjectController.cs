@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CarterGames.Assets.SaveManager.Slots;
 using CarterGames.Shared.SaveManager;
+using CarterGames.Shared.SaveManager.Editor;
 using UnityEditor;
 
 namespace CarterGames.Assets.SaveManager.Editor
@@ -96,7 +97,18 @@ namespace CarterGames.Assets.SaveManager.Editor
         public static void Initialize()
         {
             if (SaveManagerInitializer.IsInitialized) return;
+         
+            if (ScriptableRef.GetAssetDef<SmDataAssetIndex>().AssetRef == null)
+            {
+                ScriptableRef.GetAssetDef<SmDataAssetIndex>().TryCreate();
+            }
+                
+            if (ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef == null)
+            {
+                ScriptableRef.GetAssetDef<DataAssetSettings>().TryCreate();
+            }
             
+            AssetIndexHandler.UpdateIndex();
             SaveManagerInitializer.InitializedEvt.Add(OnRuntimeElementsInitialized);
 
             try
