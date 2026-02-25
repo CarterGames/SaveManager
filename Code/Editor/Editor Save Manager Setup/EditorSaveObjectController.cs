@@ -27,7 +27,7 @@ namespace CarterGames.Assets.SaveManager.Editor
     /// <summary>
     /// Handles save objects in editor space specifically.
     /// </summary>
-    public static class EditorSaveObjectController
+    public class EditorSaveObjectController : IAssetEditorInitialize
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields
@@ -89,11 +89,18 @@ namespace CarterGames.Assets.SaveManager.Editor
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+        public int InitializeOrder => 1;
+        
+        public void OnEditorInitialized()
+        {
+            Initialize();
+        }
+        
         
         /// <summary>
         /// Runs the initialization on editor load.
         /// </summary>
-        [InitializeOnLoadMethod]
         public static void Initialize()
         {
             if (SaveManagerInitializer.IsInitialized) return;
