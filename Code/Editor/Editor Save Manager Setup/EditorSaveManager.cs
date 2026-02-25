@@ -150,5 +150,16 @@ namespace CarterGames.Assets.SaveManager.Editor
             if (SaveManagerEditorIsDirty) return;
             SaveManagerEditorIsDirty = true;
         }
+
+
+        /// <summary>
+        /// Tries to make a save file if one does not exist yet
+        /// Mainly to fix issues with it not existing on first import for the editor flow.
+        /// </summary>
+        public static void TryMakeSaveFile()
+        {
+            if (ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef.Location.HasSaveData) return;
+            SaveManager.SaveGame();
+        }
     }
 }
