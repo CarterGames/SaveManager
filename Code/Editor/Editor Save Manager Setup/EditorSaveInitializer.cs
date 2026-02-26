@@ -1,20 +1,23 @@
 using System;
-using CarterGames.Shared.SaveManager;
-using CarterGames.Shared.SaveManager.Editor;
-using UnityEditor;
-using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
     public static class EditorSaveInitializer
     {
-        private static bool IsInitializing { get; set; }
-
-
-        public static void OnEditorUpdate(Action onComplete)
+        private static bool HasInitialized
         {
-            if (IsInitializing) return;
-            IsInitializing = true;
+            get => EditorUserSettings.GetBool($"{SaveManagerConstants.PrefFormat}_initial_editor_init", false);
+            set => EditorUserSettings.SetBool($"{SaveManagerConstants.PrefFormat}_initial_editor_init", value);
+        }
+
+
+        public static void TryInitializeAsset(Action onComplete)
+        {
+            if (HasInitialized)
+            {
+                onComplete?.Invoke();
+                return;
+            }
 
             if (EditorSaveObjectController.IsInitialized)
             {
@@ -24,25 +27,12 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             EditorSaveObjectController.InitializedEditorEvt.Add(OnSaveObjectInit);
             EditorSaveObjectController.Initialize();
-            Debug.LogError("Save init from import...1");
             return;
 
             void OnSaveObjectInit()
             {
-                if (ScriptableRef.GetAssetDef<SmDataAssetIndex>().AssetRef == null)
-                {
-                    ScriptableRef.GetAssetDef<SmDataAssetIndex>().TryCreate();
-                }
-                
-                if (ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef == null)
-                {
-                    ScriptableRef.GetAssetDef<DataAssetSettings>().TryCreate();
-                }
-                
-                AssetIndexHandler.UpdateIndex();
-                SaveManager.SaveGame();
-                Debug.LogError("Save init from import...");
                 onComplete?.Invoke();
+                HasInitialized = true;
             }
         }
     }
