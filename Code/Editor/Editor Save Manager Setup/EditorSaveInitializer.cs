@@ -6,8 +6,8 @@ namespace CarterGames.Assets.SaveManager.Editor
     {
         private static bool HasInitialized
         {
-            get => EditorUserSettings.GetBool($"{SaveManagerConstants.PrefFormat}_initial_editor_init", false);
-            set => EditorUserSettings.SetBool($"{SaveManagerConstants.PrefFormat}_initial_editor_init", value);
+            get => SaveManagerPrefs.GetBoolKey("initial_editor_init");
+            set => SaveManagerPrefs.SetKey($"{SaveManagerConstants.PrefFormat}_initial_editor_init", value);
         }
 
 
