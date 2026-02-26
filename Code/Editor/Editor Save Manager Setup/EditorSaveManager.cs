@@ -16,14 +16,13 @@
 
 using CarterGames.Shared.SaveManager.Editor;
 using UnityEditor;
-using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
     /// <summary>
     /// Handles a few editor setup bits for the save manager setup to keep the save up-to date.
     /// </summary>
-    public sealed class EditorSaveManager : UnityEditor.AssetModificationProcessor
+    public class EditorSaveManager : UnityEditor.AssetModificationProcessor, IAssetEditorInitialize
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
@@ -41,12 +40,14 @@ namespace CarterGames.Assets.SaveManager.Editor
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Constructors
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+        public int InitializeOrder => 100;
+        
         
         /// <summary>
         /// Auto-runs on compile.
         /// </summary>
-        [InitializeOnLoadMethod]
-        private static void InitializeEditorSaveManager()
+        public void OnEditorInitialized()
         {
             AssemblyReloadEvents.beforeAssemblyReload -= OnPreAssemblyCompile;
             AssemblyReloadEvents.beforeAssemblyReload += OnPreAssemblyCompile;
@@ -141,7 +142,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             SaveManager.SaveGame();
             SaveManagerEditorIsDirty = false; 
         }
-        
+
 
         /// <summary>
         /// Tries to set the editor save state as dirty (so it registers as changes made).
