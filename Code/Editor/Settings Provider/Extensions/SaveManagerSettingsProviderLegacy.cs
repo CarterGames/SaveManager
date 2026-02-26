@@ -28,6 +28,8 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             EditorGUILayout.PropertyField(SettingsAssetObject.Fp("tryPortLegacySave"), PortLegacySave);
             
+            EditorGUI.BeginDisabledGroup(!SettingsAssetObject.Fp("tryPortLegacySave").boolValue);
+            
             // Save encryption handler.
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginDisabledGroup(true);
@@ -41,6 +43,8 @@ namespace CarterGames.Assets.SaveManager.Editor
                 SearchProviderLegacySaveHandlers.GetProvider().Open();
                 return;
             }
+            
+            EditorGUI.EndDisabledGroup();
             
             EditorGUILayout.EndHorizontal();
             
