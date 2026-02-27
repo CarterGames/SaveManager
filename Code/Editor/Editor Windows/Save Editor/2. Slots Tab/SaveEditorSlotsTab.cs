@@ -52,7 +52,11 @@ namespace CarterGames.Assets.SaveManager.Editor
         public void DrawGUI()
         {
             // Don't load if not initialized.
-            if (!EditorSaveObjectController.IsInitialized) return;
+            if (!EditorSaveObjectController.IsInitialized)
+            {
+                EditorSaveObjectController.Initialize();
+                return;
+            }
             
             // If no slots, show there is no data
             if (!EditorSaveObjectController.HasSlotSaveObjects)
@@ -150,6 +154,13 @@ namespace CarterGames.Assets.SaveManager.Editor
                     continue;
                 }
 
+                if (!EditorSaveObjectController.GetSlotSaveObjects(entry.Key).Any())
+                {
+                    EditorGUILayout.HelpBox("No SlotSaveObjects defined in the project. Make one to be able to save data to slots.", MessageType.Info);
+                    EditorGUILayout.EndVertical();
+                    continue;
+                }
+                
                 DrawSlotSaveData(entry.Key, EditorSaveObjectController.GetSlotSaveObjects(entry.Key));
                 
                 EditorGUILayout.EndVertical();
