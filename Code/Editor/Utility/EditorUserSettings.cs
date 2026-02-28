@@ -21,16 +21,16 @@ namespace CarterGames.Assets.SaveManager.Editor
 {
     public static class EditorUserSettings
     {
-        public static bool GetBool(string key) => (bool) PerUserSettingsEditor.GetOrCreateValue<bool>(key, PerUserSettingType.SessionState);
+        public static bool GetBool(string key, bool defaultValue = false) => (bool) PerUserSettingsEditor.GetOrCreateValue<bool>(key, PerUserSettingType.SessionState, defaultValue);
         public static void SetBool(string key, bool value) => PerUserSettingsEditor.SetValue<bool>(key, PerUserSettingType.SessionState, value);
         
-        public static int GetInt(string key) => (int) PerUserSettingsEditor.GetOrCreateValue<int>(key, PerUserSettingType.SessionState);
+        public static int GetInt(string key, int defaultValue = 0) => (int) PerUserSettingsEditor.GetOrCreateValue<int>(key, PerUserSettingType.SessionState, defaultValue);
         public static void SetInt(string key, int value) => PerUserSettingsEditor.SetValue<int>(key, PerUserSettingType.SessionState, value);
         
         public static Vector2 GetVec2(string key) => (Vector2) PerUserSettingsEditor.GetOrCreateValue<Vector2>(key, PerUserSettingType.SessionState, new Vector2());
         public static void SetVec2(string key, Vector2 value) => PerUserSettingsEditor.SetValue<Vector2>(key, PerUserSettingType.SessionState, value);
         
-        public static string GetString(string key) => (string) PerUserSettingsEditor.GetOrCreateValue<string>(key, PerUserSettingType.SessionState);
+        public static string GetString(string key, string defaultValue = "") => (string) PerUserSettingsEditor.GetOrCreateValue<string>(key, PerUserSettingType.SessionState, defaultValue);
         public static void SetString(string key, string value) => PerUserSettingsEditor.SetValue<string>(key, PerUserSettingType.SessionState, value);
     }
 }

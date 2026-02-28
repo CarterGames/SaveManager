@@ -1,4 +1,5 @@
-<img width="100" height="100" alt="Logo - Save Manager - Filled BG" src="https://github.com/user-attachments/assets/4415ae30-ff63-456e-9912-e2b22cb46616" /></img>
+![SaveManager_Logo_160_Sq](https://github.com/user-attachments/assets/d7536ecd-0e1a-4fd1-8dd0-d311494e611c)
+
 # Save Manager
 
 A free, modular, scriptable object based local save system for Unity.

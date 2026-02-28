@@ -39,7 +39,7 @@ namespace CarterGames.Assets.SaveManager
         /// <summary>
         /// Gets if the logs should be shown.
         /// </summary>
-        private static bool ShowLogs => SaveManagerPrefs.GetBoolKey(SaveManagerConstants.LogsPref);
+        private static bool ShowLogs => SaveManagerPrefs.GetBoolKey(SaveManagerConstants.LogsPref, true);
         
         
         /// <summary>
