@@ -45,6 +45,8 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             EditorGUILayout.PropertyField(SettingsAssetObject.Fp("encryptSave"), UseEncryption);
 
+            EditorGUI.BeginDisabledGroup(!SettingsAssetObject.Fp("encryptSave").boolValue);
+            
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.TextField(SaveEncryptionType,
@@ -58,6 +60,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                 return;
             }
 
+            EditorGUI.EndDisabledGroup();
             EditorGUI.EndDisabledGroup();
 
             EditorGUILayout.EndHorizontal();

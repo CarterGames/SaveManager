@@ -14,14 +14,16 @@
  * If not, see <https://www.gnu.org/licenses/>. 
  */
 
-using UnityEditor;
+using CarterGames.Shared.SaveManager.Editor;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
-    public static class SaveLocationChangeHandlerEditor
+    public class SaveLocationChangeHandlerEditor : IAssetEditorInitialize
     {
-        [InitializeOnLoadMethod]
-        private static void EditorInitialize()
+        public int InitializeOrder => 50;
+        
+        
+        public void OnEditorInitialized()
         {
             SaveManagerSettingsProvider.SaveLocationChangedEvt.Add(OnSaveLocationSettingChanged);
         }
