@@ -51,6 +51,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             var window = GetWindow<EditorWindowSaveEditor>();
             window.titleContent = new GUIContent("Save Editor", EditorArtHandler.GetIcon(SaveManagerConstants.WindowIcon));
             EditorSaveInitializer.TryInitializeAsset(window.Show);
+            EditorSaveObjectController.ReInitIfNeeded();
         }
         
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────

@@ -204,20 +204,18 @@ namespace CarterGames.Assets.SaveManager.Editor
 
                 foreach (var category in SaveCategoryAttributeHelper.GetCategoryNames(actualData))
                 {
-                    if (category != SaveManagerConstants.NoCategoryTag && !hasCategoriesToShow)
+                    if (!hasCategoriesToShow)
                     {
                         hasCategoriesToShow = true;
                     }
                     
                     categoriesLookup.Add(category, SaveCategoryAttributeHelper.GetObjectsInCategory(actualData, category));
                 }
-                
-                categoriesLookup.Add(string.Empty, actualData.Where(t => categoriesLookup.Values.All(x => !x.Contains(t))));
             }
             
-            if (categoriesLookup.ContainsKey(SaveManagerConstants.NoCategoryTag))
+            if (categoriesLookup.TryGetValue(SaveManagerConstants.NoCategoryTag, out var uncategorizedSlotSaveObjects))
             {
-                foreach (var saveObject in categoriesLookup[SaveManagerConstants.NoCategoryTag])
+                foreach (var saveObject in uncategorizedSlotSaveObjects)
                 {
                     if (!EditorSaveObjectController.TryGetEditorForSlotObjectType(slotKey, saveObject.GetType(), out var editor)) continue;
                     EditorSaveObjectGUI.DrawSaveObjectEditor(saveObject, editor);
@@ -225,10 +223,8 @@ namespace CarterGames.Assets.SaveManager.Editor
             }
             
             // Skips showing the categories section if there are no categories to show.
-            if (!hasCategoriesToShow)
+            if (!hasCategoriesToShow || categoriesLookup!.Count <= 1)
             {
-                EditorGUILayout.EndVertical();
-                EditorGUILayout.EndScrollView();
                 return;
             }
             

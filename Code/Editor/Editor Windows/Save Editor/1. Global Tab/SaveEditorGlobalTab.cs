@@ -79,8 +79,6 @@ namespace CarterGames.Assets.SaveManager.Editor
                     
                     categoriesLookup.Add(category, SaveCategoryAttributeHelper.GetObjectsInCategory(data, category));
                 }
-                
-                categoriesLookup.Add(string.Empty, EditorSaveObjectController.GlobalSaveObjects.Where(t => categoriesLookup.Values.All(x => !x.Contains(t))));
             }
 
             ScrollPos = EditorGUILayout.BeginScrollView(ScrollPos);
@@ -95,7 +93,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             }
 
             // Skips showing the categories section if there are no categories to show.
-            if (!hasCategoriesToShow)
+            if (!hasCategoriesToShow || categoriesLookup.Count <= 1)
             {
                 EditorGUILayout.EndScrollView();
                 return;
