@@ -21,6 +21,7 @@ using CarterGames.Assets.SaveManager.Slots;
 using CarterGames.Shared.SaveManager;
 using CarterGames.Shared.SaveManager.Editor;
 using UnityEditor;
+using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
@@ -52,7 +53,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         public static bool IsInitialized => SaveObjectController.IsInitialized && IsEditorInitialized;
 
-        
+
         /// <summary>
         /// Gets if global save objects exist.
         /// </summary>
@@ -136,6 +137,16 @@ namespace CarterGames.Assets.SaveManager.Editor
                 IsEditorInitialized = true;
                 InitializedEditorEvt.Raise();
             }
+        }
+
+
+        public static void ReInitIfNeeded()
+        {
+            if (IsEditorInitialized) return;
+            InitializeEditor();
+            
+            IsEditorInitialized = true;
+            InitializedEditorEvt.Raise();
         }
 
 

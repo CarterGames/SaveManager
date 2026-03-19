@@ -101,6 +101,13 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <param name="change">The state change that occurred.</param>
         private static void OnPlayModeStateChanged(PlayModeStateChange change)
         {
+            if (change == PlayModeStateChange.EnteredEditMode)
+            {
+                //
+                EditorSaveObjectController.ReInitIfNeeded();
+                return;
+            }
+            
             // Only trigger on enter play mode.
             if (change != PlayModeStateChange.ExitingEditMode) return;
             
