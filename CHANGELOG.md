@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.3] - 2026-03-19
+
+### Changed
+- Updated the art in the sample scenes to match the new asset art style.
+
+### Removed
+- Removed old art files from the asset.
+- Removed custom script file icons from asset scripts.
+
+### Fixed
+- Fixed an error with the save editor where it would fail to populate after exiting playmode.
+- Fixed an error with the save editor where save slot save data would error in the GUI when no save categories were in use in the setup.
+
 ## [3.0.2] - 2026-02-27
 
 ### Fixed
