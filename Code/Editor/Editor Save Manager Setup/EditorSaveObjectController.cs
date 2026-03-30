@@ -19,14 +19,16 @@ using System.Collections.Generic;
 using System.Linq;
 using CarterGames.Assets.SaveManager.Slots;
 using CarterGames.Shared.SaveManager;
+using CarterGames.Shared.SaveManager.Editor;
 using UnityEditor;
+using UnityEngine;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
     /// <summary>
     /// Handles save objects in editor space specifically.
     /// </summary>
-    public static class EditorSaveObjectController
+    public class EditorSaveObjectController : IAssetEditorInitialize
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields
@@ -51,7 +53,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// </summary>
         public static bool IsInitialized => SaveObjectController.IsInitialized && IsEditorInitialized;
 
-        
+
         /// <summary>
         /// Gets if global save objects exist.
         /// </summary>
@@ -88,14 +90,31 @@ namespace CarterGames.Assets.SaveManager.Editor
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Methods
         ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+        public int InitializeOrder => 1;
+        
+        public void OnEditorInitialized()
+        {
+            Initialize();
+        }
+        
         
         /// <summary>
         /// Runs the initialization on editor load.
         /// </summary>
-        [InitializeOnLoadMethod]
         public static void Initialize()
         {
             if (SaveManagerInitializer.IsInitialized) return;
+
+            if (InitializeAssets())
+            {
+                EditorApplication.delayCall += Initialize;
+                return;
+            }
+            else
+            {
+                EditorApplication.delayCall -= Initialize;
+            }
             
             SaveManagerInitializer.InitializedEvt.Add(OnRuntimeElementsInitialized);
 
@@ -118,6 +137,37 @@ namespace CarterGames.Assets.SaveManager.Editor
                 IsEditorInitialized = true;
                 InitializedEditorEvt.Raise();
             }
+        }
+
+
+        public static void ReInitIfNeeded()
+        {
+            if (IsEditorInitialized) return;
+            InitializeEditor();
+            
+            IsEditorInitialized = true;
+            InitializedEditorEvt.Raise();
+        }
+
+
+
+        private static bool InitializeAssets()
+        {
+            if (ScriptableRef.GetAssetDef<DataAssetSettings>().AssetRef == null)
+            {
+                ScriptableRef.GetAssetDef<DataAssetSettings>().TryCreate();
+            }
+            
+            if (ScriptableRef.GetAssetDef<SmDataAssetIndex>().AssetRef == null)
+            {
+                ScriptableRef.GetAssetDef<SmDataAssetIndex>().TryCreate();
+                AssetIndexHandler.UpdateIndex();
+                AssetDatabase.SaveAssets();
+
+                return true;
+            }
+
+            return false;
         }
         
         

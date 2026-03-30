@@ -68,8 +68,8 @@ namespace CarterGames.Shared.SaveManager.Editor
         /// The order this script is processed in, in this case its the default.
         /// </summary>
         public int callbackOrder => 0;
-        
-        
+
+
         /// <summary>
         /// Runs before a build is executed.
         /// </summary>

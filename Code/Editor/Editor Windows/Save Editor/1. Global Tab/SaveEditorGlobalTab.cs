@@ -50,7 +50,11 @@ namespace CarterGames.Assets.SaveManager.Editor
         public void DrawGUI()
         {
             // Don't load if not initialized.
-            if (!EditorSaveObjectController.IsInitialized) return;
+            if (!EditorSaveObjectController.IsInitialized)
+            {
+                EditorGUILayout.HelpBox("Save object setup not initialized.", MessageType.Info);
+                return;
+            }
             
             // If no slots, show there is no data
             if (!EditorSaveObjectController.HasGlobalSaveObjects)
@@ -75,8 +79,6 @@ namespace CarterGames.Assets.SaveManager.Editor
                     
                     categoriesLookup.Add(category, SaveCategoryAttributeHelper.GetObjectsInCategory(data, category));
                 }
-                
-                categoriesLookup.Add(string.Empty, EditorSaveObjectController.GlobalSaveObjects.Where(t => categoriesLookup.Values.All(x => !x.Contains(t))));
             }
 
             ScrollPos = EditorGUILayout.BeginScrollView(ScrollPos);
@@ -91,7 +93,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             }
 
             // Skips showing the categories section if there are no categories to show.
-            if (!hasCategoriesToShow)
+            if (!hasCategoriesToShow || categoriesLookup.Count <= 1)
             {
                 EditorGUILayout.EndScrollView();
                 return;

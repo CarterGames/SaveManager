@@ -41,7 +41,7 @@ namespace CarterGames.Assets.SaveManager
         /// </summary>
         /// <param name="key">The key to get for.</param>
         /// <returns>Bool</returns>
-        public static bool GetBoolKey(string key) => bool.Parse(Internal_GetKey<bool>(key));
+        public static bool GetBoolKey(string key, bool defaultValue = false) => bool.Parse(Internal_GetKey<bool>(key, defaultValue.ToString()));
         
         
         /// <summary>
@@ -104,9 +104,10 @@ namespace CarterGames.Assets.SaveManager
         /// Gets a keys value.
         /// </summary>
         /// <param name="key">The key to get.</param>
+        /// <param name="defaultValue">The defaultValue to use if it didn't exist.</param>
         /// <typeparam name="T">The type the key is.</typeparam>
         /// <returns>The key's value in JSON</returns>
-        private static string Internal_GetKey<T>(string key)
+        private static string Internal_GetKey<T>(string key, string defaultValue = "")
         {
             var prefKey = Internal_GetKey(key);
             
@@ -115,8 +116,9 @@ namespace CarterGames.Assets.SaveManager
                 return PlayerPrefs.GetString(prefKey);
             }
 
-            PlayerPrefs.SetString(prefKey, default(T)?.ToString());
-            return default(T)?.ToString();
+            var def = string.IsNullOrEmpty(defaultValue) ? default(T)?.ToString() : defaultValue;
+            PlayerPrefs.SetString(prefKey, def);
+            return def;
         }
         
         
