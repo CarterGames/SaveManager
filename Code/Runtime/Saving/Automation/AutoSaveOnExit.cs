@@ -14,6 +14,7 @@
  * If not, see <https://www.gnu.org/licenses/>. 
  */
 
+using CarterGames.Assets.SaveManager.Slots;
 using CarterGames.Shared.SaveManager;
 using UnityEngine;
 
@@ -38,6 +39,12 @@ namespace CarterGames.Assets.SaveManager
         /// Gets if the save has happened already.
         /// </summary>
         private static bool HasSaved { get; set; }
+        
+        
+        /// <summary>
+        /// Stores the last unloaded slot to re-load on app focus if needed.
+        /// </summary>
+        private static int LastSlotUnloaded { get; set; }
         
         /* —————————————————————————————————————————————————————————————————————————————————————————————————————————————
         |   Methods
@@ -80,12 +87,28 @@ namespace CarterGames.Assets.SaveManager
         private void OnApplicationFocus(bool hasFocus)
         {
             if (!SmAssetAccessor.GetAsset<DataAssetSettings>().AutoSave) return;
-            if (HasSaved) return;
             
             if (hasFocus)             
             {
                 HasSaved = false;
+
+                if (SmAssetAccessor.GetAsset<DataAssetSettings>().UseSaveSlots)
+                {
+                    SaveSlotManager.LoadSlot(LastSlotUnloaded);
+                }
+
                 return;
+            }
+            
+            if (HasSaved) return;
+            
+            if (SmAssetAccessor.GetAsset<DataAssetSettings>().UseSaveSlots)
+            {
+                if (SaveSlotManager.HasLoadedSlot)
+                {
+                    LastSlotUnloaded = SaveSlotManager.ActiveSlotId;
+                    SaveSlotManager.UnloadCurrentSlot();
+                }
             }
             
             SaveManager.SaveGame();
@@ -99,6 +122,15 @@ namespace CarterGames.Assets.SaveManager
         {
             if (!SmAssetAccessor.GetAsset<DataAssetSettings>().AutoSave) return;
             if (HasSaved) return;
+            
+            if (SmAssetAccessor.GetAsset<DataAssetSettings>().UseSaveSlots)
+            {
+                if (SaveSlotManager.HasLoadedSlot)
+                {
+                    SaveSlotManager.UnloadCurrentSlot();
+                }
+            }
+            
             SaveManager.SaveGame();
         }
     }

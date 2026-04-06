@@ -1,33 +1,11 @@
-/*
- * Save Manager (3.x)
- * Copyright (c) 2025-2026 Carter Games
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version. 
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
- *
- * You should have received a copy of the GNU General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>. 
- */
-
 using CarterGames.Shared.SaveManager.Editor;
 using UnityEditor;
 
 namespace CarterGames.Assets.SaveManager.Editor
 {
-    /// <summary>
-    /// Handles a few editor setup bits for the save manager setup to keep the save up-to date.
-    /// </summary>
-    public class EditorSaveManager : UnityEditor.AssetModificationProcessor, IAssetEditorInitialize
+    [InitializeOnLoad]
+    public static class EditorSaveHandler
     {
-        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Properties
-        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-        
         /// <summary>
         /// Get/Set if the editor is dirty (editor perf).
         /// </summary>
@@ -37,17 +15,8 @@ namespace CarterGames.Assets.SaveManager.Editor
             set => PerUserSettingsEditor.SetValue<bool>("save_manager_dirty", PerUserSettingType.EditorPref, value);
         }
         
-        /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-        |   Constructors
-        ───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
-
-        public int InitializeOrder => 100;
         
-        
-        /// <summary>
-        /// Auto-runs on compile.
-        /// </summary>
-        public void OnEditorInitialized()
+        static EditorSaveHandler()
         {
             AssemblyReloadEvents.beforeAssemblyReload -= OnPreAssemblyCompile;
             AssemblyReloadEvents.beforeAssemblyReload += OnPreAssemblyCompile;
@@ -57,6 +26,9 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             EditorApplication.quitting -= OnEditorQuitting;
             EditorApplication.quitting += OnEditorQuitting;
+            
+            SaveManagerInitializer.InitializeSaveManagerRuntimeSetup();
+            EditorSaveObjectController.ReInitIfNeeded();
         }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -101,9 +73,8 @@ namespace CarterGames.Assets.SaveManager.Editor
         /// <param name="change">The state change that occurred.</param>
         private static void OnPlayModeStateChanged(PlayModeStateChange change)
         {
-            if (change == PlayModeStateChange.EnteredEditMode)
+            if (change == PlayModeStateChange.ExitingPlayMode)
             {
-                //
                 EditorSaveObjectController.ReInitIfNeeded();
                 return;
             }

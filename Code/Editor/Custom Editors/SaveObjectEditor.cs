@@ -116,7 +116,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                         serializedObject.ApplyModifiedProperties();
                         serializedObject.Update();
                         
-                        EditorSaveManager.TrySetDirty();
+                        EditorSaveHandler.TrySetDirty();
                     }
                 }
             }
