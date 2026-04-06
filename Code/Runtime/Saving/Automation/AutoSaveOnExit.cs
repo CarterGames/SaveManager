@@ -14,6 +14,7 @@
  * If not, see <https://www.gnu.org/licenses/>. 
  */
 
+using CarterGames.Assets.SaveManager.Slots;
 using CarterGames.Shared.SaveManager;
 using UnityEngine;
 
@@ -80,12 +81,21 @@ namespace CarterGames.Assets.SaveManager
         private void OnApplicationFocus(bool hasFocus)
         {
             if (!SmAssetAccessor.GetAsset<DataAssetSettings>().AutoSave) return;
-            if (HasSaved) return;
             
             if (hasFocus)             
             {
                 HasSaved = false;
                 return;
+            }
+            
+            if (HasSaved) return;
+            
+            if (SmAssetAccessor.GetAsset<DataAssetSettings>().UseSaveSlots)
+            {
+                if (SaveSlotManager.HasLoadedSlot)
+                {
+                    SaveSlotManager.UnloadCurrentSlot();
+                }
             }
             
             SaveManager.SaveGame();
@@ -99,6 +109,15 @@ namespace CarterGames.Assets.SaveManager
         {
             if (!SmAssetAccessor.GetAsset<DataAssetSettings>().AutoSave) return;
             if (HasSaved) return;
+            
+            if (SmAssetAccessor.GetAsset<DataAssetSettings>().UseSaveSlots)
+            {
+                if (SaveSlotManager.HasLoadedSlot)
+                {
+                    SaveSlotManager.UnloadCurrentSlot();
+                }
+            }
+            
             SaveManager.SaveGame();
         }
     }
