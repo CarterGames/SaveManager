@@ -204,7 +204,7 @@ namespace CarterGames.Assets.SaveManager.Editor
 
                 foreach (var category in SaveCategoryAttributeHelper.GetCategoryNames(actualData))
                 {
-                    if (!hasCategoriesToShow)
+                    if (category != SaveManagerConstants.NoCategoryTag && !hasCategoriesToShow)
                     {
                         hasCategoriesToShow = true;
                     }
