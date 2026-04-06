@@ -27,6 +27,7 @@ namespace CarterGames.Assets.SaveManager.Editor
         {
             get => SaveManagerPrefs.GetBoolKey("initial_editor_init");
             set => SaveManagerPrefs.SetKey($"{SaveManagerConstants.PrefFormat}_initial_editor_init", value);
+            //
         }
 
 

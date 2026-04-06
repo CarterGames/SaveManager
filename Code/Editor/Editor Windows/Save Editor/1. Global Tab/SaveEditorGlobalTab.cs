@@ -93,7 +93,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             }
 
             // Skips showing the categories section if there are no categories to show.
-            if (!hasCategoriesToShow || categoriesLookup.Count <= 1)
+            if (!hasCategoriesToShow)
             {
                 EditorGUILayout.EndScrollView();
                 return;

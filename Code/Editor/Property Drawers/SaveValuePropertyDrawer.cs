@@ -76,7 +76,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                     property.serializedObject.ApplyModifiedProperties();
                     property.serializedObject.Update();
                     
-                    EditorSaveManager.TrySetDirty();
+                    EditorSaveHandler.TrySetDirty();
                 }
                 
                 if (property.Fpr("hasDefaultValue").boolValue)
@@ -133,7 +133,7 @@ namespace CarterGames.Assets.SaveManager.Editor
                     property.serializedObject.ApplyModifiedProperties();
                     property.serializedObject.Update();
                     
-                    EditorSaveManager.TrySetDirty();
+                    EditorSaveHandler.TrySetDirty();
                     return;
                 }
             }

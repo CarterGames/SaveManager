@@ -142,6 +142,8 @@ namespace CarterGames.Assets.SaveManager.Editor
 
         public static void ReInitIfNeeded()
         {
+            Debug.LogError("Try-re-init");
+            
             if (IsEditorInitialized) return;
             InitializeEditor();
             
