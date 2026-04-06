@@ -40,6 +40,12 @@ namespace CarterGames.Assets.SaveManager
         /// </summary>
         private static bool HasSaved { get; set; }
         
+        
+        /// <summary>
+        /// Stores the last unloaded slot to re-load on app focus if needed.
+        /// </summary>
+        private static int LastSlotUnloaded { get; set; }
+        
         /* —————————————————————————————————————————————————————————————————————————————————————————————————————————————
         |   Methods
         ————————————————————————————————————————————————————————————————————————————————————————————————————————————— */
@@ -85,6 +91,12 @@ namespace CarterGames.Assets.SaveManager
             if (hasFocus)             
             {
                 HasSaved = false;
+
+                if (SmAssetAccessor.GetAsset<DataAssetSettings>().UseSaveSlots)
+                {
+                    SaveSlotManager.LoadSlot(LastSlotUnloaded);
+                }
+
                 return;
             }
             
@@ -94,6 +106,7 @@ namespace CarterGames.Assets.SaveManager
             {
                 if (SaveSlotManager.HasLoadedSlot)
                 {
+                    LastSlotUnloaded = SaveSlotManager.ActiveSlotId;
                     SaveSlotManager.UnloadCurrentSlot();
                 }
             }
