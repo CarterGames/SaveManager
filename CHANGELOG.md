@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.4] - 2026-04-06
+
+### Changed
+- Save slots now auto unload the currently loaded slot when auto-saving the game.
+- Save slots will re-load the last loaded slot when focus restored if applicable.
+
+### Fixed
+- Fixed an issue where the save editor would lose the save objects when exiting playmode sometimes. [[KI-19](https://www.notion.so/cartergames/Save-editor-fails-to-refresh-when-expected-33af72ed3eaf80be8b25c0c09690ff04)]
+- Fixed an issue where save slots would not unload when exiting the game when auto save was on. [[KI-20](https://www.notion.so/cartergames/Save-slot-do-not-unload-on-auto-save-33af72ed3eaf8077bc97f8fab7f6047a)]
+- Fixed an issue where only having one save category would mean the save objects under it would not render in the save editor GUI. [[KI-21](https://www.notion.so/cartergames/Save-editor-is-missing-entries-when-only-1-category-is-used-33af72ed3eaf80ecaaf0db27f8a97dfd)]
+- Fixed save slots losing data when the save slot was made from the save editor. [[KI-18](https://www.notion.so/cartergames/Save-slots-lose-data-sometimes-33af72ed3eaf80b482b9c023c64f29dc)]
+
 ## [3.0.3] - 2026-03-19
 
 ### Changed
