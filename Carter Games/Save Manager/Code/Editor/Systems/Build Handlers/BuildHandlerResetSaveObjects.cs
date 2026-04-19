@@ -49,7 +49,11 @@ namespace CarterGames.Assets.SaveManager.Editor
 				
 				var assetObject = new SerializedObject(fileInstance);
 
+#if UNITY_6000_5_OR_NEWER
+				EditorPrefs.SetString(assetObject.targetObject.GetEntityId().ToString(), EditorJsonUtility.ToJson(assetObject.targetObject));
+#else
 				EditorPrefs.SetString(assetObject.targetObject.GetInstanceID().ToString(), EditorJsonUtility.ToJson(assetObject.targetObject));
+#endif
 				
 				var propIterator = assetObject.GetIterator();
             
@@ -91,7 +95,12 @@ namespace CarterGames.Assets.SaveManager.Editor
 
 				var assetObject = new SerializedObject(fileInstance);
 				
+#if UNITY_6000_5_OR_NEWER
+				EditorJsonUtility.FromJsonOverwrite(EditorPrefs.GetString(assetObject.targetObject.GetEntityId().ToString()), assetObject.targetObject);
+#else
 				EditorJsonUtility.FromJsonOverwrite(EditorPrefs.GetString(assetObject.targetObject.GetInstanceID().ToString()), assetObject.targetObject);
+#endif
+
 				EditorUtility.SetDirty(assetObject.targetObject);
 			}
 			
