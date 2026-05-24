@@ -44,8 +44,8 @@ namespace CarterGames.Assets.SaveManager
         
         [SerializeField] private bool autoSaveOnExit = true;
         
-        [SerializeField] private AssemblyClassDef saveLocation = AssemblyClassDef.FromType<SaveLocationLocalFile>();
-        [SerializeField] private AssemblyClassDef backupLocation = AssemblyClassDef.FromType<SaveBackupLocalFile>();
+        [SerializeField] private AssemblyClassDef saveLocation = typeof(SaveLocationLocalFile);
+        [SerializeField] private AssemblyClassDef backupLocation = typeof(SaveBackupLocalFile);
 
         [SerializeField] private bool useJsonConverters = true;
         
@@ -53,7 +53,7 @@ namespace CarterGames.Assets.SaveManager
         [SerializeField] private AssemblyClassDef encryptionHandler;
         
         [SerializeField] private bool tryPortLegacySave = true;
-        [SerializeField] private AssemblyClassDef legacySaveHandler = AssemblyClassDef.FromType<LegacySaveHandlerGlobalOnly>();
+        [SerializeField] private AssemblyClassDef legacySaveHandler = typeof(LegacySaveHandlerGlobalOnly);
         
         [SerializeField] private bool useSaveSlots;
         [SerializeField] private bool limitAvailableSlots;
@@ -87,7 +87,7 @@ namespace CarterGames.Assets.SaveManager
         /// <summary>
         /// The save location in use to store the game save at.
         /// </summary>
-        public ISaveDataLocation Location => saveLocation?.GetDefinedType<ISaveDataLocation>();
+        public ISaveDataLocation Location => saveLocation?.GetTypeInstance<ISaveDataLocation>();
         
         
         /// <summary>
@@ -99,7 +99,7 @@ namespace CarterGames.Assets.SaveManager
         /// <summary>
         /// The backup location in use to store game save backups when it successfully loads a save.
         /// </summary>
-        public ISaveBackupLocation BackupLocation => backupLocation?.GetDefinedType<ISaveBackupLocation>();
+        public ISaveBackupLocation BackupLocation => backupLocation?.GetTypeInstance<ISaveBackupLocation>();
         
         
         /// <summary>
@@ -117,7 +117,7 @@ namespace CarterGames.Assets.SaveManager
         /// <summary>
         /// Gets the encrypted handler assigned to encrypt & decrypt the game save content.
         /// </summary>
-        public ISaveEncryptionHandler EncryptionHandler => encryptionHandler?.GetDefinedType<ISaveEncryptionHandler>();
+        public ISaveEncryptionHandler EncryptionHandler => encryptionHandler?.GetTypeInstance<ISaveEncryptionHandler>();
 
         
         /// <summary>
@@ -135,7 +135,7 @@ namespace CarterGames.Assets.SaveManager
         /// <summary>
         /// Gets the assigned legacy save converted to use.
         /// </summary>
-        public ILegacySaveHandler LegacySaveHandler => legacySaveHandler?.GetDefinedType<ILegacySaveHandler>();
+        public ILegacySaveHandler LegacySaveHandler => legacySaveHandler?.GetTypeInstance<ILegacySaveHandler>();
         
         
         /// <summary>

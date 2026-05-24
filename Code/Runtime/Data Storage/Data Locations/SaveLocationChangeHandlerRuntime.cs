@@ -77,7 +77,7 @@ namespace CarterGames.Assets.SaveManager
             if (location == CurrentSaveLocation) return;
                 
             // Save data from old to new.
-            var data = JsonUtility.FromJson<AssemblyClassDef>(LastSaveLocation).GetDefinedType<ISaveDataLocation>().LoadDataFromLocation();
+            var data = JsonUtility.FromJson<AssemblyClassDef>(LastSaveLocation).GetTypeInstance<ISaveDataLocation>().LoadDataFromLocation();
             CurrentSaveLocation.SaveDataToLocation(data);
             
             // Update last location used.
@@ -96,7 +96,7 @@ namespace CarterGames.Assets.SaveManager
         {
             try
             {
-                saveLocation = JsonUtility.FromJson<AssemblyClassDef>(value).GetDefinedType<ISaveDataLocation>();
+                saveLocation = JsonUtility.FromJson<AssemblyClassDef>(value).GetTypeInstance<ISaveDataLocation>();
                 return saveLocation != null;
             }
 #pragma warning disable 0168

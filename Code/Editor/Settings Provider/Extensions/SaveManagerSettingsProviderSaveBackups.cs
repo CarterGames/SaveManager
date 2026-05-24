@@ -56,7 +56,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             
             var oldAssembly = SettingsAssetObject.Fp("backupLocation").Fpr("assembly").stringValue;
             var oldType = SettingsAssetObject.Fp("backupLocation").Fpr("type").stringValue;
-            var oldHandler = new AssemblyClassDef(oldAssembly, oldType).GetDefinedType<ISaveBackupLocation>();
+            var oldHandler = new AssemblyClassDef(oldAssembly, oldType).GetTypeInstance<ISaveBackupLocation>();
             var selectedHandler = (ISaveBackupLocation)entry.userData;
 
             if (oldHandler == selectedHandler) return;

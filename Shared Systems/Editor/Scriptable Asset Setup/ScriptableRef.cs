@@ -58,7 +58,7 @@ namespace CarterGames.Shared.SaveManager.Editor
                 
                 cacheLookup = new Dictionary<Type, IScriptableAssetDef<SmDataAsset>>();
 
-                foreach (var elly in AssemblyHelper.GetClassesOfType<IScriptableAssetDef<SmDataAsset>>())
+                foreach (var elly in AssemblyHelper.GetClassesOfType<IScriptableAssetDef<SmDataAsset>>(true))
                 {
                     cacheLookup.Add(elly.AssetType, elly);
                 }

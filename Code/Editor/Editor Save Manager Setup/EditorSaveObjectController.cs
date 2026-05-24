@@ -28,7 +28,7 @@ namespace CarterGames.Assets.SaveManager.Editor
     /// <summary>
     /// Handles save objects in editor space specifically.
     /// </summary>
-    public class EditorSaveObjectController : IAssetEditorInitialize
+    public class EditorSaveObjectController : IAssetEditorInitialize, IAssetEditorFileChanges
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Fields
@@ -94,6 +94,12 @@ namespace CarterGames.Assets.SaveManager.Editor
         public int InitializeOrder => 1;
         
         public void OnEditorInitialized()
+        {
+            Initialize();
+        }
+        
+        
+        public void OnEditorFileChanges()
         {
             Initialize();
         }

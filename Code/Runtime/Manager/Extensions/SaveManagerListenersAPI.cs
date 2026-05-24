@@ -30,13 +30,13 @@ namespace CarterGames.Assets.SaveManager
         /// </summary>
         private static void InitializeListeners()
         {
-            foreach (var entry in AssemblyHelper.GetClassesOfType<IGameSaveListener>(false))
+            foreach (var entry in AssemblyHelper.GetClassesOfType<IGameSaveListener>())
             {
                 GameSaveStartedEvt.Add(entry.OnGameSaveCalled);
                 GameSaveCompletedEvt.Add(entry.OnGameSaveCompleted);
             }
             
-            foreach (var entry in AssemblyHelper.GetClassesOfType<IGameLoadListener>(false))
+            foreach (var entry in AssemblyHelper.GetClassesOfType<IGameLoadListener>())
             {
                 GameLoadStartedEvt.Add(entry.OnGameLoadCalled);
                 GameLoadFailedEvt.Add(entry.OnGameLoadFailed);

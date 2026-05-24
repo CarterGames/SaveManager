@@ -53,7 +53,7 @@ namespace CarterGames.Assets.SaveManager
         
                 cacheConvertersLookup = new Dictionary<Type, IAssetJsonConverter>();
         
-                foreach (var entry in AssemblyHelper.GetClassesOfType<IAssetJsonConverter>(false))
+                foreach (var entry in AssemblyHelper.GetClassesOfType<IAssetJsonConverter>())
                 {
                     cacheConvertersLookup.Add(entry.TargetType, entry);
                 }

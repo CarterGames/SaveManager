@@ -31,7 +31,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             // Save encryption handler.
             if (CachedTotalEncryptionHandlers == -1)
             {
-                CachedTotalEncryptionHandlers = AssemblyHelper.CountClassesOfType<ISaveEncryptionHandler>(false);
+                CachedTotalEncryptionHandlers = AssemblyHelper.CountClassesOfType<ISaveEncryptionHandler>();
             }
 
             if (CachedTotalEncryptionHandlers <= 0)
@@ -83,7 +83,7 @@ namespace CarterGames.Assets.SaveManager.Editor
 
             var oldAssembly = SettingsAssetObject.Fp("encryptionHandler").Fpr("assembly").stringValue;
             var oldType = SettingsAssetObject.Fp("encryptionHandler").Fpr("type").stringValue;
-            var oldHandler = new AssemblyClassDef(oldAssembly, oldType).GetDefinedType<ISaveEncryptionHandler>();
+            var oldHandler = new AssemblyClassDef(oldAssembly, oldType).GetTypeInstance<ISaveEncryptionHandler>();
 
             SettingsAssetObject.Fp("encryptionHandler").Fpr("assembly").stringValue = selectedHandler.GetType().Assembly.FullName;
             SettingsAssetObject.Fp("encryptionHandler").Fpr("type").stringValue = selectedHandler.GetType().FullName;

@@ -70,7 +70,7 @@ namespace CarterGames.Assets.SaveManager.Editor
             {
                 var oldAssembly = SettingsAssetObject.Fp("legacySaveHandler").Fpr("assembly").stringValue;
                 var oldType = SettingsAssetObject.Fp("legacySaveHandler").Fpr("type").stringValue;
-                oldHandler = new AssemblyClassDef(oldAssembly, oldType).GetDefinedType<ILegacySaveHandler>();
+                oldHandler = new AssemblyClassDef(oldAssembly, oldType).GetTypeInstance<ILegacySaveHandler>();
             }
 
             SettingsAssetObject.Fp("legacySaveHandler").Fpr("assembly").stringValue = selectedHandler.GetType().Assembly.FullName;

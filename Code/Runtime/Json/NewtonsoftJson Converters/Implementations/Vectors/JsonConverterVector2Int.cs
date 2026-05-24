@@ -17,14 +17,12 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace CarterGames.Assets.SaveManager
 {
     /// <summary>
     /// Converter for <see cref="Vector2Int"/>
     /// </summary>
-    [Preserve]
     public sealed class JsonConverterVector2Int : SmJsonConverterBase<Vector2Int>
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -62,8 +60,8 @@ namespace CarterGames.Assets.SaveManager
         {
             return new KeyValuePair<string, object>[]
             {
-                new KeyValuePair<string, object>("x", value.x),
-                new KeyValuePair<string, object>("y", value.y),
+                new KeyValuePair<string, object>(nameof(value.x), value.x),
+                new KeyValuePair<string, object>(nameof(value.y), value.y),
             };
         }
     }

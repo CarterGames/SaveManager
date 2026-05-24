@@ -27,6 +27,11 @@ namespace CarterGames.Assets.SaveManager.Editor
             EditorApplication.quitting -= OnEditorQuitting;
             EditorApplication.quitting += OnEditorQuitting;
             
+            if (!EditorSaveObjectController.IsInitialized)
+            {
+                EditorSaveObjectController.Initialize();
+            }
+            
             SaveManagerInitializer.InitializeSaveManagerRuntimeSetup();
             EditorSaveObjectController.ReInitIfNeeded();
         }

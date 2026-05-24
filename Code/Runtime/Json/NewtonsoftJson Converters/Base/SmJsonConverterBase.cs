@@ -27,7 +27,7 @@ namespace CarterGames.Assets.SaveManager
     /// Implement from this class if you want to add your own converters for your class types if they do not parse correctly.
     /// </summary>
     /// <typeparam name="T">The type to convert.</typeparam>
-    [Preserve]
+    [RequireDerived]
     public abstract class SmJsonConverterBase<T> : JsonConverter, IAssetJsonConverter where T : new()
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────

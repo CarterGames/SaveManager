@@ -79,7 +79,7 @@ namespace CarterGames.Assets.SaveManager
         /// <returns>A JObject with the data.</returns>
         private static JObject GenerateMetaSaveData()
         {
-            var metaDataClasses = AssemblyHelper.GetClassesOfType<ISaveMetaData>(false).Where(t => t.CanWriteMetaData);
+            var metaDataClasses = AssemblyHelper.GetClassesOfType<ISaveMetaData>().Where(t => t.CanWriteMetaData);
 
             // Skip if no meta data is enabled.
             if (!metaDataClasses.Any()) return null;

@@ -14,18 +14,15 @@
  * If not, see <https://www.gnu.org/licenses/>. 
  */
 
-using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace CarterGames.Assets.SaveManager
 {
     /// <summary>
     /// Converter for <see cref="Vector3"/>
     /// </summary>
-    [Preserve]
     public sealed class JsonConverterVector3 : SmJsonConverterBase<Vector3>
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -66,9 +63,9 @@ namespace CarterGames.Assets.SaveManager
         {
             return new KeyValuePair<string, object>[]
             {
-                new KeyValuePair<string, object>("x", value.x),
-                new KeyValuePair<string, object>("y", value.y),
-                new KeyValuePair<string, object>("z", value.z),
+                new KeyValuePair<string, object>(nameof(value.x), value.x),
+                new KeyValuePair<string, object>(nameof(value.y), value.y),
+                new KeyValuePair<string, object>(nameof(value.z), value.z),
             };
         }
     }

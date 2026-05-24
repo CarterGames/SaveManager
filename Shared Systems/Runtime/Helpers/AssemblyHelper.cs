@@ -1,24 +1,17 @@
 ﻿/*
- * Copyright (c) 2025 Carter Games
+ * Save Manager (3.x)
+ * Copyright (c) 2025-2026 Carter Games
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. 
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
  *
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>. 
  */
 
 using System;
@@ -41,9 +34,9 @@ namespace CarterGames.Shared.SaveManager
         /// It is intended to use this cache to avoid the use
         /// of <see cref="Assembly.GetTypes"/> in each call.
         /// </summary>
-        private static readonly Dictionary<Type, List<Type>> TypeCache = new();
+        private static readonly Dictionary<Type, List<Type>> TypeCache = new Dictionary<Type, List<Type>>();
 
-        private static Assembly[] _cachedAssemblies;
+        private static Assembly[] cachedAssemblies;
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
         |   Properties
@@ -56,9 +49,9 @@ namespace CarterGames.Shared.SaveManager
         {
             get
             {
-                if (_cachedAssemblies != null) return _cachedAssemblies;
-                _cachedAssemblies = GetAssemblies();
-                return _cachedAssemblies;
+                if (cachedAssemblies != null) return cachedAssemblies;
+                cachedAssemblies = GetAssemblies();
+                return cachedAssemblies;
             }
         }
 
@@ -86,22 +79,9 @@ namespace CarterGames.Shared.SaveManager
         /// <param name="internalCheckOnly">Check internally to the asset only.</param>
         /// <typeparam name="T">The type to find.</typeparam>
         /// <returns>The total in the project.</returns>
-        public static int CountClassesOfType<T>(bool internalCheckOnly = true)
+        public static int CountClassesOfType<T>(bool internalCheckOnly = false)
         {
             return GetClassesNamesOfType<T>(internalCheckOnly).Count();
-        }
-        
-        
-        /// <summary>
-        /// Gets the number of classes of the requested type in the project.
-        /// </summary>
-        /// <param name="assemblies">The assemblies to check through.</param>
-        /// <typeparam name="T">The type to find.</typeparam>
-        /// <returns>The total in the project.</returns>
-        public static int CountClassesOfType<T>(params Assembly[] assemblies)
-        {
-            return assemblies.SelectMany(x => x.GetTypes())
-                .Count(x => x.IsClass && typeof(T).IsAssignableFrom(x));
         }
         
         
@@ -111,7 +91,7 @@ namespace CarterGames.Shared.SaveManager
         /// <param name="internalCheckOnly">Check internally to the asset only.</param>
         /// <typeparam name="T">The type to find.</typeparam>
         /// <returns>All the implementations of the entered class.</returns>
-        public static IEnumerable<T> GetClassesOfType<T>(bool internalCheckOnly = true)
+        public static IEnumerable<T> GetClassesOfType<T>(bool internalCheckOnly = false)
         {
             return GetClassesNamesOfType<T>(internalCheckOnly)
                 .Select(type => (T)Activator.CreateInstance(type));
@@ -124,13 +104,12 @@ namespace CarterGames.Shared.SaveManager
         /// <param name="internalCheckOnly">Check internally to the asset only.</param>
         /// <typeparam name="T">The type to find.</typeparam>
         /// <returns>All the implementations of the entered class.</returns>
-        public static IEnumerable<Type> GetClassesNamesOfType<T>(bool internalCheckOnly = true)
+        public static IEnumerable<Type> GetClassesNamesOfType<T>(bool internalCheckOnly = false)
         {
             Type targetType = typeof(T);
 
             // We don't need to search in the project / assembly if we already know the type.
-            if (TypeCache.TryGetValue(targetType, out List<Type> cachedTypes))
-                return cachedTypes;
+            if (TypeCache.TryGetValue(targetType, out List<Type> cachedTypes)) return cachedTypes;
 
 #if UNITY_6000_0_OR_NEWER
             var assemblies = internalCheckOnly ? CachedAssemblies
@@ -151,20 +130,6 @@ namespace CarterGames.Shared.SaveManager
             TypeCache[targetType] = foundTypes;
 
             return foundTypes;
-        }
-
-
-        /// <summary>
-        /// Gets all the classes of the entered type in the project.
-        /// </summary>
-        /// <param name="assemblies">The assemblies to check through.</param>
-        /// <typeparam name="T">The type to find.</typeparam>
-        /// <returns>All the implementations of the entered class.</returns>
-        public static IEnumerable<T> GetClassesOfType<T>(params Assembly[] assemblies)
-        {
-            return assemblies.SelectMany(x => x.GetTypes())
-                .Where(x => x.IsClass && typeof(T).IsAssignableFrom(x) && x.FullName != typeof(T).FullName)
-                .Select(type => (T)Activator.CreateInstance(type));
         }
     }
 }

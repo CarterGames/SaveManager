@@ -1,34 +1,26 @@
 ﻿/*
- * Copyright (c) 2025 Carter Games
+ * Save Manager (3.x)
+ * Copyright (c) 2025-2026 Carter Games
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. 
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
  *
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>. 
  */
 
 using System;
-using System.Linq;
 using UnityEngine;
 
 namespace CarterGames.Shared.SaveManager
 {
 	/// <summary>
-	/// A class for storing info about a class so it can be referenced from its assembly & type names.
+	/// A class for storing info about a class, so it can be referenced from its assembly & type names.
 	/// </summary>
 	[Serializable]
 	public sealed class AssemblyClassDef
@@ -53,13 +45,19 @@ namespace CarterGames.Shared.SaveManager
 		/// <summary>
 		/// The assembly string stored.
 		/// </summary>
-		public string Assembly => assembly;
+		public string StoredAssembly => assembly;
 		
 		
 		/// <summary>
 		/// The type string stored.
 		/// </summary>
-		public string Type => type;
+		public string StoredType => type;
+		
+		
+		/// <summary>
+		/// The assembly qualified string stored.
+		/// </summary>
+		public string StoredAssemblyQualified => $"{StoredType}, {StoredAssembly}";
 
 		/* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 		|   Fields
@@ -68,21 +66,12 @@ namespace CarterGames.Shared.SaveManager
 		/// <summary>
 		/// Creates a new definition when called.
 		/// </summary>
-		/// <param name="assembly">The assembly to reference.</param>
+		/// <param name="storedAssembly">The assembly to reference.</param>
 		/// <param name="type">The type to reference.</param>
-		public AssemblyClassDef(string assembly, string type)
+		public AssemblyClassDef(string storedAssembly, string type)
 		{
-			this.assembly = assembly;
+			this.assembly = storedAssembly;
 			this.type = type;
-		}
-
-		
-		/// <summary>
-		/// Creates a new definition when called.
-		/// </summary>
-		public static AssemblyClassDef FromType<T>()
-		{
-			return new AssemblyClassDef(typeof(T).Assembly.FullName, typeof(T).FullName);
 		}
 
 		/* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -102,13 +91,37 @@ namespace CarterGames.Shared.SaveManager
 		/* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 		|   Fields
 		───────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+		/// <summary>
+		/// Tries to get the type stored.
+		/// </summary>
+		/// <param name="typeStored">The type stored</param>
+		/// <returns>Bool</returns>
+		public bool TryGetType(out Type typeStored)
+		{
+			typeStored = null;
+			
+			try
+			{
+				typeStored = Type.GetType(StoredAssemblyQualified);
+				return true;
+			}
+#pragma warning disable 0168
+			catch (Exception e)
+#pragma warning restore
+			{
+				return false;
+			}
+		}
+		
 		
 		/// <summary>
-		/// Gets the type stored in this AssemblyClassDef.
+		/// Gets the type stored in this AssemblyClassDef as an instance of its type.
+		/// Use <see cref="TryGetType"/> to just get the type.
 		/// </summary>
 		/// <typeparam name="T">The type to make.</typeparam>
 		/// <returns>The made type or the types default on failure.</returns>
-		public T GetDefinedType<T>()
+		public T GetTypeInstance<T>()
 		{
 			if (!IsValid)
 			{
@@ -118,26 +131,16 @@ namespace CarterGames.Shared.SaveManager
 			
 			try
 			{
-                // We try first to resolve the type with his name :
-                // https://stackoverflow.com/questions/1825147/type-gettypenamespace-a-b-classname-returns-null
-                string assemblyQualifiedName = $"{Type}, {Assembly}";
-                Type targetType = System.Type.GetType(assemblyQualifiedName);
-
-                // If it failed, we use the fallback (without instantiation.)
-                if (targetType == null)
-                {
-                    targetType = AssemblyHelper.GetClassesNamesOfType<T>(false)
-                        .FirstOrDefault(t => t.Assembly.FullName == Assembly && t.FullName == Type);
-                }
-
-                if (targetType != null)
-                {
-                    return (T)Activator.CreateInstance(targetType);
-                }
-
+				if (TryGetType(out var typeValue))
+				{
+					return (T)Activator.CreateInstance(typeValue);
+				}
+				
+				Debug.LogError("[GetDefinedType]: Type resolved is null, have you refactored the typename, namespace or assembly?");
+					
 				return default;
-            }
-#pragma warning disable
+			}
+#pragma warning disable 0168
 			catch (Exception e)
 			{
 				Debug.LogError(
@@ -146,6 +149,36 @@ namespace CarterGames.Shared.SaveManager
 				return default;
 			}
 #pragma warning restore
+		}
+
+
+		/// <summary>
+		/// Gets if a type is the same as this assembly class define.
+		/// </summary>
+		/// <param name="targetType">The type to compare</param>
+		/// <returns>bool</returns>
+		public bool IsDefineType(Type targetType)
+		{
+			return StoredAssembly == targetType.Assembly.FullName && StoredType == targetType.FullName;
+		}
+
+		
+		/// <summary>
+		/// Gets if the type entered is a base class of the stored value.
+		/// </summary>
+		/// <param name="targetType">The type to compare</param>
+		/// <returns>Bool</returns>
+		public bool InheritsFrom(Type targetType)
+		{
+			if (!TryGetType(out var thisType))
+			{
+				Debug.Log(
+					"Stored type is not parsing to the desired type. Please reselect if you have changed the types namespace or assembly.");
+				
+				return false;
+			}
+			
+			return thisType.IsAssignableFrom(targetType);
 		}
 	}
 }

@@ -17,14 +17,12 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace CarterGames.Assets.SaveManager
 {
     /// <summary>
     /// Converter for <see cref="Color32"/>
     /// </summary>
-    [Preserve]
     public sealed class JsonConverterColor32 : SmJsonConverterBase<Color32>
     {
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -68,10 +66,10 @@ namespace CarterGames.Assets.SaveManager
         {
             return new KeyValuePair<string, object>[]
             {
-                new KeyValuePair<string, object>("r", value.r),
-                new KeyValuePair<string, object>("g", value.g),
-                new KeyValuePair<string, object>("b", value.b),
-                new KeyValuePair<string, object>("a", value.a),
+                new KeyValuePair<string, object>(nameof(value.r), value.r),
+                new KeyValuePair<string, object>(nameof(value.g), value.g),
+                new KeyValuePair<string, object>(nameof(value.b), value.b),
+                new KeyValuePair<string, object>(nameof(value.a), value.a),
             };
         }
         

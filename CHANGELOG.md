@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.7] - 2026-05-24
+
+### Changed
+- Documentation updated to a .md file structure over a .pdf file to allow for contribution and changes.
+- Refactored AssemblyClassDef with latest Cart lib setup changes.
+- (Contribution: NoixDeXydre) Improved assembly API performance [[GIT-PR#39](https://github.com/CarterGames/SaveManager/pull/39)].
+
+### Fixed
+- Package json samples fixed (again).
+- Fixed Backup & legacy interface implementation not been picked up in some cases.
+- (Contribution: NoixDeXydre) Fixed runtime initialize call point causing issues around first scene load [[GIT-PR#38](https://github.com/CarterGames/SaveManager/pull/38)].
+- Fixed an issue where required asset was not generated at the expected time, causing an error in some cases when imported for the first time.
+
 ## [3.0.6] - 2026-05-16
 
 ### Added
