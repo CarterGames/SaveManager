@@ -131,6 +131,7 @@ namespace CarterGames.Assets.SaveManager
         private static void Internal_SetKey<T>(string key, string value)
         {
             PlayerPrefs.SetString(Internal_GetKey(key), value);
+            PlayerPrefs.Save();
         }
     }
 }

@@ -148,7 +148,7 @@ namespace CarterGames.Assets.SaveManager
             AllGlobalSaveObjects = new List<SaveObject>();
             AllGlobalSaveValues = new Dictionary<SaveObject, List<SaveValueBase>>();
 
-#if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_4_OR_NEWER
             var assemblies = UnityEngine.Assemblies.CurrentAssemblies.GetLoadedAssemblies();
 #else
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();

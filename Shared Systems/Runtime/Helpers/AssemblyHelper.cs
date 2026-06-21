@@ -111,7 +111,7 @@ namespace CarterGames.Shared.SaveManager
             // We don't need to search in the project / assembly if we already know the type.
             if (TypeCache.TryGetValue(targetType, out List<Type> cachedTypes)) return cachedTypes;
 
-#if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_4_OR_NEWER
             var assemblies = internalCheckOnly ? CachedAssemblies
                 : UnityEngine.Assemblies.CurrentAssemblies.GetLoadedAssemblies();
 #else

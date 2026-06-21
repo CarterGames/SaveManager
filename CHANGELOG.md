@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.8] - 2026-06-21
+
+### Fixed
+- Fixed an issue where some settings in the asset do not save changes when they are edited by the user [[KI-26](https://cartergames.notion.site/Some-settings-do-not-save-in-the-settings-provider-374f72ed3eaf804ebf60e2745806d3b1)].
+- Fixed an issue reported by a user where the asset would not compile in Unity 6.0 > 6.3 versions due to an API change in a contribution [[KI-27](https://cartergames.notion.site/Compile-issue-with-Unity-6-6-3-x-386f72ed3eaf803fa80bf8e0d0553769)] [[GIT-ISS#42](https://github.com/CarterGames/SaveManager/issues/42)].
+
 ## [3.0.7] - 2026-05-24
 
 ### Changed
