@@ -139,6 +139,7 @@ namespace CarterGames.Assets.SaveManager
             this.key = key;
             hasDefaultValue = true;
             this.defaultValue = defaultValue;
+            value = defaultValue;
         }
 
         /* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
